@@ -82,7 +82,7 @@ T5..T11 ─▶ T12 Docker + Caddy ─▶ T13 e2e ─▶ T14 pipeline Turbo + doc
 | `z.toJSONSchema` gerando algo que o Swagger/Orval interpretam errado | Alto | T3 cobre opcional, nullable, enum, uuid e datas com teste de snapshot do `openapi.json`; plano B: pós-processar o schema no decorator |
 | `@nestjs/swagger` 12 com SWC sem CLI plugin exige metadados explícitos | Médio | Os decorators `@Zod*` declaram tudo explicitamente; o plugin não é usado |
 | Mutator axios no SSR do TanStack Start (repassar cookie, base URL interna) | Alto | T5 valida no SSR; o e2e da T13 cobre |
-| TS 7 checando os pacotes com decorators (`experimentalDecorators`) | Médio | T2 roda `check-types` com TS 7 na API logo no esqueleto |
+| TS 7.0 sem API programática quebra o `nest build` | ~~Médio~~ Resolvido | Confirmado na T2: API fixada em TS 6.0 até a 7.1 |
 | Shadcn CLI em monorepo com Tailwind v4 | Baixo | Seguir a doc oficial de monorepo do shadcn; componentes em `packages/ui` |
 | `turbo prune` com npm workspaces no Docker | Médio | T12 valida o build das duas imagens a partir de um clone limpo |
 

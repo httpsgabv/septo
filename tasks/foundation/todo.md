@@ -34,7 +34,7 @@
 **Aceite:**
 - [x] `npm run dev -w @septo/api` sobe em `:3333`; `GET /api/health` retorna 200
 - [x] Faltar variável obrigatória derruba o boot com mensagem clara (zod)
-- [x] `check-types` (TS 7, preset `nest.json`) e `build` (`nest build --builder swc`) passam; DI por tipo de construtor funciona no binário buildado
+- [x] `check-types` (**TS 6** — ver Riscos da spec; preset `nest.json`) e `build` (`nest build`, builder SWC) passam. DI por tipo de construtor no binário buildado fica provada na T6 (primeiro provider injetado)
 
 **Verificação:**
 - [x] `npm run test -w @septo/api` (unit do schema de env + integração do health com supertest)
