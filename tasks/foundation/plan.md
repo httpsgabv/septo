@@ -37,7 +37,7 @@ T5..T11 ─▶ T12 Docker + Caddy ─▶ T13 e2e ─▶ T14 pipeline Turbo + doc
 - [x] T1: Limpar o scaffold e configurar Biome e `@septo/typescript-config`
 - [x] T2: Esqueleto da `@septo/api` (Nest 12 + SWC + env zod + Vitest)
 - [x] T3: Pipeline zod → OpenAPI → Scalar + geração do `openapi.json`
-- [ ] T4: Esqueleto do `@septo/web` (TanStack Start + proxy `/api`)
+- [x] T4: Esqueleto do `@septo/web` (TanStack Start + proxy `/api`)
 - [ ] T5: Codegen com Orval + axios, status da API no SSR
 
 ### Checkpoint A: contrato ponta a ponta

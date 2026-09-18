@@ -67,7 +67,7 @@ navegador ──HTTPS──▶ Caddy (${APP_DOMAIN}) ─┬─ /api/*  ──▶
 SSR do web ──HTTP interno (${API_INTERNAL_URL})──▶ api
 ```
 
-Mesma origem para web e API → cookie de sessão sem CORS. Em dev, o Vite faz proxy de `/api` para `:3333`, reproduzindo o mesmo comportamento.
+Mesma origem para web e API → cookie de sessão sem CORS. Em dev, o `devProxy` do Nitro (`'/api/**'` → `API_INTERNAL_URL`) reproduz o mesmo comportamento — o `server.proxy` do Vite não funciona porque o Nitro atende as requisições antes dele.
 
 ### Contrato da API: zod → OpenAPI → Orval
 

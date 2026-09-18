@@ -70,13 +70,13 @@
 **Descrição:** Criar o app TanStack Start em `:5173` com root route, uma rota index, proxy do Vite para `/api` → `:3333`, env do servidor validada com zod e Vitest configurado.
 
 **Aceite:**
-- [ ] `npm run dev -w @septo/web` sobe em `:5173` com SSR funcionando (HTML inicial já contém o conteúdo)
-- [ ] `http://localhost:5173/api/health` chega na API pelo proxy
-- [ ] `check-types` (TS 7, preset `react.json`) e `build` passam
+- [x] `npm run dev -w @septo/web` sobe em `:5173` com SSR funcionando (HTML inicial já contém o conteúdo)
+- [x] `http://localhost:5173/api/health` chega na API pelo proxy
+- [x] `check-types` (TS 7, preset `react.json`) e `build` passam
 
 **Verificação:**
-- [ ] `npm run build -w @septo/web`; `npm run test -w @septo/web` (unit do schema de env)
-- [ ] Manual: `curl http://localhost:5173` retorna HTML renderizado no servidor
+- [x] `npm run build -w @septo/web`; `npm run test -w @septo/web` (unit do schema de env)
+- [x] Manual: `curl http://localhost:5173` retorna HTML renderizado no servidor
 
 **Dependências:** T1
 **Arquivos:** `apps/web/package.json`, `apps/web/vite.config.ts`, `apps/web/tsconfig.json`, `apps/web/src/router.tsx`, `apps/web/src/routes/{__root,index}.tsx`, `apps/web/src/shared/env.ts`
