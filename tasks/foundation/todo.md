@@ -190,11 +190,11 @@
 **Descrição:** Adicionar o componente `command` do shadcn (cmdk) ao `@septo/ui` e montar a palette no shell: abre com ⌘K / Ctrl+K e com botão no header, lista as seções navegáveis e navega ao selecionar. A lista de itens vem da mesma fonte que a sidebar.
 
 **Aceite:**
-- [ ] ⌘K/Ctrl+K abre a palette; digitar filtra; enter navega; esc fecha
-- [ ] Sidebar e palette usam a mesma definição de navegação (um array só)
+- [x] ⌘K/Ctrl+K abre a palette; digitar filtra; enter navega; esc fecha
+- [x] Sidebar e palette usam a mesma definição de navegação (um array só)
 
 **Verificação:**
-- [ ] Manual só com teclado (a navegação é um dado estático, não pede teste unitário); coberto no e2e da T13
+- [x] Manual só com teclado (a navegação é um dado estático, não pede teste unitário); coberto no e2e da T13
 
 **Dependências:** T9
 **Arquivos:** `packages/ui/src/components/command.tsx`, `apps/web/src/shared/layout/command-palette.tsx`, `apps/web/src/shared/navigation.ts`, `apps/web/src/shared/layout/header.tsx`
