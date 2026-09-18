@@ -9,6 +9,7 @@ import type * as React from 'react';
 
 function InputGroup({ className, ...props }: React.ComponentProps<'div'>) {
   return (
+    // biome-ignore lint/a11y/useSemanticElements: a <fieldset> would bring its own border and min-width into this flex control
     <div
       data-slot="input-group"
       role="group"
@@ -46,6 +47,8 @@ function InputGroupAddon({
   ...props
 }: React.ComponentProps<'div'> & VariantProps<typeof inputGroupAddonVariants>) {
   return (
+    // biome-ignore lint/a11y/useSemanticElements: same as InputGroup; this is a visual addon, not a form section
+    // biome-ignore lint/a11y/useKeyWithClickEvents: mouse convenience that focuses the input; keyboard users tab to the input itself
     <div
       role="group"
       data-slot="input-group-addon"
