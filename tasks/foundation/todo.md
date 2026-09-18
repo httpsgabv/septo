@@ -51,13 +51,13 @@
 **Descrição:** Implementar `ZodValidationPipe` e os decorators `@ZodBody`, `@ZodQuery`, `@ZodParams` e `@ZodResponse` usando `z.toJSONSchema(schema, { target: 'openapi-3.0' })`. Montar o documento em `src/openapi.ts`, servir o Scalar em `/api/docs` e o JSON em `/api/openapi.json` (se `API_DOCS_ENABLED`), e criar o script `openapi` que grava `apps/api/openapi.json` sem abrir porta. O health passa a declarar o schema de resposta.
 
 **Aceite:**
-- [ ] Um schema de teste com campo opcional, nullable, enum, uuid e data aparece corretamente no `openapi.json` (snapshot)
-- [ ] Entrada inválida nos decorators de entrada é rejeitada com 400
-- [ ] `/api/docs` mostra o health documentado com o schema de resposta; `npm run openapi -w @septo/api` gera o arquivo de forma determinística (rodar duas vezes gera diff zero)
+- [x] Um schema de teste com campo opcional, nullable, enum, uuid e data aparece corretamente no `openapi.json` (snapshot)
+- [x] Entrada inválida nos decorators de entrada é rejeitada com 400
+- [x] `/api/docs` mostra o health documentado com o schema de resposta; `npm run openapi -w @septo/api` gera o arquivo de forma determinística (rodar duas vezes gera diff zero)
 
 **Verificação:**
-- [ ] `npm run test -w @septo/api` (unit do pipe e dos decorators; snapshot do documento)
-- [ ] Manual: abrir `http://localhost:3333/api/docs`
+- [x] `npm run test -w @septo/api` (unit do pipe e dos decorators; snapshot do documento)
+- [x] Manual: abrir `http://localhost:3333/api/docs`
 
 **Dependências:** T2
 **Arquivos:** `apps/api/src/shared/http/zod-validation.pipe.ts`, `apps/api/src/shared/http/zod.decorators.ts`, `apps/api/src/openapi.ts`, `apps/api/scripts/generate-openapi.ts`, `apps/api/src/main.ts`, `apps/api/openapi.json`

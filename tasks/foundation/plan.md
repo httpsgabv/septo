@@ -36,7 +36,7 @@ T5..T11 ─▶ T12 Docker + Caddy ─▶ T13 e2e ─▶ T14 pipeline Turbo + doc
 ### Fase 1: base e riscos técnicos
 - [x] T1: Limpar o scaffold e configurar Biome e `@septo/typescript-config`
 - [x] T2: Esqueleto da `@septo/api` (Nest 12 + SWC + env zod + Vitest)
-- [ ] T3: Pipeline zod → OpenAPI → Scalar + geração do `openapi.json`
+- [x] T3: Pipeline zod → OpenAPI → Scalar + geração do `openapi.json`
 - [ ] T4: Esqueleto do `@septo/web` (TanStack Start + proxy `/api`)
 - [ ] T5: Codegen com Orval + axios, status da API no SSR
 

@@ -82,7 +82,9 @@ zod (DTOs em presentation) ──z.toJSONSchema──▶ @nestjs/swagger ──�
 | Peça | Decisão |
 |---|---|
 | Validação de entrada | `ZodValidationPipe` próprio (~15 linhas) em `src/shared/http/` |
-| Documentação dos DTOs | decorators próprios `@ZodBody(schema)`, `@ZodQuery(schema)`, `@ZodParams(schema)`, `@ZodResponse(status, schema?)` que combinam validação + `@ApiBody`/`@ApiResponse` com `z.toJSONSchema(schema, { target: 'openapi-3.0' })`. Substitui o `nestjs-zod` |
+| Documentação dos DTOs | decorators de **parâmetro** `@ZodBody(schema)`, `@ZodQuery(schema)`, `@ZodParams(schema)` (validam aquele argumento e documentam o handler) e o decorator de método `@ZodResponse(status, schema?)`, todos sobre `z.toJSONSchema(schema, { target: 'openapi-3.0' })`. Schemas com `.meta({ id })` viram `components/schemas` nomeados. Substitui o `nestjs-zod` |
+| operationId | nome do método do controller — vira o nome do hook no Orval (`listNotes` → `useListNotes`). Por isso nomes de métodos são únicos na API inteira (verbo + substantivo); duplicata derruba a geração do documento |
+| Datas no contrato | `z.iso.datetime()` (string ISO); `z.date()` não é representável em JSON Schema. Conversão `Date` ↔ string nos mappers de `presentation` |
 | `openapi.json` | gerado por script (`npm run openapi -w @septo/api`) que monta o `AppModule` sem abrir porta; **commitado** — mudanças no contrato aparecem no diff do PR |
 | Client do web | Orval com `client: 'react-query'`, `httpClient: 'axios'` e um `mutator` (`src/shared/api/http-client.ts`) com a instância axios: `baseURL` `/api` no navegador, `API_INTERNAL_URL` no SSR repassando o cookie da requisição, `withCredentials: true` |
 | Schemas no web | segundo output do Orval com `client: 'zod'` — formulários validam com o mesmo contrato da API |
@@ -247,14 +249,13 @@ export const noteIdParams = z.object({ id: z.uuid() });
 
 @Controller('notes')
 export class NotesController {
-  constructor(private readonly archiveNote: ArchiveNoteUseCase) {}
+  constructor(private readonly archiveNoteUseCase: ArchiveNoteUseCase) {}
 
   @Post(':id/archive')
   @HttpCode(204)
-  @ZodParams(noteIdParams)
   @ZodResponse(204)
-  archive(@Param() { id }: z.infer<typeof noteIdParams>): Promise<void> {
-    return this.archiveNote.execute(id);
+  archiveNote(@ZodParams(noteIdParams) { id }: z.infer<typeof noteIdParams>): Promise<void> {
+    return this.archiveNoteUseCase.execute(id);
   }
 }
 ```

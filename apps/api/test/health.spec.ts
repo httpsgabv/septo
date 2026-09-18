@@ -7,7 +7,7 @@ describe('GET /api/health', () => {
   let app: INestApplication;
 
   beforeAll(async () => {
-    app = await createApp();
+    app = await createApp({ logger: false });
     await app.init();
   });
 
