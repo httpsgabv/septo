@@ -86,7 +86,9 @@ zod (DTOs em presentation) ──z.toJSONSchema──▶ @nestjs/swagger ──�
 | operationId | nome do método do controller — vira o nome do hook no Orval (`listNotes` → `useListNotes`). Por isso nomes de métodos são únicos na API inteira (verbo + substantivo); duplicata derruba a geração do documento |
 | Datas no contrato | `z.iso.datetime()` (string ISO); `z.date()` não é representável em JSON Schema. Conversão `Date` ↔ string nos mappers de `presentation` |
 | `openapi.json` | gerado por script (`npm run openapi -w @septo/api`) que monta o `AppModule` sem abrir porta; **commitado** — mudanças no contrato aparecem no diff do PR |
-| Client do web | Orval com `client: 'react-query'`, `httpClient: 'axios'` e um `mutator` (`src/shared/api/http-client.ts`) com a instância axios: `baseURL` `/api` no navegador, `API_INTERNAL_URL` no SSR repassando o cookie da requisição, `withCredentials: true` |
+| Client do web | Orval com `client: 'react-query'`, `httpClient: 'axios'` e um `mutator` (`src/shared/api/http-client.ts`) com a instância axios: no navegador, mesma origem (os paths do OpenAPI já começam com `/api`); no SSR, `baseURL` = `API_INTERNAL_URL` repassando o cookie da requisição (`createIsomorphicFn` + `getRequestHeader`); `withCredentials: true` |
+| SSR + cache | `@tanstack/react-router-ssr-query`: `QueryClient` novo por requisição no contexto do router; loaders chamam `ensureQueryData(get<Op>QueryOptions())` e componentes usam o hook gerado (`use<Op>`) |
+| Turbo | `@septo/api#openapi` (depende de `build`) → `@septo/web#codegen`; `dev`, `build`, `check-types` e `test` do web dependem de `codegen` (config em `apps/web/turbo.json`) |
 | Schemas no web | segundo output do Orval com `client: 'zod'` — formulários validam com o mesmo contrato da API |
 | Código gerado | **não commitado** (`.gitignore`); produzido pela task `codegen` do Turbo, com cache, antes de `dev`, `check-types`, `build` e `test` do web |
 | Scalar | `GET /api/docs` (UI) e `GET /api/openapi.json`; habilitado por `API_DOCS_ENABLED` (default `true` em dev) |

@@ -89,21 +89,21 @@
 **Descrição:** Configurar o Orval (saída `react-query` com axios + saída `zod`) lendo `apps/api/openapi.json`. Criar o mutator `http-client.ts`: `baseURL` `/api` no navegador; no SSR, `API_INTERNAL_URL` repassando o header `cookie` da requisição. Criar a task `codegen` no Turbo (web depende de `^openapi`) e fazer a home mostrar o status da API carregado no loader (SSR) com o hook gerado. Adicionar o teste de contrato na API (o `openapi.json` commitado é igual ao gerado).
 
 **Aceite:**
-- [ ] `npm run codegen` gera `apps/web/src/shared/api/generated/` (gitignored) a partir do `openapi.json`
-- [ ] A home renderiza o status da API já no HTML do SSR e revalida no cliente
-- [ ] Remover `status` do schema zod de resposta do health e rodar `codegen` quebra o `check-types` do web (Success Criterion 3); o teste de contrato falha se o `openapi.json` estiver desatualizado
+- [x] `npm run codegen` gera `apps/web/src/shared/api/generated/` (gitignored) a partir do `openapi.json`
+- [x] A home renderiza o status da API já no HTML do SSR e revalida no cliente
+- [x] Remover `status` do schema zod de resposta do health e rodar `codegen` quebra o `check-types` do web (Success Criterion 3); o teste de contrato falha se o `openapi.json` estiver desatualizado
 
 **Verificação:**
-- [ ] `npm run codegen && npm run check-types && npm run test`
-- [ ] Manual: `curl http://localhost:5173` contém o status; o teste de quebra de tipo é feito e revertido
+- [x] `npm run codegen && npm run check-types && npm run test`
+- [x] Manual: `curl http://localhost:5173` contém o status; o teste de quebra de tipo é feito e revertido
 
 **Dependências:** T3, T4
 **Arquivos:** `apps/web/orval.config.ts`, `apps/web/src/shared/api/http-client.ts`, `apps/web/src/routes/index.tsx`, `turbo.json`, `apps/api/test/openapi-contract.spec.ts`
 **Tamanho:** M
 
 ### ✅ Checkpoint A: contrato ponta a ponta
-- [ ] `npm run lint && npm run check-types && npm run test` passam
-- [ ] Quebra de contrato propagando até o web demonstrada
+- [x] `npm run lint && npm run check-types && npm run test` passam
+- [x] Quebra de contrato propagando até o web demonstrada
 - [ ] **Revisão com você antes da Fase 2/3**
 
 ---

@@ -7,6 +7,10 @@
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": ["dist/**", ".output/**"]
     },
+    "openapi": {
+      "dependsOn": ["build"],
+      "outputs": ["openapi.json"]
+    },
     "check-types": {
       "dependsOn": ["^check-types"]
     },

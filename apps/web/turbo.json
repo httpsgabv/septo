@@ -1,0 +1,19 @@
+{
+  "$schema": "https://turborepo.dev/schema.json",
+  "extends": ["//"],
+  "tasks": {
+    "codegen": {
+      "dependsOn": ["@septo/api#openapi"],
+      "inputs": [
+        "orval.config.ts",
+        "src/shared/api/http-client.ts",
+        "$TURBO_ROOT$/apps/api/openapi.json"
+      ],
+      "outputs": ["src/shared/api/generated/**"]
+    },
+    "build": { "dependsOn": ["^build", "codegen"] },
+    "check-types": { "dependsOn": ["^check-types", "codegen"] },
+    "test": { "dependsOn": ["^build", "codegen"] },
+    "dev": { "dependsOn": ["codegen"] }
+  }
+}

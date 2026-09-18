@@ -38,11 +38,11 @@ T5..T11 ─▶ T12 Docker + Caddy ─▶ T13 e2e ─▶ T14 pipeline Turbo + doc
 - [x] T2: Esqueleto da `@septo/api` (Nest 12 + SWC + env zod + Vitest)
 - [x] T3: Pipeline zod → OpenAPI → Scalar + geração do `openapi.json`
 - [x] T4: Esqueleto do `@septo/web` (TanStack Start + proxy `/api`)
-- [ ] T5: Codegen com Orval + axios, status da API no SSR
+- [x] T5: Codegen com Orval + axios, status da API no SSR
 
 ### Checkpoint A: contrato ponta a ponta
-- [ ] Mudar um campo no schema zod de resposta e rodar `codegen` quebra o `check-types` do web
-- [ ] `lint`, `check-types`, `test` passam
+- [x] Mudar um campo no schema zod de resposta e rodar `codegen` quebra o `check-types` do web
+- [x] `lint`, `check-types`, `test` passam
 - [ ] Revisão com você antes de seguir
 
 ### Fase 2: API (pode rodar em paralelo com a Fase 3)

@@ -1,8 +1,21 @@
+import { QueryClient } from '@tanstack/react-query';
 import { createRouter } from '@tanstack/react-router';
+import { setupRouterSsrQueryIntegration } from '@tanstack/react-router-ssr-query';
 import { routeTree } from './routeTree.gen';
 
 export function getRouter() {
-  return createRouter({ routeTree, scrollRestoration: true, defaultPreload: 'intent' });
+  // A fresh QueryClient per request so SSR never shares cache between visitors.
+  const queryClient = new QueryClient({ defaultOptions: { queries: { staleTime: 30_000 } } });
+  const router = createRouter({
+    routeTree,
+    context: { queryClient },
+    scrollRestoration: true,
+    defaultPreload: 'intent',
+    // React Query owns caching; loaders should always run and delegate to it.
+    defaultPreloadStaleTime: 0,
+  });
+  setupRouterSsrQueryIntegration({ router, queryClient });
+  return router;
 }
 
 declare module '@tanstack/react-router' {
