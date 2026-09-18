@@ -250,11 +250,11 @@
 **Descrição:** Configurar o Playwright no `@septo/web` (webServer subindo api+web em dev) e cobrir: shell carrega com o status da API renderizado no SSR; navegação pela sidebar e pela ⌘K; acento trocado persiste após reload; em 375 px o drawer funciona e não há scroll horizontal.
 
 **Aceite:**
-- [ ] `npm run test:e2e` passa localmente em Chromium
-- [ ] Cada Success Criterion de UI da spec (5, 6) tem pelo menos um teste
+- [x] `npm run test:e2e` passa localmente em Chromium
+- [x] Cada Success Criterion de UI da spec (5, 6) tem pelo menos um teste
 
 **Verificação:**
-- [ ] `npm run test:e2e`
+- [x] `npm run test:e2e`
 
 **Dependências:** T11 (T12 não é necessária: roda contra o dev)
 **Arquivos:** `apps/web/playwright.config.ts`, `apps/web/e2e/shell.spec.ts`, `apps/web/e2e/settings.spec.ts`, `package.json`, `turbo.json`

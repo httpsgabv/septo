@@ -62,7 +62,7 @@ T5..T11 ─▶ T12 Docker + Caddy ─▶ T13 e2e ─▶ T14 pipeline Turbo + doc
 
 ### Fase 4: infra, e2e e docs
 - [x] T12: Dockerfiles, compose completo e Caddy
-- [ ] T13: Suite e2e de fumaça (Playwright)
+- [x] T13: Suite e2e de fumaça (Playwright)
 - [ ] T14: Pipeline do Turbo (cache) e documentação (README, CLAUDE.md)
 
 ### Checkpoint final

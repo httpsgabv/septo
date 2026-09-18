@@ -9,7 +9,8 @@
     "start": "node .output/server/index.mjs",
     "check-types": "tsc --noEmit",
     "test": "vitest run",
-    "codegen": "orval"
+    "codegen": "orval",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@septo/ui": "*",
@@ -24,6 +25,7 @@
     "zod": "4.6.5"
   },
   "devDependencies": {
+    "@playwright/test": "1.63.0",
     "@septo/typescript-config": "*",
     "@tailwindcss/vite": "4.3.3",
     "@types/node": "26.6.1",

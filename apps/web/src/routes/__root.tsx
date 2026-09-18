@@ -8,7 +8,7 @@ import {
   Outlet,
   Scripts,
 } from '@tanstack/react-router';
-import type { ReactNode } from 'react';
+import { type ReactNode, useEffect } from 'react';
 import { PREFERENCES_SCRIPT } from '../features/settings/preferences-script';
 import { getHealthCheckQueryOptions } from '../shared/api/generated/endpoints/health/health';
 import { AppHeader } from '../shared/layout/app-header';
@@ -39,6 +39,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootComponent() {
   const { sidebarOpen } = Route.useLoaderData();
+  // Signals that event handlers are live (e2e tests wait for it instead of guessing).
+  useEffect(() => {
+    document.body.dataset.hydrated = 'true';
+  }, []);
   return (
     <RootDocument>
       <TooltipProvider>
