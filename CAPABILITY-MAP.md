@@ -20,7 +20,7 @@ septo é um app pessoal que centraliza ferramentas hoje espalhadas em N apps avu
 ```
 apps/api            @septo/api — NestJS, um módulo por bounded context (domain/application/infrastructure/presentation); gera openapi.json
 apps/web            @septo/web — TanStack Start, src/features/<contexto>; client gerado pelo Orval
-packages/ui         @septo/ui — design system (shadcn + Radix + Tailwind v4, tokens)
+packages/ui         @septo/ui — design system (shadcn base-nova + Base UI + Tailwind v4, tokens)
 packages/typescript-config  @septo/typescript-config
 ```
 
@@ -46,5 +46,6 @@ Separações deliberadamente **não** feitas (reavaliar quando houver 2º consum
 | Lint/format | Biome (sem ESLint/Prettier) |
 | TypeScript | 7.0 no web e nos pacotes; API em 6.0 (Nest CLI precisa da API do compilador, ausente no 7.0) compilando com SWC |
 | Visual | premium minimalista, dark-first, estilo Linear/Raycast; acento customizável, default `#5808a3` |
+| Primitivas de UI | Base UI (shadcn `base-nova`), no lugar de Radix — decidido em 2026-09-18 |
 | Domínio | `APP_DOMAIN` em env, default `localhost` |
 | Testes | Vitest (unit/integration) + Playwright (e2e) |

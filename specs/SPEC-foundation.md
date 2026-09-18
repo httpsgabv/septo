@@ -30,7 +30,7 @@ Fora de escopo: login (módulo `identity`), qualquer feature de negócio, CI/CD 
 | Banco | PostgreSQL | 18 (`postgres:18-alpine`) |
 | Frontend | TanStack Start + TanStack Router (Vite) | start 1.168, vite 8 |
 | Cache/estado servidor | TanStack Query | 5 |
-| Estilo | Tailwind CSS v4 + shadcn/ui (Radix) + lucide-react | tailwind 4.3 |
+| Estilo | Tailwind CSS v4 + shadcn/ui estilo `base-nova` (primitivas **Base UI**, `@base-ui/react`) + lucide-react | tailwind 4.3, base-ui 1.8 |
 | Testes | Vitest (+ `unplugin-swc` na API), Playwright | vitest 5, playwright 1.63 |
 | Proxy/HTTPS | Caddy | 2 |
 
@@ -147,8 +147,11 @@ apps/web/src/
   - `#5808a3` é escuro: como fundo (botão primário) usa texto branco; como texto/borda sobre fundo escuro usa a variante clareada derivada, garantindo contraste AA.
   - Configurações do app têm seletor com presets + cor livre; a escolha fica em `localStorage` e é aplicada por script inline no `<head>` (sem flash). Sem persistência no servidor na v1.
 - Tema claro e escuro, seguindo `prefers-color-scheme` com toggle manual persistido.
-- Componentes shadcn copiados para `packages/ui/src/components`, exportados por subpath (`@septo/ui/button`).
-- Acessibilidade: foco visível, contraste AA, navegação por teclado (garantida pelo Radix).
+- Componentes shadcn no estilo `base-nova` (Base UI, padrão do shadcn desde 07/2026; escolhido no lugar de Radix em 2026-09-18) ficam em `packages/ui/src/components` e são importados por subpath: `@septo/ui/components/button`.
+- O CLI do shadcn quebra neste ambiente: trunca o caminho do usuário no ponto (`gabriel.vieira`) e chegou a instalar o pacote npm `cn`, sem relação com o projeto (removido). Componentes são baixados do registry oficial (`https://ui.shadcn.com/r/styles/base-nova/<nome>.json`) aplicando as mesmas transformações do CLI: `cn` → `@septo/ui/lib/utils`, `IconPlaceholder` → ícone lucide, remoção dos marcadores `cn-*`. De `shadcn/tailwind.css`, só as variantes `data-horizontal`/`data-vertical` são necessárias com Base UI (as demais `data-*` são nativas do Tailwind v4).
+- Texto em acento usa `text-brand-text`, nunca `text-primary` (o acento puro tem 1,8:1 sobre o fundo escuro).
+- Contraste verificado no navegador para 10 acentos (incluindo `#5808a3`, amarelo, rosa, ciano e cinza) nos 2 temas: botão primário e texto em acento ficam ≥ 4,5:1 em todos. No default: 10,6:1 no botão; 7,5:1 (escuro) e 10,3:1 (claro) no texto.
+- Acessibilidade: foco visível, contraste AA, navegação por teclado (garantida pelo Base UI); `prefers-reduced-motion` desliga animações.
 
 ### Shell do app
 

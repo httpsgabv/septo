@@ -1,5 +1,6 @@
 import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
+import tailwindcss from '@tailwindcss/vite';
 import { tanstackStart } from '@tanstack/react-start/plugin/vite';
 import viteReact from '@vitejs/plugin-react';
 import { nitro } from 'nitro/vite';
@@ -14,6 +15,7 @@ const env = parseServerEnv(process.env);
 export default defineConfig({
   server: { port: env.WEB_PORT, strictPort: true },
   plugins: [
+    tailwindcss(),
     tanstackStart(),
     // Same-origin /api in dev, mirroring Caddy in production. Nitro handles requests before
     // Vite's own `server.proxy`, so the proxy has to live here.

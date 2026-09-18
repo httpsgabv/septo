@@ -1,0 +1,8 @@
+{
+  "extends": "@septo/typescript-config/react.json",
+  "compilerOptions": {
+    "types": [],
+    "paths": { "@septo/ui/*": ["./src/*"] }
+  },
+  "include": ["src"]
+}

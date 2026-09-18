@@ -151,15 +151,15 @@
 
 ### T8: `@septo/ui`: Tailwind v4, tokens, tema e acento derivado
 
-**Descrição:** Configurar `packages/ui` com Tailwind v4 (`@theme`), tokens (zinc, raios, sombras, Geist Sans/Mono), temas claro/escuro e `--accent-base` (default `#5808a3`) com as variantes derivadas via `oklch(from …)`. Inicializar o shadcn no monorepo e adicionar os primeiros componentes: button, input, card, dialog, dropdown-menu, tooltip, separator, sheet. O web importa o CSS e os componentes por subpath.
+**Descrição:** Configurar `packages/ui` com Tailwind v4 (`@theme`), tokens (zinc, raios, sombras, Geist Sans/Mono), temas claro/escuro e `--accent-base` (default `#5808a3`) com as variantes derivadas via `oklch(from …)`. Configurar o shadcn (estilo `base-nova`, Base UI) no monorepo e adicionar os primeiros componentes: button, input, card, dialog, dropdown-menu, tooltip, separator, sheet. O web importa o CSS e os componentes por subpath.
 
 **Aceite:**
-- [ ] Trocar `--accent-base` no DevTools recolore botões, foco e links do app inteiro
-- [ ] O texto em cor de acento tem contraste ≥ 4.5:1 nos dois temas com o default `#5808a3` (verificação documentada)
-- [ ] O web usa `@septo/ui/button` com o tema aplicado; `check-types` e `build` passam
+- [x] Trocar `--accent-base` no DevTools recolore botões, foco e links do app inteiro
+- [x] O texto em cor de acento tem contraste ≥ 4.5:1 nos dois temas com o default `#5808a3` (verificação documentada)
+- [x] O web usa `@septo/ui/components/button` com o tema aplicado; `check-types` e `build` passam
 
 **Verificação:**
-- [ ] `npm run build`; manual: página de exemplo temporária na index com os componentes nos dois temas
+- [x] `npm run build`; manual: página de exemplo temporária na index com os componentes nos dois temas
 
 **Dependências:** T4
 **Arquivos:** `packages/ui/package.json`, `packages/ui/components.json`, `packages/ui/src/styles/globals.css`, `packages/ui/src/components/*`, `packages/ui/src/lib/utils.ts`, `apps/web/components.json`
