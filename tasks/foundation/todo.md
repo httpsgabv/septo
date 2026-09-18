@@ -279,5 +279,5 @@
 **Tamanho:** S
 
 ### ✅ Checkpoint final
-- [ ] Success Criteria 1–10 da spec verificados um a um
+- [x] Success Criteria 1–10 da spec verificados um a um
 - [ ] **Revisão final com você**

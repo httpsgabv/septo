@@ -66,8 +66,8 @@ T5..T11 ─▶ T12 Docker + Caddy ─▶ T13 e2e ─▶ T14 pipeline Turbo + doc
 - [x] T14: Pipeline do Turbo (cache) e documentação (README, CLAUDE.md)
 
 ### Checkpoint final
-- [ ] Todos os Success Criteria da spec verificados
-- [ ] Clone limpo → `npm install && cp .env.example .env && docker compose up -d postgres && npm run dev` funciona
+- [x] Todos os Success Criteria da spec verificados
+- [x] Clone limpo → `npm install && cp .env.example .env && docker compose up -d postgres && npm run dev` funciona
 - [ ] Revisão final com você
 
 ## Paralelização
