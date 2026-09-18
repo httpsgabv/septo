@@ -1,16 +1,16 @@
 import { createFileRoute } from '@tanstack/react-router';
 import {
-  getCheckHealthQueryOptions,
-  useCheckHealth,
+  getHealthCheckQueryOptions,
+  useHealthCheck,
 } from '../shared/api/generated/endpoints/health/health';
 
 export const Route = createFileRoute('/')({
-  loader: ({ context }) => context.queryClient.ensureQueryData(getCheckHealthQueryOptions()),
+  loader: ({ context }) => context.queryClient.ensureQueryData(getHealthCheckQueryOptions()),
   component: Home,
 });
 
 function Home() {
-  const { data } = useCheckHealth();
+  const { data } = useHealthCheck();
   return (
     <main>
       <h1>septo</h1>

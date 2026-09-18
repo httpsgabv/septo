@@ -83,7 +83,7 @@ zod (DTOs em presentation) ──z.toJSONSchema──▶ @nestjs/swagger ──�
 |---|---|
 | Validação de entrada | `ZodValidationPipe` próprio (~15 linhas) em `src/shared/http/` |
 | Documentação dos DTOs | decorators de **parâmetro** `@ZodBody(schema)`, `@ZodQuery(schema)`, `@ZodParams(schema)` (validam aquele argumento e documentam o handler) e o decorator de método `@ZodResponse(status, schema?)`, todos sobre `z.toJSONSchema(schema, { target: 'openapi-3.0' })`. Schemas com `.meta({ id })` viram `components/schemas` nomeados. Substitui o `nestjs-zod` |
-| operationId | nome do método do controller — vira o nome do hook no Orval (`listNotes` → `useListNotes`). Por isso nomes de métodos são únicos na API inteira (verbo + substantivo); duplicata derruba a geração do documento |
+| operationId | `<controller sem sufixo><Método>`: `NotesController.archive` → `notesArchive` → hook `useNotesArchive`. Único por construção (nome de classe + método); os handlers ficam com nomes curtos (`list`, `create`, `archive`). Uma checagem de duplicata na geração do documento protege contra dois controllers com o mesmo nome |
 | Datas no contrato | `z.iso.datetime()` (string ISO); `z.date()` não é representável em JSON Schema. Conversão `Date` ↔ string nos mappers de `presentation` |
 | `openapi.json` | gerado por script (`npm run openapi -w @septo/api`) que monta o `AppModule` sem abrir porta; **commitado** — mudanças no contrato aparecem no diff do PR |
 | Client do web | Orval com `client: 'react-query'`, `httpClient: 'axios'` e um `mutator` (`src/shared/api/http-client.ts`) com a instância axios: no navegador, mesma origem (os paths do OpenAPI já começam com `/api`); no SSR, `baseURL` = `API_INTERNAL_URL` repassando o cookie da requisição (`createIsomorphicFn` + `getRequestHeader`); `withCredentials: true` |
@@ -251,13 +251,13 @@ export const noteIdParams = z.object({ id: z.uuid() });
 
 @Controller('notes')
 export class NotesController {
-  constructor(private readonly archiveNoteUseCase: ArchiveNoteUseCase) {}
+  constructor(private readonly archiveNote: ArchiveNoteUseCase) {}
 
   @Post(':id/archive')
   @HttpCode(204)
   @ZodResponse(204)
-  archiveNote(@ZodParams(noteIdParams) { id }: z.infer<typeof noteIdParams>): Promise<void> {
-    return this.archiveNoteUseCase.execute(id);
+  archive(@ZodParams(noteIdParams) { id }: z.infer<typeof noteIdParams>): Promise<void> {
+    return this.archiveNote.execute(id); // operationId: notesArchive
   }
 }
 ```
@@ -265,7 +265,7 @@ export class NotesController {
 ```tsx
 // apps/web/src/features/notes/components/archive-note-button.tsx
 export function ArchiveNoteButton({ id }: { id: string }) {
-  const archive = useArchiveNote(); // gerado pelo Orval
+  const archive = useNotesArchive(); // gerado pelo Orval a partir do operationId
   return (
     <Button variant="ghost" onClick={() => archive.mutate({ id })} disabled={archive.isPending}>
       Arquivar

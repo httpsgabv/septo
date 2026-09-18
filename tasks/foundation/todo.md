@@ -104,7 +104,7 @@
 ### ✅ Checkpoint A: contrato ponta a ponta
 - [x] `npm run lint && npm run check-types && npm run test` passam
 - [x] Quebra de contrato propagando até o web demonstrada
-- [ ] **Revisão com você antes da Fase 2/3**
+- [x] **Revisão com você antes da Fase 2/3** (ajuste: operationId com escopo do controller)
 
 ---
 

@@ -3,7 +3,7 @@
   "paths": {
     "/api/health": {
       "get": {
-        "operationId": "checkHealth",
+        "operationId": "healthCheck",
         "parameters": [],
         "responses": {
           "200": {

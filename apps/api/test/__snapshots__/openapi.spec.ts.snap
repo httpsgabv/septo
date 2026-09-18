@@ -45,7 +45,7 @@ exports[`zod → OpenAPI pipeline > documents params, query, body, responses and
   "paths": {
     "/api/samples": {
       "get": {
-        "operationId": "listSamples",
+        "operationId": "sampleList",
         "parameters": [
           {
             "in": "query",
@@ -87,7 +87,7 @@ exports[`zod → OpenAPI pipeline > documents params, query, body, responses and
         ],
       },
       "post": {
-        "operationId": "createSample",
+        "operationId": "sampleCreate",
         "parameters": [],
         "requestBody": {
           "content": {
@@ -135,7 +135,7 @@ exports[`zod → OpenAPI pipeline > documents params, query, body, responses and
     },
     "/api/samples/{id}": {
       "get": {
-        "operationId": "getSample",
+        "operationId": "sampleGet",
         "parameters": [
           {
             "in": "path",

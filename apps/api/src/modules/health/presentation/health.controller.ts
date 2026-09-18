@@ -6,7 +6,7 @@ import { type HealthResponse, healthResponse } from './health.schemas.js';
 export class HealthController {
   @Get()
   @ZodResponse(200, healthResponse)
-  checkHealth(): HealthResponse {
+  check(): HealthResponse {
     return { status: 'ok' };
   }
 }

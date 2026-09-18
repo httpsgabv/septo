@@ -26,19 +26,19 @@ const idParams = z.object({ id: z.uuid() });
 class SampleController {
   @Get()
   @ZodResponse(200, z.array(sampleItem))
-  listSamples(@ZodQuery(listQuery) query: z.infer<typeof listQuery>) {
+  list(@ZodQuery(listQuery) query: z.infer<typeof listQuery>) {
     return query;
   }
 
   @Get(':id')
   @ZodResponse(200, sampleItem)
-  getSample(@ZodParams(idParams) { id }: z.infer<typeof idParams>) {
+  get(@ZodParams(idParams) { id }: z.infer<typeof idParams>) {
     return { id };
   }
 
   @Post()
   @ZodResponse(201, sampleItem)
-  createSample(@ZodBody(createSampleItem) body: z.infer<typeof createSampleItem>) {
+  create(@ZodBody(createSampleItem) body: z.infer<typeof createSampleItem>) {
     return body;
   }
 }
@@ -59,9 +59,11 @@ describe('zod → OpenAPI pipeline', () => {
     expect({ paths, components }).toMatchSnapshot();
   });
 
-  it('uses the controller method name as operationId', () => {
+  it('scopes operationIds by controller so they are unique across the API', () => {
     const { paths } = createOpenApiDocument(app);
-    expect(paths['/api/samples']?.get?.operationId).toBe('listSamples');
+    expect(paths['/api/samples']?.get?.operationId).toBe('sampleList');
+    expect(paths['/api/samples']?.post?.operationId).toBe('sampleCreate');
+    expect(paths['/api/samples/{id}']?.get?.operationId).toBe('sampleGet');
   });
 
   it('validates and parses each input source', async () => {

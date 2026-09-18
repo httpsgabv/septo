@@ -43,7 +43,7 @@ T5..T11 ─▶ T12 Docker + Caddy ─▶ T13 e2e ─▶ T14 pipeline Turbo + doc
 ### Checkpoint A: contrato ponta a ponta
 - [x] Mudar um campo no schema zod de resposta e rodar `codegen` quebra o `check-types` do web
 - [x] `lint`, `check-types`, `test` passam
-- [ ] Revisão com você antes de seguir
+- [x] Revisão com você antes de seguir
 
 ### Fase 2: API (pode rodar em paralelo com a Fase 3)
 - [ ] T6: Postgres no compose + Prisma + health com checagem do banco
