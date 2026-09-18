@@ -1,11 +1,14 @@
 import type { INestApplication } from '@nestjs/common';
 import { DocumentBuilder, type OpenAPIObject, SwaggerModule } from '@nestjs/swagger';
 import { apiReference } from '@scalar/nestjs-api-reference';
-import { openApiComponents } from './shared/http/openapi-schema.js';
+import { errorResponse } from './shared/http/error-response.schema.js';
+import { openApiComponents, toOpenApiSchema } from './shared/http/openapi-schema.js';
 
 export function createOpenApiDocument(app: INestApplication): OpenAPIObject {
   const config = new DocumentBuilder().setTitle('septo API').setVersion('0.0.0').build();
   const document = SwaggerModule.createDocument(app, config, { operationIdFactory: operationId });
+  // Always published so clients get the error type even before an endpoint references it.
+  toOpenApiSchema(errorResponse, 'output');
   assertUniqueOperationIds(document);
 
   const schemas = { ...document.components?.schemas, ...openApiComponents };

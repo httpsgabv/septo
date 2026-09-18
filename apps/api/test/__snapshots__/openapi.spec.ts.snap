@@ -4,6 +4,41 @@ exports[`zod → OpenAPI pipeline > documents params, query, body, responses and
 {
   "components": {
     "schemas": {
+      "ErrorResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "type": "string",
+          },
+          "details": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "message": {
+                  "type": "string",
+                },
+                "path": {
+                  "type": "string",
+                },
+              },
+              "required": [
+                "path",
+                "message",
+              ],
+              "type": "object",
+            },
+            "type": "array",
+          },
+          "message": {
+            "type": "string",
+          },
+        },
+        "required": [
+          "code",
+          "message",
+        ],
+        "type": "object",
+      },
       "SampleItem": {
         "additionalProperties": false,
         "properties": {
@@ -81,6 +116,16 @@ exports[`zod → OpenAPI pipeline > documents params, query, body, responses and
             },
             "description": "",
           },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse",
+                },
+              },
+            },
+            "description": "",
+          },
         },
         "tags": [
           "Sample",
@@ -127,6 +172,16 @@ exports[`zod → OpenAPI pipeline > documents params, query, body, responses and
             },
             "description": "",
           },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse",
+                },
+              },
+            },
+            "description": "",
+          },
         },
         "tags": [
           "Sample",
@@ -154,6 +209,16 @@ exports[`zod → OpenAPI pipeline > documents params, query, body, responses and
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/SampleItem",
+                },
+              },
+            },
+            "description": "",
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse",
                 },
               },
             },

@@ -116,7 +116,8 @@ Regras:
 - Prisma **só** em `infrastructure`. Entidade de domínio nunca é o model do Prisma nem o DTO de resposta.
 - Portas existem só em fronteiras reais (persistência, serviços externos, relógio). Casos de uso **não** têm interface.
 - Portas são `abstract class` — servem como token de DI no Nest sem `@Inject('STRING')`.
-- Erros de domínio estendem `DomainError`; o exception filter global mapeia para status HTTP.
+- Erros de domínio estendem `DomainError` com `code` (ex.: `NOTE_NOT_FOUND`) e `kind` (`not_found` | `conflict` | `invalid` | `forbidden`) — nunca status HTTP. O `ApiExceptionFilter` global mapeia `kind` → 404/409/422/403; erros inesperados viram `500 INTERNAL_ERROR` sem vazar detalhes (stack só no log).
+- Todo endpoint com `@ZodBody`/`@ZodQuery`/`@ZodParams` documenta automaticamente o `400` com `ErrorResponse`; erros de domínio possíveis são documentados com `@ZodResponse(404, errorResponse)` etc.
 - Rotas sob o prefixo global `/api`, em inglês, no plural: `/api/notes`, `/api/notes/:id/archive`.
 
 ### Web — organização por feature

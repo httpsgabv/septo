@@ -131,18 +131,18 @@
 
 ### T7: `DomainError`, exception filter e formato padrão de erro
 
-**Descrição:** Criar a classe base `DomainError` (com `code` e status HTTP associado) e o exception filter global que converte `DomainError`, erro de validação zod e `HttpException` em `{ code, message, details? }`; erros inesperados viram 500 sem vazar stack. Schema `ErrorResponse` registrado no OpenAPI e usado pelo `@ZodResponse` nos casos de erro.
+**Descrição:** Criar a classe base `DomainError` (com `code` e `kind` — `not_found`/`conflict`/`invalid`/`forbidden`; o domínio não conhece status HTTP, o filter mapeia `kind` → 404/409/422/403) e o exception filter global que converte `DomainError`, erro de validação zod e `HttpException` em `{ code, message, details? }`; erros inesperados viram 500 sem vazar stack. Schema `ErrorResponse` registrado no OpenAPI e usado pelo `@ZodResponse` nos casos de erro.
 
 **Aceite:**
-- [ ] Entrada inválida → `400 { code: "VALIDATION_ERROR", message, details }`
-- [ ] `DomainError` → status mapeado com o `code` do erro; erro desconhecido → `500 { code: "INTERNAL_ERROR" }` e log com stack
-- [ ] `ErrorResponse` aparece no `openapi.json` e no client gerado
+- [x] Entrada inválida → `400 { code: "VALIDATION_ERROR", message, details }`
+- [x] `DomainError` → status mapeado com o `code` do erro; erro desconhecido → `500 { code: "INTERNAL_ERROR" }` e log com stack
+- [x] `ErrorResponse` aparece no `openapi.json` e no client gerado
 
 **Verificação:**
-- [ ] Unit do filter (um caso por tipo de erro); integração via endpoint de teste só nos testes
+- [x] Unit do filter (um caso por tipo de erro); integração via endpoint de teste só nos testes
 
 **Dependências:** T3
-**Arquivos:** `apps/api/src/shared/domain-error.ts`, `apps/api/src/shared/http/exception.filter.ts`, `apps/api/src/shared/http/error-response.schema.ts`, `apps/api/src/main.ts`, `apps/api/src/shared/http/exception.filter.spec.ts`
+**Arquivos:** `apps/api/src/shared/domain-error.ts`, `apps/api/src/shared/http/api-exception.filter.ts`, `apps/api/src/shared/http/error-response.schema.ts`, `apps/api/src/shared/http/zod.decorators.ts`, `apps/api/src/app.ts`, `apps/api/test/errors.spec.ts`
 **Tamanho:** S
 
 ---
