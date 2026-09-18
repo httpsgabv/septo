@@ -221,7 +221,7 @@
 ### ✅ Checkpoint B: app navegável
 - [x] Todos os testes passam; build limpo
 - [x] Shell, ⌘K e Configurações funcionando em desktop e em 375 px
-- [ ] **Revisão visual com você**
+- [x] **Revisão visual com você** (aprovada)
 
 ---
 
@@ -232,12 +232,12 @@
 **Descrição:** Dockerfiles multi-stage (`node:24-alpine`, `turbo prune --docker`) para api e web; `compose.yaml` com `api`, `web` e `caddy` (depends_on com healthchecks); `Caddyfile` usando `{$APP_DOMAIN}` com `/api/*` → api e o resto → web. A API aplica `prisma migrate deploy` no start.
 
 **Aceite:**
-- [ ] `docker compose up -d --build` sobe os quatro serviços saudáveis
-- [ ] `https://localhost` serve o web; `https://localhost/api/health` e `/api/docs` respondem via Caddy
-- [ ] O SSR dentro do container usa `API_INTERNAL_URL=http://api:3333`
+- [x] `docker compose up -d --build` sobe os quatro serviços saudáveis
+- [x] `https://localhost` serve o web; `https://localhost/api/health` e `/api/docs` respondem via Caddy
+- [x] O SSR dentro do container usa `API_INTERNAL_URL=http://api:3333`
 
 **Verificação:**
-- [ ] Manual: `docker compose ps` todos healthy; `curl -k https://localhost/api/health`
+- [x] Manual: `docker compose ps` todos healthy; `curl -k https://localhost/api/health`
 
 **Dependências:** T6, T11
 **Arquivos:** `apps/api/Dockerfile`, `apps/web/Dockerfile`, `compose.yaml`, `Caddyfile`, `.dockerignore`

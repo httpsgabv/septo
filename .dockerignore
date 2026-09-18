@@ -1,0 +1,14 @@
+.git
+.env
+.env.*
+!.env.example
+**/node_modules
+**/dist
+**/.output
+**/.turbo
+**/.nitro
+**/.tanstack
+**/generated
+**/coverage
+**/test-results
+**/playwright-report

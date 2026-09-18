@@ -329,7 +329,7 @@ Convenções:
 | Codegen desatualizado entre API e web | `openapi.json` commitado + teste de contrato; `codegen` como dependência das tasks do web no Turbo |
 | SSR precisa repassar cookie para a API | Mutator do axios lê headers da requisição no servidor (`@tanstack/react-start/server`); coberto no e2e |
 | `prisma@latest` no npm é 8.0 RC | Versão fixa em 7.10.x |
-| `npm audit`: 4 alertas altos na CLI `prisma` 7.10 (`deepmerge-ts` < 8 e `mysql2`, dependências transitivas) | Só a CLI (devDependency) é afetada; `mysql2` não é usado (Postgres) e o merge de config só recebe nosso arquivo estático. Correção oferecida é voltar ao Prisma 6 — não aplicada. Reavaliar a cada atualização do Prisma |
+| `npm audit`: 4 alertas altos na CLI `prisma` 7.10 (`deepmerge-ts` < 8 e `mysql2`, dependências transitivas) | Só a CLI é afetada — ela é dependência de runtime da API porque o container roda `prisma migrate deploy` no start, mas nunca recebe entrada externa; `mysql2` não é usado (Postgres) e o merge de config só recebe nosso arquivo estático. Correção oferecida é voltar ao Prisma 6 — não aplicada. Reavaliar a cada atualização do Prisma |
 | Web Push exige HTTPS | Caddy já na foundation (usado pelo `reminders`) |
 
 ## Open Questions

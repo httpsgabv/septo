@@ -58,10 +58,10 @@ T5..T11 ─▶ T12 Docker + Caddy ─▶ T13 e2e ─▶ T14 pipeline Turbo + doc
 ### Checkpoint B: app navegável
 - [x] Shell funciona em desktop e em 375 px; acento persiste após reload
 - [x] `/api/health` responde 200 e 503 corretamente
-- [ ] Revisão visual com você
+- [x] Revisão visual com você (aprovada)
 
 ### Fase 4: infra, e2e e docs
-- [ ] T12: Dockerfiles, compose completo e Caddy
+- [x] T12: Dockerfiles, compose completo e Caddy
 - [ ] T13: Suite e2e de fumaça (Playwright)
 - [ ] T14: Pipeline do Turbo (cache) e documentação (README, CLAUDE.md)
 

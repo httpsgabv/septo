@@ -1,5 +1,8 @@
 name: septo
 
+# Dev: `docker compose up -d postgres` (apps run with `npm run dev`).
+# Full stack: `docker compose up -d --build`.
+
 services:
   postgres:
     image: postgres:18-alpine
@@ -19,5 +22,53 @@ services:
       timeout: 3s
       retries: 10
 
+  api:
+    build: { context: ., dockerfile: apps/api/Dockerfile }
+    restart: unless-stopped
+    environment:
+      API_PORT: 3333
+      API_DOCS_ENABLED: ${API_DOCS_ENABLED:-true}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-septo}:${POSTGRES_PASSWORD:-septo}@postgres:5432/${POSTGRES_DB:-septo}
+    depends_on:
+      postgres: { condition: service_healthy }
+    healthcheck:
+      test: ['CMD-SHELL', 'wget -qO- http://localhost:3333/api/health || exit 1']
+      interval: 10s
+      timeout: 3s
+      retries: 6
+      start_period: 20s
+
+  web:
+    build: { context: ., dockerfile: apps/web/Dockerfile }
+    restart: unless-stopped
+    environment:
+      API_INTERNAL_URL: http://api:3333
+    depends_on:
+      api: { condition: service_healthy }
+    healthcheck:
+      test: ['CMD-SHELL', 'wget -qO- http://localhost:3000/notes || exit 1']
+      interval: 10s
+      timeout: 3s
+      retries: 6
+      start_period: 10s
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    environment:
+      APP_DOMAIN: ${APP_DOMAIN:-localhost}
+    ports:
+      - '80:80'
+      - '443:443'
+      - '443:443/udp'
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      web: { condition: service_healthy }
+
 volumes:
   postgres-data:
+  caddy-data:
+  caddy-config:

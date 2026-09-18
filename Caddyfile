@@ -1,0 +1,12 @@
+# HTTPS for APP_DOMAIN: Let's Encrypt for a real domain, Caddy's local CA for localhost.
+{$APP_DOMAIN:localhost} {
+	encode zstd gzip
+
+	handle /api/* {
+		reverse_proxy api:3333
+	}
+
+	handle {
+		reverse_proxy web:3000
+	}
+}
