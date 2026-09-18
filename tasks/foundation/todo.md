@@ -13,13 +13,13 @@
 **Descrição:** Remover o que veio do create-turbo e não será usado. Trocar ESLint/Prettier por Biome e renomear o pacote de tsconfig para o escopo `@septo`.
 
 **Aceite:**
-- [ ] `apps/docs`, `apps/web` (Next), `packages/eslint-config` e os componentes demo de `packages/ui` removidos; Prettier fora do `package.json` raiz
-- [ ] `packages/typescript-config` publicado como `@septo/typescript-config`, com presets `base.json`, `nest.json` (decorators) e `react.json`
-- [ ] `biome.json` na raiz (ignora `**/generated/**`, `dist`, `.output`, `.turbo`, com suporte a diretivas do Tailwind); scripts `lint` e `format` na raiz; `turbo.json` sem a task `lint`
+- [x] `apps/docs`, `apps/web` (Next), `packages/eslint-config` e os componentes demo de `packages/ui` removidos; Prettier fora do `package.json` raiz
+- [x] `packages/typescript-config` publicado como `@septo/typescript-config`, com presets `base.json`, `nest.json` (decorators) e `react.json`
+- [x] `biome.json` na raiz (ignora `**/generated/**`, `dist`, `.output`, `.turbo`, com suporte a diretivas do Tailwind); scripts `lint` e `format` na raiz; `turbo.json` sem a task `lint`
 
 **Verificação:**
-- [ ] `npm install` sem erro; `npm run lint` passa
-- [ ] `grep -r "@repo/" --include=package.json .` não retorna nada
+- [x] `npm install` sem erro; `npm run lint` passa
+- [x] `grep -r "@repo/" --include=package.json .` não retorna nada
 
 **Dependências:** nenhuma
 **Arquivos:** `package.json`, `turbo.json`, `biome.json`, `packages/typescript-config/*`, `.gitignore`; remoção de `apps/docs`, `apps/web`, `packages/eslint-config`, `packages/ui/src/*`
@@ -32,13 +32,13 @@
 **Descrição:** Criar a API NestJS mínima com build via SWC, prefixo global `/api`, env validada com zod e Vitest configurado com `unplugin-swc`. Health ainda sem banco: `GET /api/health` → `{ status: "ok" }`.
 
 **Aceite:**
-- [ ] `npm run dev -w @septo/api` sobe em `:3333`; `GET /api/health` retorna 200
-- [ ] Faltar variável obrigatória derruba o boot com mensagem clara (zod)
-- [ ] `check-types` (TS 7, preset `nest.json`) e `build` (`nest build --builder swc`) passam; DI por tipo de construtor funciona no binário buildado
+- [x] `npm run dev -w @septo/api` sobe em `:3333`; `GET /api/health` retorna 200
+- [x] Faltar variável obrigatória derruba o boot com mensagem clara (zod)
+- [x] `check-types` (TS 7, preset `nest.json`) e `build` (`nest build --builder swc`) passam; DI por tipo de construtor funciona no binário buildado
 
 **Verificação:**
-- [ ] `npm run test -w @septo/api` (unit do schema de env + integração do health com supertest)
-- [ ] `npm run build -w @septo/api && node apps/api/dist/main.js` responde no health
+- [x] `npm run test -w @septo/api` (unit do schema de env + integração do health com supertest)
+- [x] `npm run build -w @septo/api && node apps/api/dist/main.js` responde no health
 
 **Dependências:** T1
 **Arquivos:** `apps/api/package.json`, `apps/api/nest-cli.json`, `apps/api/.swcrc`, `apps/api/vitest.config.ts`, `apps/api/src/{main,app.module}.ts`, `apps/api/src/shared/env.ts`, `apps/api/src/modules/health/presentation/health.controller.ts`, `apps/api/test/health.spec.ts`

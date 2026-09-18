@@ -1,6 +1,6 @@
 # Implementation Plan: foundation
 
-> Spec: [SPEC-foundation](../../specs/SPEC-foundation.md) · Tarefas: [todo.md](todo.md) · Status: **aguardando revisão**
+> Spec: [SPEC-foundation](../../specs/SPEC-foundation.md) · Tarefas: [todo.md](todo.md) · Status: **aprovado — em execução**
 
 ## Overview
 
@@ -34,8 +34,8 @@ T5..T11 ─▶ T12 Docker + Caddy ─▶ T13 e2e ─▶ T14 pipeline Turbo + doc
 ## Task List
 
 ### Fase 1: base e riscos técnicos
-- [ ] T1: Limpar o scaffold e configurar Biome e `@septo/typescript-config`
-- [ ] T2: Esqueleto da `@septo/api` (Nest 12 + SWC + env zod + Vitest)
+- [x] T1: Limpar o scaffold e configurar Biome e `@septo/typescript-config`
+- [x] T2: Esqueleto da `@septo/api` (Nest 12 + SWC + env zod + Vitest)
 - [ ] T3: Pipeline zod → OpenAPI → Scalar + geração do `openapi.json`
 - [ ] T4: Esqueleto do `@septo/web` (TanStack Start + proxy `/api`)
 - [ ] T5: Codegen com Orval + axios, status da API no SSR
@@ -88,4 +88,4 @@ T5..T11 ─▶ T12 Docker + Caddy ─▶ T13 e2e ─▶ T14 pipeline Turbo + doc
 
 ## Open Questions
 
-1. **Git:** trabalho em uma branch `feat/foundation` com um commit por tarefa (mensagens em inglês, Conventional Commits)? Só commito quando você pedir, ou posso commitar ao concluir cada tarefa verificada?
+Nenhuma. (Git: branch `feat/foundation`, um commit por tarefa, Conventional Commits em inglês — aprovado.)

@@ -17,10 +17,11 @@ Fora de escopo: login (módulo `identity`), qualquer feature de negócio, CI/CD 
 |---|---|---|
 | Runtime | Node.js | ≥ 24 (local: 26) |
 | Monorepo | Turborepo + npm workspaces | turbo 2.10, npm 11 |
-| Linguagem | TypeScript (type-check em todo o monorepo) | 7.0 |
+| Linguagem | TypeScript — web e pacotes | 7.0 |
+| Linguagem (API) | TypeScript — a API fica no 6 porque o Nest CLI exige a API programática do compilador, que o TS 7.0 não tem (volta na 7.1) | 6.0 |
 | Lint + format | Biome (substitui ESLint e Prettier) | 2.5 |
 | Schemas | zod — DTOs da API, formulários, env | 4 |
-| API | NestJS (`@nestjs/platform-express`) | 12 |
+| API | NestJS (`@nestjs/platform-express`), em ESM (`"type": "module"`, imports relativos com `.js`) | 12 |
 | Build da API | Nest CLI com builder SWC | @swc/core 1.16 |
 | OpenAPI | `@nestjs/swagger` (só geração do documento, sem CLI plugin) | 12 |
 | Docs da API | Scalar (`@scalar/nestjs-api-reference`) em `/api/docs` | 1.2 |
@@ -46,7 +47,7 @@ npm run codegen                          # turbo: api gera openapi.json → web 
 npm run build                            # turbo build (com cache; depende de codegen)
 npm run lint                             # biome check . (lint + format + imports)
 npm run format                           # biome check --write .
-npm run check-types                      # turbo: tsc --noEmit (TS 7) em todos os pacotes
+npm run check-types                      # turbo: tsc --noEmit em todos os pacotes
 npm run test                             # turbo: vitest em todos os pacotes
 npm run test:e2e                         # playwright contra web+api em dev
 npm run db:migrate -w @septo/api         # prisma migrate dev
@@ -314,7 +315,7 @@ Convenções:
 
 | Risco | Mitigação |
 |---|---|
-| TS 7 não tem API programática → `nest build` e o CLI plugin do `@nestjs/swagger` não rodam nele | Build da API via SWC (`--builder swc`); o Nest CLI traz seu próprio TS 6 internamente; sem CLI plugin — DTOs documentados via zod. TS 7 faz o type-check |
+| TS 7.0 não tem API programática → `nest build` e o CLI plugin do `@nestjs/swagger` não rodam nele | **Confirmado na T2:** a API fixa `typescript@6.0` (type-check e Nest CLI) e compila com SWC; sem CLI plugin — DTOs documentados via zod. Voltar a API para TS 7 quando a 7.1 sair |
 | `z.toJSONSchema` gera construções que o `@nestjs/swagger`/Orval interpretam mal (ex.: `anyOf` com `null`, formatos) | Primeira tarefa do plano é um spike ponta a ponta (schema zod → OpenAPI → hook Orval) com tipos opcionais, nullable, enum e uuid |
 | Codegen desatualizado entre API e web | `openapi.json` commitado + teste de contrato; `codegen` como dependência das tasks do web no Turbo |
 | SSR precisa repassar cookie para a API | Mutator do axios lê headers da requisição no servidor (`@tanstack/react-start/server`); coberto no e2e |

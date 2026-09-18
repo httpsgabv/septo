@@ -44,7 +44,7 @@ Separações deliberadamente **não** feitas (reavaliar quando houver 2º consum
 | Comunicação | REST; zod na API → OpenAPI (`@nestjs/swagger`) → client Orval (axios + TanStack Query); docs no Scalar em `/api/docs`. Sem tRPC |
 | Schemas | zod 4 |
 | Lint/format | Biome (sem ESLint/Prettier) |
-| TypeScript | 7.0 para type-check; API compila com SWC |
+| TypeScript | 7.0 no web e nos pacotes; API em 6.0 (Nest CLI precisa da API do compilador, ausente no 7.0) compilando com SWC |
 | Visual | premium minimalista, dark-first, estilo Linear/Raycast; acento customizável, default `#5808a3` |
 | Domínio | `APP_DOMAIN` em env, default `localhost` |
 | Testes | Vitest (unit/integration) + Playwright (e2e) |
