@@ -207,12 +207,12 @@
 **Descrição:** Página `/settings` com toggle de tema (claro/escuro/sistema) e seletor de acento (presets + `<input type="color">`). Salva em `localStorage`; um script inline no `<head>` aplica tema e acento antes da primeira pintura. Função pura de validação da cor (hex) em `features/settings/domain`.
 
 **Aceite:**
-- [ ] Trocar a cor recolore o app na hora; recarregar mantém a cor sem flash do roxo default
-- [ ] Tema "sistema" acompanha `prefers-color-scheme`
-- [ ] Valor inválido ou `localStorage` indisponível cai no default sem quebrar
+- [x] Trocar a cor recolore o app na hora; recarregar mantém a cor sem flash do roxo default
+- [x] Tema "sistema" acompanha `prefers-color-scheme`
+- [x] Valor inválido ou `localStorage` indisponível cai no default sem quebrar
 
 **Verificação:**
-- [ ] Unit da validação/parse das preferências; manual com reload e aba anônima
+- [x] Unit da validação/parse das preferências; manual com reload e aba anônima
 
 **Dependências:** T9
 **Arquivos:** `apps/web/src/routes/settings.tsx`, `apps/web/src/features/settings/domain/preferences.ts`, `apps/web/src/features/settings/domain/preferences.spec.ts`, `apps/web/src/features/settings/components/accent-picker.tsx`, `apps/web/src/routes/__root.tsx`

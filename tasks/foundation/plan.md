@@ -53,7 +53,7 @@ T5..T11 ─▶ T12 Docker + Caddy ─▶ T13 e2e ─▶ T14 pipeline Turbo + doc
 - [x] T8: `@septo/ui`: Tailwind v4, tokens, tema e acento derivado
 - [x] T9: Shell (sidebar, header, drawer mobile, páginas placeholder)
 - [x] T10: Command palette ⌘K
-- [ ] T11: Configurações: tema e cor de acento sem flash
+- [x] T11: Configurações: tema e cor de acento sem flash
 
 ### Checkpoint B: app navegável
 - [ ] Shell funciona em desktop e em 375 px; acento persiste após reload

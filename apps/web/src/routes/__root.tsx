@@ -9,6 +9,7 @@ import {
   Scripts,
 } from '@tanstack/react-router';
 import type { ReactNode } from 'react';
+import { PREFERENCES_SCRIPT } from '../features/settings/preferences-script';
 import { getHealthCheckQueryOptions } from '../shared/api/generated/endpoints/health/health';
 import { AppHeader } from '../shared/layout/app-header';
 import { AppSidebar } from '../shared/layout/app-sidebar';
@@ -24,6 +25,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: 'septo' },
     ],
     links: [{ rel: 'stylesheet', href: appCss }],
+    // Before first paint: stored theme and accent, no flash of the defaults.
+    scripts: [{ children: PREFERENCES_SCRIPT }],
   }),
   loader: async ({ context }) => {
     // prefetch (not ensure): the shell must render even when the API is down.
@@ -53,8 +56,8 @@ function RootComponent() {
 
 function RootDocument({ children }: { children: ReactNode }) {
   return (
-    // ponytail: dark is hardcoded until T11 adds the theme preference
-    <html lang="pt-BR" className="dark">
+    // The preferences script sets the class and accent before hydration.
+    <html lang="pt-BR" suppressHydrationWarning>
       <head>
         <HeadContent />
       </head>
