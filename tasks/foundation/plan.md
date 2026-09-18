@@ -56,8 +56,8 @@ T5..T11 ─▶ T12 Docker + Caddy ─▶ T13 e2e ─▶ T14 pipeline Turbo + doc
 - [x] T11: Configurações: tema e cor de acento sem flash
 
 ### Checkpoint B: app navegável
-- [ ] Shell funciona em desktop e em 375 px; acento persiste após reload
-- [ ] `/api/health` responde 200 e 503 corretamente
+- [x] Shell funciona em desktop e em 375 px; acento persiste após reload
+- [x] `/api/health` responde 200 e 503 corretamente
 - [ ] Revisão visual com você
 
 ### Fase 4: infra, e2e e docs

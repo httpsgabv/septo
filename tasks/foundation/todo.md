@@ -219,8 +219,8 @@
 **Tamanho:** M
 
 ### ✅ Checkpoint B: app navegável
-- [ ] Todos os testes passam; build limpo
-- [ ] Shell, ⌘K e Configurações funcionando em desktop e em 375 px
+- [x] Todos os testes passam; build limpo
+- [x] Shell, ⌘K e Configurações funcionando em desktop e em 375 px
 - [ ] **Revisão visual com você**
 
 ---
