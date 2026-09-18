@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema.json",
+  "style": "base-nova",
+  "rsc": false,
+  "tsx": true,
+  "tailwind": {
+    "config": "",
+    "css": "src/styles/globals.css",
+    "baseColor": "zinc",
+    "cssVariables": true
+  },
+  "iconLibrary": "lucide",
+  "aliases": {
+    "components": "@septo/ui/components",
+    "ui": "@septo/ui/components",
+    "utils": "@septo/ui/lib/utils",
+    "lib": "@septo/ui/lib",
+    "hooks": "@septo/ui/hooks"
+  }
+}

@@ -1,0 +1,51 @@
+name: septo
+
+# Infra only: Postgres and Caddy (HTTPS). The api and web run outside compose:
+# - dev: `npm run dev` on the host; Caddy reaches them through host.docker.internal.
+# - production: the api/web images run standalone on the `septo` network (see README).
+
+services:
+  postgres:
+    image: postgres:18-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-septo}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-septo}
+      POSTGRES_DB: ${POSTGRES_DB:-septo}
+    ports:
+      # Loopback only: reachable from this machine (dev, SSH tunnel), never from the internet.
+      - '127.0.0.1:${POSTGRES_PORT:-5433}:5432'
+    volumes:
+      - postgres-data:/var/lib/postgresql
+      - ./docker/postgres/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    environment:
+      APP_DOMAIN: ${APP_DOMAIN:-localhost}
+      API_UPSTREAM: ${API_UPSTREAM:-host.docker.internal:3333}
+      WEB_UPSTREAM: ${WEB_UPSTREAM:-host.docker.internal:5173}
+    ports:
+      - '80:80'
+      - '443:443'
+      - '443:443/udp'
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+
+networks:
+  default:
+    # Fixed name so standalone api/web containers can join with `--network septo`.
+    name: septo
+
+volumes:
+  postgres-data:
+  caddy-data:
+  caddy-config:

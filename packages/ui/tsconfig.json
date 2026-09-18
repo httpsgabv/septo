@@ -1,9 +1,8 @@
 {
-  "extends": "@repo/typescript-config/react-library.json",
+  "extends": "@septo/typescript-config/react.json",
   "compilerOptions": {
-    "outDir": "dist",
-    "strictNullChecks": true
+    "types": [],
+    "paths": { "@septo/ui/*": ["./src/*"] }
   },
-  "include": ["src"],
-  "exclude": ["node_modules", "dist"]
+  "include": ["src"]
 }

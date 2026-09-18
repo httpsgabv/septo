@@ -1,159 +1,104 @@
-# Turborepo starter
+# septo
 
-This Turborepo starter is maintained by the Turborepo core team.
+Um lugar só para as ferramentas que hoje ficam espalhadas em vários apps: notas e lembretes, e ferramentas do dia a dia de dev (formatador JSON, gerador de chaves RSA, conversor de arquivos, leitor de README).
 
-## Using this example
+Projeto pessoal, usuário único, hospedado numa VPS.
 
-Run the following command:
+## Stack
 
-```sh
-npx create-turbo@latest
+| | |
+|---|---|
+| Monorepo | Turborepo + npm workspaces |
+| API | NestJS 12 (ESM, SWC) · Prisma 7 + PostgreSQL 18 · zod → OpenAPI · docs no Scalar |
+| Web | TanStack Start (SSR) · TanStack Query · client gerado pelo Orval (axios) |
+| UI | `@septo/ui`: Tailwind v4 + shadcn (Base UI), tema claro/escuro e cor de destaque customizável |
+| Qualidade | Biome · Vitest · Playwright |
+| Infra | Docker Compose · Caddy (HTTPS automático) |
+
+## Começando
+
+Requisitos: Node ≥ 24, npm 11, Docker.
+
+```bash
+npm install
+cp .env.example .env
+docker compose up -d
+npm run dev
 ```
 
-## What's inside?
+- App: http://localhost:5173 ou https://localhost (via Caddy)
+- Docs da API (Scalar): http://localhost:5173/api/docs
 
-This Turborepo includes the following packages/apps:
+`docker compose up -d` sobe só a infra: o Postgres (porta **5433**, apenas em `127.0.0.1`, para não brigar com um Postgres local) e o Caddy, que dá HTTPS em https://localhost na frente dos servidores de dev (útil para Web Push e cookies `Secure`). O navegador avisa sobre o certificado local do Caddy até você confiar nele.
 
-### Apps and Packages
+## Comandos
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `@next/eslint-plugin-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+| Comando | O que faz |
+|---|---|
+| `npm run dev` | API (:3333) + web (:5173), gerando antes o contrato e o client |
+| `npm run build` | Build de tudo, com cache do Turbo |
+| `npm run check-types` | Type-check de todos os pacotes |
+| `npm run test` | Testes unitários e de integração (a API usa o banco `septo_test`, precisa do Postgres no ar) |
+| `npm run test:e2e` | Playwright; sobe os servidores de dev sozinho (precisa do Postgres no ar) |
+| `docker compose up -d` | Infra: Postgres + Caddy (https://localhost) |
+| `npm run lint` / `npm run format` | Biome: verificar / corrigir |
+| `npm run codegen` | Gera `apps/api/openapi.json` e o client do web |
+| `npm run db:migrate -w @septo/api` | Cria e aplica migrações do Prisma |
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+### Mudou a API?
 
-### Utilities
+O contrato nasce nos schemas zod dos controllers. Depois de mudar um endpoint:
 
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo build
+```bash
+npm run codegen
 ```
 
-Without global `turbo`, use your package manager:
+Isso atualiza o `apps/api/openapi.json` (que é commitado) e regenera os hooks do web. Um teste falha se o arquivo commitado estiver desatualizado.
 
-```sh
-cd my-turborepo
-npx turbo build
-npm exec turbo build
-npm exec turbo build
+## Produção
+
+O compose continua só com Postgres e Caddy. API e web rodam como imagens avulsas na rede `septo` (criada pelo compose), sem publicar portas:
+
+```bash
+docker build -f apps/api/Dockerfile -t septo-api .
 ```
 
-You can build a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo build --filter=docs
+```bash
+docker build -f apps/web/Dockerfile -t septo-web .
 ```
 
-Without global `turbo`:
-
-```sh
-npx turbo build --filter=docs
-npm exec turbo build --filter=docs
-npm exec turbo build --filter=docs
+```bash
+docker run -d --name septo-api --network septo --restart unless-stopped -e DATABASE_URL=postgresql://septo:<senha>@postgres:5432/septo septo-api
 ```
 
-### Develop
-
-To develop all apps and packages, run the following command:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo dev
+```bash
+docker run -d --name septo-web --network septo --restart unless-stopped -e API_INTERNAL_URL=http://septo-api:3333 septo-web
 ```
 
-Without global `turbo`, use your package manager:
+No `.env` da VPS:
 
-```sh
-cd my-turborepo
-npx turbo dev
-npm exec turbo dev
-npm exec turbo dev
+```dotenv
+APP_DOMAIN=seu.dominio
+API_UPSTREAM=septo-api:3333
+WEB_UPSTREAM=septo-web:5173
+POSTGRES_PASSWORD=<senha forte>
 ```
 
-You can develop a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+Depois `docker compose up -d`. O Caddy emite o certificado Let's Encrypt sozinho: aponte o DNS para a VPS e abra as portas 80 e 443. A API aplica as migrações do Prisma ao iniciar.
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
+## Estrutura
 
-```sh
-turbo dev --filter=web
+```
+apps/api            NestJS: um módulo por contexto (domain / application / infrastructure / presentation)
+apps/web            TanStack Start: src/routes (finas) + src/features/<contexto>
+packages/ui         design system
+packages/typescript-config
+specs/              uma spec por módulo
+tasks/<módulo>/     plano e tarefas do módulo
 ```
 
-Without global `turbo`:
+## Documentação
 
-```sh
-npx turbo dev --filter=web
-npm exec turbo dev --filter=web
-npm exec turbo dev --filter=web
-```
-
-### Remote Caching
-
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo login
-```
-
-Without global `turbo`, use your package manager:
-
-```sh
-cd my-turborepo
-npx turbo login
-npm exec turbo login
-npm exec turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo link
-```
-
-Without global `turbo`:
-
-```sh
-npx turbo link
-npm exec turbo link
-npm exec turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.dev/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.dev/docs/reference/configuration)
-- [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
+- [CAPABILITY-MAP.md](CAPABILITY-MAP.md): módulos, ordem de construção e decisões globais
+- [specs/](specs/): a spec de cada módulo. A do [foundation](specs/SPEC-foundation.md) define as convenções que valem para todo o projeto
+- [CLAUDE.md](CLAUDE.md): contexto para agentes de IA
