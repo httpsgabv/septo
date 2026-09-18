@@ -7,7 +7,7 @@ septo é um app pessoal que centraliza ferramentas hoje espalhadas em N apps avu
 
 | Module id | Responsabilidade | Depende de | Spec |
 |---|---|---|---|
-| `foundation` | Monorepo (TanStack Start + NestJS), contrato zod → OpenAPI (Scalar) → Orval, Docker Compose (Postgres, Caddy/HTTPS), design system `@septo/ui`, shell do app, convenções globais | — | [SPEC-foundation](specs/SPEC-foundation.md) · [plano](tasks/foundation/plan.md) |
+| `foundation` | Monorepo (TanStack Start + NestJS), contrato zod → OpenAPI (Scalar) → Orval, Docker Compose (Postgres, Caddy/HTTPS), design system `@septo/ui`, shell do app, convenções globais | — | [SPEC-foundation](specs/SPEC-foundation.md) · [plano](tasks/foundation/plan.md) · ✅ implementado |
 | `identity` | Login de usuário único, sessão em cookie httpOnly, guard de rotas (API e web) | foundation | _pendente_ |
 | `notes` | Notas markdown: CRUD, tags, fixar, arquivar, busca. Lembrete = nota com `remindAt` | identity | _pendente_ |
 | `reminders` | Web Push: assinaturas, scheduler na API, disparo, service worker/PWA | notes | _pendente_ |

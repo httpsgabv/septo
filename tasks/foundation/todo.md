@@ -267,12 +267,12 @@
 **Descrição:** Ajustar `turbo.json` (inputs/outputs de `build`, `codegen`, `openapi`, `test`, `check-types`; env vars declaradas) até a segunda execução do `build` dar 100% de cache hit. Reescrever o README (visão, comandos, arquitetura resumida), criar o `CLAUDE.md` (aponta para o CAPABILITY-MAP, as specs, as convenções e os comandos) e marcar o `foundation` como concluído no CAPABILITY-MAP.
 
 **Aceite:**
-- [ ] `npm run build` duas vezes seguidas → a segunda com `FULL TURBO`
-- [ ] Um clone limpo segue o README e chega ao app rodando sem passos extras
-- [ ] Docs refletem o estado real (nenhuma referência a Next, ESLint, tRPC ou `@repo`)
+- [x] `npm run build` duas vezes seguidas → a segunda com `FULL TURBO`
+- [x] Um clone limpo segue o README e chega ao app rodando sem passos extras
+- [x] Docs refletem o estado real (nenhuma referência a Next, ESLint, tRPC ou `@repo`)
 
 **Verificação:**
-- [ ] `npm run build && npm run build`; clone limpo em pasta temporária seguindo o README
+- [x] `npm run build && npm run build`; clone limpo em pasta temporária seguindo o README
 
 **Dependências:** T12, T13
 **Arquivos:** `turbo.json`, `README.md`, `CLAUDE.md`, `CAPABILITY-MAP.md`

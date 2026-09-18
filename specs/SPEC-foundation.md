@@ -63,7 +63,7 @@ Biome roda na raiz (é rápido e enxerga o repo inteiro); não passa pelo Turbo.
 
 ```
 navegador ──HTTPS──▶ Caddy (${APP_DOMAIN}) ─┬─ /api/*  ──▶ api :3333 ──▶ postgres :5432 (host :5433)
-                                            └─ /*      ──▶ web :5173 (SSR TanStack Start)
+                                            └─ /*      ──▶ web :3000 no container / :5173 em dev (SSR TanStack Start)
 SSR do web ──HTTP interno (${API_INTERNAL_URL})──▶ api
 ```
 
@@ -299,7 +299,8 @@ Convenções:
 
 - TDD para regra de domínio e casos de uso.
 - Meta de cobertura: ≥ 90% de linhas em `domain/` e `application/`; sem meta global.
-- Foundation entrega: integração do `/api/health`, teste de contrato do OpenAPI e um e2e de fumaça do shell (inclui status da API renderizado via SSR com hook gerado).
+- Foundation entrega: integração do `/api/health` (200/503), filtro de erros, pipeline zod → OpenAPI (snapshot), teste de contrato do `openapi.json`, domínio das preferências (inclusive paridade com o script inline) e e2e do shell e das Configurações.
+- E2E rodam contra os servidores de dev (o Playwright sobe `npm run dev`; Postgres precisa estar no ar). O root marca `body[data-hydrated]` quando o React hidrata; testes que interagem usam `gotoHydrated()` em vez de adivinhar tempo. O `expect` tem timeout de 15 s porque o dev server compila módulos na primeira requisição. Suíte estável em 5 repetições (40/40).
 
 ## Boundaries
 
