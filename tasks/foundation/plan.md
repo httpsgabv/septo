@@ -51,7 +51,7 @@ T5..T11 ─▶ T12 Docker + Caddy ─▶ T13 e2e ─▶ T14 pipeline Turbo + doc
 
 ### Fase 3: design system e shell
 - [x] T8: `@septo/ui`: Tailwind v4, tokens, tema e acento derivado
-- [ ] T9: Shell (sidebar, header, drawer mobile, páginas placeholder)
+- [x] T9: Shell (sidebar, header, drawer mobile, páginas placeholder)
 - [ ] T10: Command palette ⌘K
 - [ ] T11: Configurações: tema e cor de acento sem flash
 

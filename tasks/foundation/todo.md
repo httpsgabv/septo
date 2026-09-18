@@ -172,12 +172,12 @@
 **Descrição:** Layout raiz com sidebar colapsável (Notas, Dev Tools, Configurações), header e drawer (`Sheet`) em telas < 768 px. Rotas `/notes`, `/dev-tools` e `/settings` com placeholders; status da API da T5 vai para o rodapé da sidebar.
 
 **Aceite:**
-- [ ] A navegação entre as três rotas funciona e o item ativo fica destacado
-- [ ] Em 375 px: drawer abre/fecha, sem scroll horizontal
-- [ ] Navegável só com teclado (tab, enter, esc fecha o drawer)
+- [x] A navegação entre as três rotas funciona e o item ativo fica destacado
+- [x] Em 375 px: drawer abre/fecha, sem scroll horizontal
+- [x] Navegável só com teclado (tab, enter, esc fecha o drawer)
 
 **Verificação:**
-- [ ] `npm run check-types && npm run build`; manual em 1440 px e 375 px
+- [x] `npm run check-types && npm run build`; manual em 1440 px e 375 px
 
 **Dependências:** T8
 **Arquivos:** `apps/web/src/shared/layout/{app-shell,sidebar,header}.tsx`, `apps/web/src/routes/__root.tsx`, `apps/web/src/routes/{notes,dev-tools,settings}.tsx`
