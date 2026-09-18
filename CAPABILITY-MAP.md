@@ -33,7 +33,7 @@ Separações deliberadamente **não** feitas (reavaliar quando houver 2º consum
 
 | Tema | Decisão |
 |---|---|
-| Deploy | VPS via Docker Compose, usuário único |
+| Deploy | VPS, usuário único. Compose só com infra (Postgres + Caddy); API e web como imagens Docker avulsas na rede `septo`. Caddy com HTTPS também em dev |
 | Auth | e-mail + hash argon2 em env, sessão em cookie httpOnly, sem signup |
 | Banco | PostgreSQL + Prisma |
 | Lembretes | Web Push (VAPID), sem recorrência na v1, scheduler por polling de 1 min |

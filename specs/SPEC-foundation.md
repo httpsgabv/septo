@@ -32,7 +32,7 @@ Fora de escopo: login (módulo `identity`), qualquer feature de negócio, CI/CD 
 | Cache/estado servidor | TanStack Query | 5 |
 | Estilo | Tailwind CSS v4 + shadcn/ui estilo `base-nova` (primitivas **Base UI**, `@base-ui/react`) + lucide-react | tailwind 4.3, base-ui 1.8 |
 | Testes | Vitest (+ `unplugin-swc` na API), Playwright | vitest 5, playwright 1.63 |
-| Proxy/HTTPS | Caddy | 2 |
+| Proxy/HTTPS | Caddy (em dev e em produção) | 2 |
 
 Descartados: tRPC (decisão do projeto); `nestjs-zod` (peer deps só até Nest 11); `class-validator`/`class-transformer` (usamos zod).
 
@@ -41,7 +41,7 @@ Descartados: tRPC (decisão do projeto); `nestjs-zod` (peer deps só até Nest 1
 ```bash
 npm install                              # instala todo o monorepo
 cp .env.example .env                     # uma vez
-docker compose up -d postgres            # dev: só o banco em container
+docker compose up -d                     # infra: postgres + caddy (https://localhost na frente do dev)
 npm run dev                              # turbo: codegen + api :3333 + web :5173
 npm run codegen                          # turbo: api gera openapi.json → web roda orval
 npm run build                            # turbo build (com cache; depende de codegen)
@@ -52,7 +52,8 @@ npm run test                             # turbo: vitest em todos os pacotes
 npm run test:e2e                         # playwright contra web+api em dev
 npm run db:migrate -w @septo/api         # prisma migrate dev
 npm run db:generate -w @septo/api        # prisma generate
-docker compose up -d --build             # stack completa: postgres, api, web, caddy
+docker build -f apps/api/Dockerfile -t septo-api .   # imagens de produção (rodam fora do compose)
+docker build -f apps/web/Dockerfile -t septo-web .
 ```
 
 Biome roda na raiz (é rápido e enxerga o repo inteiro); não passa pelo Turbo.
@@ -62,12 +63,21 @@ Biome roda na raiz (é rápido e enxerga o repo inteiro); não passa pelo Turbo.
 ### Tráfego
 
 ```
-navegador ──HTTPS──▶ Caddy (${APP_DOMAIN}) ─┬─ /api/*  ──▶ api :3333 ──▶ postgres :5432 (host :5433)
-                                            └─ /*      ──▶ web :3000 no container / :5173 em dev (SSR TanStack Start)
+navegador ──HTTPS──▶ Caddy (${APP_DOMAIN}) ─┬─ /api/*  ──▶ ${API_UPSTREAM} (api :3333) ──▶ postgres :5432
+                                            └─ /*      ──▶ ${WEB_UPSTREAM} (web :5173, SSR TanStack Start)
 SSR do web ──HTTP interno (${API_INTERNAL_URL})──▶ api
 ```
 
-Mesma origem para web e API → cookie de sessão sem CORS. Em dev, o `devProxy` do Nitro (`'/api/**'` → `API_INTERNAL_URL`) reproduz o mesmo comportamento — o `server.proxy` do Vite não funciona porque o Nitro atende as requisições antes dele.
+O `compose.yaml` só tem **infra: Postgres e Caddy** (decisão de 2026-09-18). API e web rodam fora dele:
+
+| Ambiente | API e web | Upstreams do Caddy | `API_INTERNAL_URL` |
+|---|---|---|---|
+| Dev | `npm run dev` no host (Vite em `127.0.0.1`: `localhost` vira `::1` no Windows e o gateway do Docker só alcança IPv4) | `host.docker.internal:3333` / `:5173` (padrão) | `http://localhost:3333` |
+| Produção | imagens `septo-api` e `septo-web` avulsas na rede Docker `septo` (criada pelo compose), sem publicar portas | `septo-api:3333` / `septo-web:5173` | `http://septo-api:3333` |
+
+`host.docker.internal` vem do Docker Desktop, Rancher Desktop ou OrbStack; num Linux com Docker puro em dev, defina os upstreams com o IP do host. O Postgres publica a porta só em `127.0.0.1`, nunca para a internet.
+
+Mesma origem para web e API → cookie de sessão sem CORS. `https://localhost` em dev permite testar Web Push e cookies `Secure`; o HMR do Vite (websocket) passa pelo Caddy. Em dev, o `devProxy` do Nitro (`'/api/**'` → `API_INTERNAL_URL`) reproduz o mesmo comportamento — o `server.proxy` do Vite não funciona porque o Nitro atende as requisições antes dele.
 
 ### Contrato da API: zod → OpenAPI → Orval
 
@@ -171,10 +181,11 @@ Todas em `.env.example`, validadas com zod no boot de cada app (falha rápida se
 | `APP_URL` | `https://localhost` | URL pública |
 | `API_PORT` | `3333` | porta da API |
 | `WEB_PORT` | `5173` | porta do web |
-| `API_INTERNAL_URL` | `http://localhost:3333` | SSR → API (`http://api:3333` no compose) |
+| `API_INTERNAL_URL` | `http://localhost:3333` | SSR → API (`http://septo-api:3333` em produção) |
+| `API_UPSTREAM` / `WEB_UPSTREAM` | `host.docker.internal:3333` / `host.docker.internal:5173` | destinos do Caddy (produção: `septo-api:3333` / `septo-web:5173`) |
 | `API_DOCS_ENABLED` | `true` | expõe Scalar e `openapi.json` |
 | `POSTGRES_USER` / `POSTGRES_PASSWORD` / `POSTGRES_DB` | `septo` / `septo` / `septo` | container do Postgres |
-| `POSTGRES_PORT` | `5433` | porta do Postgres no host (5433 evita conflito com um Postgres instalado localmente) |
+| `POSTGRES_PORT` | `5433` | porta do Postgres no host, só em `127.0.0.1` (5433 evita conflito com um Postgres instalado localmente) |
 | `DATABASE_URL` | `postgresql://septo:septo@localhost:5433/septo` | Prisma (testes de integração trocam o banco para `septo_test`) |
 
 ## Project Structure
@@ -187,7 +198,7 @@ septo/
   biome.json               lint + format do repo inteiro
   specs/SPEC-<id>.md       uma spec por módulo
   tasks/plan.md, todo.md   plano e tarefas do módulo em andamento
-  compose.yaml             postgres, api, web, caddy
+  compose.yaml             infra: postgres + caddy (api e web rodam fora)
   Caddyfile
   .env.example
   apps/
@@ -316,9 +327,9 @@ Convenções:
 4. Entrada inválida em qualquer endpoint retorna `400 { code: "VALIDATION_ERROR", message, details }`.
 5. Shell renderiza sidebar, header, ⌘K, toggle de tema e Configurações; em desktop e em 375 px de largura sem scroll horizontal; status da API aparece renderizado no SSR.
 6. Trocar a cor de acento nas Configurações recolore o app inteiro instantaneamente, persiste após reload, sem flash; default `#5808a3`; texto com acento mantém contraste AA nos dois temas.
-7. A partir de um clone limpo: `npm install && cp .env.example .env && docker compose up -d postgres && npm run dev` funciona sem outros passos.
+7. A partir de um clone limpo: `npm install && cp .env.example .env && docker compose up -d && npm run dev` funciona sem outros passos (em `http://localhost:5173` e `https://localhost`).
 8. `npm run lint`, `check-types`, `build` e `test` passam; segunda execução de `npm run build` é 100% cache hit.
-9. `docker compose up -d --build` sobe a stack; `https://localhost` serve o web e `https://localhost/api/health` responde via Caddy; trocar `APP_DOMAIN` é o único passo para usar o domínio real.
+9. O compose sobe só Postgres e Caddy. Em dev, `https://localhost` serve o web e `/api/health` via Caddy (com HMR). Em produção, as imagens `septo-api`/`septo-web` rodam avulsas na rede `septo` e o Caddy chega nelas via `API_UPSTREAM`/`WEB_UPSTREAM`; trocar `APP_DOMAIN` é o único passo para usar o domínio real.
 10. README, CLAUDE.md e CAPABILITY-MAP atualizados.
 
 ## Riscos

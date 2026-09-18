@@ -243,6 +243,8 @@
 **Arquivos:** `apps/api/Dockerfile`, `apps/web/Dockerfile`, `compose.yaml`, `Caddyfile`, `.dockerignore`
 **Tamanho:** M
 
+**Revisão (2026-09-18, pedido do usuário):** o compose passou a ter só Postgres e Caddy. API e web rodam como imagens avulsas na rede `septo` (produção) ou `npm run dev` no host (dev, com o Caddy na frente em `https://localhost`). Upstreams do Caddy via `API_UPSTREAM`/`WEB_UPSTREAM`; o web escuta na 5173 também no container; o Postgres publica só em `127.0.0.1`. Verificado nos dois modos, incluindo o HMR (websocket 101) pelo Caddy.
+
 ---
 
 ### T13: Suite e2e de fumaça (Playwright)

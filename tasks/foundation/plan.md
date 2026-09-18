@@ -67,7 +67,7 @@ T5..T11 ─▶ T12 Docker + Caddy ─▶ T13 e2e ─▶ T14 pipeline Turbo + doc
 
 ### Checkpoint final
 - [x] Todos os Success Criteria da spec verificados
-- [x] Clone limpo → `npm install && cp .env.example .env && docker compose up -d postgres && npm run dev` funciona
+- [x] Clone limpo → `npm install && cp .env.example .env && docker compose up -d && npm run dev` funciona
 - [ ] Revisão final com você
 
 ## Paralelização

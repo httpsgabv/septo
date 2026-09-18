@@ -22,14 +22,14 @@ Requisitos: Node ≥ 24, npm 11, Docker.
 ```bash
 npm install
 cp .env.example .env
-docker compose up -d postgres
+docker compose up -d
 npm run dev
 ```
 
-- App: http://localhost:5173
+- App: http://localhost:5173 ou https://localhost (via Caddy)
 - Docs da API (Scalar): http://localhost:5173/api/docs
 
-O Postgres do container fica na porta **5433** do host, para não brigar com um Postgres instalado localmente.
+`docker compose up -d` sobe só a infra: o Postgres (porta **5433**, apenas em `127.0.0.1`, para não brigar com um Postgres local) e o Caddy, que dá HTTPS em https://localhost na frente dos servidores de dev (útil para Web Push e cookies `Secure`). O navegador avisa sobre o certificado local do Caddy até você confiar nele.
 
 ## Comandos
 
@@ -40,6 +40,7 @@ O Postgres do container fica na porta **5433** do host, para não brigar com um 
 | `npm run check-types` | Type-check de todos os pacotes |
 | `npm run test` | Testes unitários e de integração (a API usa o banco `septo_test`, precisa do Postgres no ar) |
 | `npm run test:e2e` | Playwright; sobe os servidores de dev sozinho (precisa do Postgres no ar) |
+| `docker compose up -d` | Infra: Postgres + Caddy (https://localhost) |
 | `npm run lint` / `npm run format` | Biome: verificar / corrigir |
 | `npm run codegen` | Gera `apps/api/openapi.json` e o client do web |
 | `npm run db:migrate -w @septo/api` | Cria e aplica migrações do Prisma |
@@ -56,11 +57,34 @@ Isso atualiza o `apps/api/openapi.json` (que é commitado) e regenera os hooks d
 
 ## Produção
 
+O compose continua só com Postgres e Caddy. API e web rodam como imagens avulsas na rede `septo` (criada pelo compose), sem publicar portas:
+
 ```bash
-docker compose up -d --build
+docker build -f apps/api/Dockerfile -t septo-api .
 ```
 
-Sobe Postgres, API, web e Caddy. O Caddy serve `APP_DOMAIN` com HTTPS: certificado local para `localhost` e Let's Encrypt para um domínio real. Para publicar, aponte o DNS para a VPS, abra as portas 80 e 443 e defina `APP_DOMAIN` no `.env`. Troque também `POSTGRES_PASSWORD`.
+```bash
+docker build -f apps/web/Dockerfile -t septo-web .
+```
+
+```bash
+docker run -d --name septo-api --network septo --restart unless-stopped -e DATABASE_URL=postgresql://septo:<senha>@postgres:5432/septo septo-api
+```
+
+```bash
+docker run -d --name septo-web --network septo --restart unless-stopped -e API_INTERNAL_URL=http://septo-api:3333 septo-web
+```
+
+No `.env` da VPS:
+
+```dotenv
+APP_DOMAIN=seu.dominio
+API_UPSTREAM=septo-api:3333
+WEB_UPSTREAM=septo-web:5173
+POSTGRES_PASSWORD=<senha forte>
+```
+
+Depois `docker compose up -d`. O Caddy emite o certificado Let's Encrypt sozinho: aponte o DNS para a VPS e abra as portas 80 e 443. A API aplica as migrações do Prisma ao iniciar.
 
 ## Estrutura
 

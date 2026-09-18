@@ -1,12 +1,13 @@
 # HTTPS for APP_DOMAIN: Let's Encrypt for a real domain, Caddy's local CA for localhost.
+# Upstreams: the dev servers on the host by default; the standalone containers in production.
 {$APP_DOMAIN:localhost} {
 	encode zstd gzip
 
 	handle /api/* {
-		reverse_proxy api:3333
+		reverse_proxy {$API_UPSTREAM:host.docker.internal:3333}
 	}
 
 	handle {
-		reverse_proxy web:3000
+		reverse_proxy {$WEB_UPSTREAM:host.docker.internal:5173}
 	}
 }

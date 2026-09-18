@@ -16,8 +16,9 @@ RUN npm run codegen -w @septo/web && npx turbo run build --filter=@septo/web --o
 
 # Nitro's .output is self-contained (server bundle + traced node_modules).
 FROM base AS runner
-ENV NODE_ENV=production PORT=3000
+# Same port as `npm run dev`, so Caddy upstreams look alike in dev and production.
+ENV NODE_ENV=production PORT=5173
 COPY --from=builder /app/apps/web/.output ./.output
 USER node
-EXPOSE 3000
+EXPOSE 5173
 CMD ["node", ".output/server/index.mjs"]

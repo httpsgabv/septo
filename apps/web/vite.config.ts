@@ -13,7 +13,13 @@ if (existsSync(rootEnv)) process.loadEnvFile(rootEnv);
 const env = parseServerEnv(process.env);
 
 export default defineConfig({
-  server: { port: env.WEB_PORT, strictPort: true },
+  server: {
+    // IPv4 loopback: reachable by Caddy through host.docker.internal (plain `localhost` binds ::1 on
+    // Windows), without exposing the dev server to the local network like 0.0.0.0 would.
+    host: '127.0.0.1',
+    port: env.WEB_PORT,
+    strictPort: true,
+  },
   plugins: [
     tailwindcss(),
     tanstackStart(),

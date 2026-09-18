@@ -1,6 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
 
-// Runs against the dev servers (api + web via turbo). Postgres must be up: `docker compose up -d postgres`.
+// Runs against the dev servers (api + web via turbo). Infra must be up: `docker compose up -d`.
 export default defineConfig({
   testDir: 'e2e',
   fullyParallel: true,
