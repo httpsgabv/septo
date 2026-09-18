@@ -62,7 +62,7 @@ Biome roda na raiz (é rápido e enxerga o repo inteiro); não passa pelo Turbo.
 ### Tráfego
 
 ```
-navegador ──HTTPS──▶ Caddy (${APP_DOMAIN}) ─┬─ /api/*  ──▶ api :3333 ──▶ postgres :5432
+navegador ──HTTPS──▶ Caddy (${APP_DOMAIN}) ─┬─ /api/*  ──▶ api :3333 ──▶ postgres :5432 (host :5433)
                                             └─ /*      ──▶ web :5173 (SSR TanStack Start)
 SSR do web ──HTTP interno (${API_INTERNAL_URL})──▶ api
 ```
@@ -169,7 +169,8 @@ Todas em `.env.example`, validadas com zod no boot de cada app (falha rápida se
 | `API_INTERNAL_URL` | `http://localhost:3333` | SSR → API (`http://api:3333` no compose) |
 | `API_DOCS_ENABLED` | `true` | expõe Scalar e `openapi.json` |
 | `POSTGRES_USER` / `POSTGRES_PASSWORD` / `POSTGRES_DB` | `septo` / `septo` / `septo` | container do Postgres |
-| `DATABASE_URL` | `postgresql://septo:septo@localhost:5432/septo` | Prisma |
+| `POSTGRES_PORT` | `5433` | porta do Postgres no host (5433 evita conflito com um Postgres instalado localmente) |
+| `DATABASE_URL` | `postgresql://septo:septo@localhost:5433/septo` | Prisma (testes de integração trocam o banco para `septo_test`) |
 
 ## Project Structure
 
@@ -323,6 +324,7 @@ Convenções:
 | Codegen desatualizado entre API e web | `openapi.json` commitado + teste de contrato; `codegen` como dependência das tasks do web no Turbo |
 | SSR precisa repassar cookie para a API | Mutator do axios lê headers da requisição no servidor (`@tanstack/react-start/server`); coberto no e2e |
 | `prisma@latest` no npm é 8.0 RC | Versão fixa em 7.10.x |
+| `npm audit`: 4 alertas altos na CLI `prisma` 7.10 (`deepmerge-ts` < 8 e `mysql2`, dependências transitivas) | Só a CLI (devDependency) é afetada; `mysql2` não é usado (Postgres) e o merge de config só recebe nosso arquivo estático. Correção oferecida é voltar ao Prisma 6 — não aplicada. Reavaliar a cada atualização do Prisma |
 | Web Push exige HTTPS | Caddy já na foundation (usado pelo `reminders`) |
 
 ## Open Questions

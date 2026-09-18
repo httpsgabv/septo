@@ -115,16 +115,16 @@
 **Descrição:** Adicionar `compose.yaml` com o serviço `postgres` (volume, healthcheck, script de init que cria `septo_test`) e `.env.example`. Configurar Prisma 7.10 com `prisma.config.ts` e `@prisma/adapter-pg`, `PrismaService` em `shared`. Refatorar o health para a fatia de referência: porta `DatabaseHealthCheck` (domain) → `CheckHealthUseCase` (application) → `PrismaDatabaseHealthCheck` (infrastructure, `SELECT 1`) → controller retornando 200 `{status:"ok",db:"up"}` ou 503 `{status:"degraded",db:"down"}`.
 
 **Aceite:**
-- [ ] `docker compose up -d postgres` sobe o banco com `septo` e `septo_test`
-- [ ] Health retorna 200 com o banco no ar e 503 com o banco fora
-- [ ] Prisma importado só em `infrastructure` e `shared/prisma`
+- [x] `docker compose up -d postgres` sobe o banco com `septo` e `septo_test`
+- [x] Health retorna 200 com o banco no ar e 503 com o banco fora
+- [x] Prisma importado só em `infrastructure` e `shared/prisma`
 
 **Verificação:**
-- [ ] Unit do caso de uso com fake da porta; integração contra `septo_test`
-- [ ] Manual: `docker compose stop postgres` → health 503
+- [x] Unit do caso de uso com fake da porta; integração contra `septo_test`
+- [x] Manual: `docker compose stop postgres` → health 503
 
 **Dependências:** T3 (a T5 precisa estar concluída para regenerar o client)
-**Arquivos:** `compose.yaml`, `docker/postgres/init.sql`, `.env.example`, `apps/api/prisma/schema.prisma`, `apps/api/prisma.config.ts`, `apps/api/src/shared/prisma.service.ts`, `apps/api/src/modules/health/**`
+**Arquivos:** `compose.yaml`, `docker/postgres/init/01-create-test-db.sql`, `.env.example`, `apps/api/prisma/schema.prisma`, `apps/api/prisma.config.ts`, `apps/api/src/shared/prisma.service.ts`, `apps/api/src/modules/health/**`
 **Tamanho:** M
 
 ---

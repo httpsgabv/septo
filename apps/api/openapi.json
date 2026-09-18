@@ -15,6 +15,16 @@
                 }
               }
             }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -39,12 +49,21 @@
           "status": {
             "type": "string",
             "enum": [
-              "ok"
+              "ok",
+              "degraded"
+            ]
+          },
+          "db": {
+            "type": "string",
+            "enum": [
+              "up",
+              "down"
             ]
           }
         },
         "required": [
-          "status"
+          "status",
+          "db"
         ],
         "additionalProperties": false
       }

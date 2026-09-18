@@ -46,7 +46,7 @@ T5..T11 ─▶ T12 Docker + Caddy ─▶ T13 e2e ─▶ T14 pipeline Turbo + doc
 - [x] Revisão com você antes de seguir
 
 ### Fase 2: API (pode rodar em paralelo com a Fase 3)
-- [ ] T6: Postgres no compose + Prisma + health com checagem do banco
+- [x] T6: Postgres no compose + Prisma + health com checagem do banco
 - [ ] T7: `DomainError`, exception filter e formato padrão de erro
 
 ### Fase 3: design system e shell
