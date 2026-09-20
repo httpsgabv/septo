@@ -35,14 +35,14 @@
 **Descrição:** TS puro, sem framework, com TDD. A entidade `User` sabe trocar a senha (recebe o hash novo, incrementa `tokenVersion`), revogar sessões (incrementa `tokenVersion`), editar o perfil (`displayName` com 1–50 caracteres, sem espaços nas pontas) e registrar login (`lastLoginAt`, `lastLoginIp`). A política de senha (12–128 caracteres) vive no domínio e é usada pela API e pelo CLI. Portas: `UserRepository`, `PasswordHasher`, `TokenService`, `LoginAttempts`.
 
 **Aceite:**
-- [ ] `User` cobre criação (`displayName` = `username`), `changePassword`, `revokeSessions`, `updateProfile`, `recordLogin`; cada mutação de senha ou de sessões incrementa `tokenVersion`
-- [ ] `validatePassword` rejeita < 12 e > 128 caracteres e aceita os limites exatos, sem outras regras de composição
-- [ ] Erros de domínio (`kind: 'invalid'`) com `code`: `INVALID_CURRENT_PASSWORD`, `WEAK_PASSWORD`, `INVALID_DISPLAY_NAME`. Os de `unauthenticated` e `rate_limited` nascem na T5, junto com os `kind`s novos
-- [ ] Portas declaradas como `abstract class`; nenhum import de Nest, Prisma ou `node:crypto` em `domain/`
+- [x] `User` cobre criação (`displayName` = `username`), `changePassword`, `revokeSessions`, `updateProfile`, `recordLogin`; cada mutação de senha ou de sessões incrementa `tokenVersion`
+- [x] `validatePassword` rejeita < 12 e > 128 caracteres e aceita os limites exatos, sem outras regras de composição
+- [x] Erros de domínio (`kind: 'invalid'`) com `code`: `INVALID_CURRENT_PASSWORD`, `WEAK_PASSWORD`, `INVALID_DISPLAY_NAME`. Os de `unauthenticated` e `rate_limited` nascem na T5, junto com os `kind`s novos
+- [x] Portas declaradas como `abstract class`; nenhum import de Nest, Prisma ou `node:crypto` em `domain/`
 
 **Verificação:**
-- [ ] `npm run test -w @septo/api` (unit de `user.spec.ts` e `password-policy.spec.ts`, escritos antes da implementação)
-- [ ] `grep -rn "@nestjs\|generated/prisma\|node:" apps/api/src/modules/identity/domain` não retorna nada
+- [x] `npm run test -w @septo/api` (unit de `user.spec.ts` e `password-policy.spec.ts`, escritos antes da implementação)
+- [x] `grep -rn "@nestjs\|generated/prisma\|node:" apps/api/src/modules/identity/domain` não retorna nada
 
 **Dependências:** T1
 **Arquivos:** `apps/api/src/modules/identity/domain/{user,user.spec,user.repository,password-hasher,token-service,login-attempts,errors}.ts`, `apps/api/src/modules/identity/domain/password-policy.ts` (+ spec)

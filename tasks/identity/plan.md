@@ -43,7 +43,7 @@ T18 ─▶ T19 docs, env, Docker e fechamento
 
 ### Fase 1: usuário, hash e CLI (API)
 - [x] T1: `JWT_SECRET`, dependência `jose`, model `User` + primeira migration e setup do banco de teste
-- [ ] T2: Domínio do identity: entidade `User`, política de senha, portas e erros
+- [x] T2: Domínio do identity: entidade `User`, política de senha, portas e erros
 - [ ] T3: Adapters: hasher argon2id e repositório Prisma
 - [ ] T4: `SetUserUseCase` + CLI `user:set`
 
