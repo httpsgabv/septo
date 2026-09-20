@@ -193,16 +193,16 @@
 **Descrição:** `/notes/$noteId` passa a montar o editor: `useEditor` com `noteExtensions` e `immediatelyRender: false`, conteúdo carregado com `parseMarkdown` da T1, título num `<Input>` e o corpo no editor. O componente do editor entra por import dinâmico, com skeleton no lugar até carregar. `editor-toolbar.tsx` com os botões do conjunto aprovado (lucide + `@septo/ui/components/button`), estados ativos e `aria-pressed`. Estilo do conteúdo (títulos, listas, citação, código) nos tokens do design system. **Sem autosave ainda**: a edição fica em memória.
 
 **Aceite:**
-- [ ] Abrir uma nota existente mostra a formatação correta (markdown → editor) e o título editável
-- [ ] Input rules funcionam: `## `, `- `, `1. `, `> `, `**x**`, `~~x~~`, `` `x` ``
-- [ ] Toolbar reflete o estado do cursor, é operável por teclado e respeita `prefers-reduced-motion`
-- [ ] Bundle do editor só carrega em `/notes/$noteId` (chunk separado)
-- [ ] Nenhum `dangerouslySetInnerHTML` no módulo
+- [x] Abrir uma nota existente mostra a formatação correta (markdown → editor) e o título editável
+- [x] Input rules funcionam: `## `, `- `, `1. `, `> `, `**x**`, `~~x~~`, `` `x` ``
+- [x] Toolbar reflete o estado do cursor, é operável por teclado e respeita `prefers-reduced-motion`
+- [x] Bundle do editor só carrega em `/notes/$noteId` (chunk separado)
+- [x] Nenhum `dangerouslySetInnerHTML` no módulo
 
 **Verificação:**
-- [ ] `npm run check-types`, `npm run lint`, `npm run test`
-- [ ] Manual: abrir nota criada por `curl` com markdown variado e comparar com o esperado; aba Network confirma o chunk sob demanda
-- [ ] `npm run test:e2e` (suítes existentes) com `gotoHydrated`
+- [x] `npm run check-types`, `npm run lint`, `npm run test`
+- [x] Manual: abrir nota criada por `curl` com markdown variado e comparar com o esperado; aba Network confirma o chunk sob demanda
+- [x] `npm run test:e2e` (suítes existentes) com `gotoHydrated`
 
 **Dependências:** T8 (usa o bridge da T1)
 **Arquivos:** `apps/web/src/routes/_app/notes/$noteId.tsx`, `apps/web/src/features/notes/components/{note-editor,editor-toolbar}.tsx`

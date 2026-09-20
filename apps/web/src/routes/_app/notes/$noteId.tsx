@@ -1,8 +1,9 @@
 import { Button } from '@septo/ui/components/button';
-import { createFileRoute, Link, notFound } from '@tanstack/react-router';
+import { Skeleton } from '@septo/ui/components/skeleton';
+import { ClientOnly, createFileRoute, Link, notFound } from '@tanstack/react-router';
 import { isAxiosError } from 'axios';
 import { ArrowLeftIcon } from 'lucide-react';
-import { LocalTime } from '../../../features/notes/components/local-time';
+import { lazy, Suspense } from 'react';
 import {
   getNotesGetQueryOptions,
   useNotesGet,
@@ -27,6 +28,7 @@ function BackToList() {
     <Button
       variant="ghost"
       size="sm"
+      nativeButton={false}
       className="mb-4 md:hidden"
       render={<Link to="/notes" search={(prev) => prev} />}
     >
@@ -47,20 +49,34 @@ function NoteNotFound() {
   );
 }
 
-// Placeholder until the editor arrives (T9): the note as plain text.
+// The editor (Tiptap, ~200 KB) is its own chunk: `/notes` alone never downloads it.
+const NoteEditor = lazy(() =>
+  import('../../../features/notes/components/note-editor').then((m) => ({ default: m.NoteEditor })),
+);
+
+function EditorSkeleton() {
+  return (
+    <div className="flex flex-col gap-4" role="status" aria-label="Carregando o editor">
+      <Skeleton className="h-9 w-2/3" />
+      <Skeleton className="h-10 w-full" />
+      <Skeleton className="h-40 w-full" />
+    </div>
+  );
+}
+
 function NotePage() {
   const { noteId } = Route.useParams();
   const { data: note } = useNotesGet(noteId);
   if (!note) return null;
 
   return (
-    <article className="p-6 md:p-10">
+    <div className="mx-auto max-w-3xl p-6 md:p-10">
       <BackToList />
-      <h2 className="text-xl font-semibold">{note.title || 'Sem título'}</h2>
-      <p className="mt-1 text-sm text-muted-foreground">
-        Editada em <LocalTime iso={note.updatedAt} withTime />
-      </p>
-      <pre className="mt-6 font-sans whitespace-pre-wrap">{note.body}</pre>
-    </article>
+      <ClientOnly fallback={<EditorSkeleton />}>
+        <Suspense fallback={<EditorSkeleton />}>
+          <NoteEditor key={note.id} note={note} />
+        </Suspense>
+      </ClientOnly>
+    </div>
   );
 }

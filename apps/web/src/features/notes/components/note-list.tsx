@@ -46,6 +46,7 @@ export function NoteList() {
               key={option}
               variant={option === view ? 'secondary' : 'ghost'}
               size="sm"
+              nativeButton={false}
               aria-current={option === view ? 'true' : undefined}
               render={<Link to="." search={(prev) => ({ ...prev, view: option })} />}
             >
