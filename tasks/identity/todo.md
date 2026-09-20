@@ -55,14 +55,14 @@
 **Descrição:** Implementar `PasswordHasher` com `crypto.argon2` do `node:crypto` (argon2id, m = 19 MiB, t = 2, p = 1, salt aleatório, saída em formato PHC) e `UserRepository` com Prisma (mapper Prisma ↔ domínio, sem vazar o model). Cria o `IdentityModule` ligando as portas às implementações.
 
 **Aceite:**
-- [ ] `hash()` gera string PHC `$argon2id$v=19$m=19456,t=2,p=1$...`; `verify()` aceita a senha certa, rejeita a errada e devolve `false` (não lança) para PHC malformado
-- [ ] `verify()` compara em tempo constante (`timingSafeEqual`)
-- [ ] `UserRepository`: `findByUsername`, `findById`, `count`/`findFirst` (para o CLI), `save` (cria e atualiza, incluindo `tokenVersion`, `lastLogin*`); mapper converte `null` ↔ `null`, `Date` ↔ `Date`
-- [ ] `IdentityModule` registrado no `AppModule`; DI resolve por tipo de construtor com o build SWC
+- [x] `hash()` gera string PHC `$argon2id$v=19$m=19456,t=2,p=1$...`; `verify()` aceita a senha certa, rejeita a errada e devolve `false` (não lança) para PHC malformado
+- [x] `verify()` compara em tempo constante (`timingSafeEqual`)
+- [x] `UserRepository`: `findByUsername`, `findById`, `count`/`findFirst` (para o CLI), `save` (cria e atualiza, incluindo `tokenVersion`, `lastLogin*`); mapper converte `null` ↔ `null`, `Date` ↔ `Date`
+- [x] `IdentityModule` registrado no `AppModule`; DI resolve por tipo de construtor com o build SWC
 
 **Verificação:**
-- [ ] `npm run test -w @septo/api` (hasher real: hash, verificação, senha errada, PHC inválido, dois hashes da mesma senha diferem; repositório contra `septo_test`, com limpeza da tabela entre testes)
-- [ ] `npm run build -w @septo/api && node apps/api/dist/main.js` sobe sem erro de DI
+- [x] `npm run test -w @septo/api` (hasher real: hash, verificação, senha errada, PHC inválido, dois hashes da mesma senha diferem; repositório contra `septo_test`, com limpeza da tabela entre testes)
+- [x] `npm run build -w @septo/api && node apps/api/dist/main.js` sobe sem erro de DI
 
 **Dependências:** T2
 **Arquivos:** `apps/api/src/modules/identity/infrastructure/{argon2-password-hasher,user.prisma-repository}.ts` (+ specs), `apps/api/src/modules/identity/identity.module.ts`, `apps/api/src/app.module.ts`

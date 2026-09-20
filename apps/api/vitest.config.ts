@@ -14,6 +14,8 @@ testDatabaseUrl.pathname = '/septo_test';
 
 export default defineConfig({
   test: {
+    // Integration tests share one database and clean tables between tests.
+    fileParallelism: false,
     include: ['src/**/*.spec.ts', 'test/**/*.spec.ts'],
     env: { DATABASE_URL: testDatabaseUrl.toString() },
     globalSetup: ['test/global-setup.ts'],
