@@ -19,6 +19,12 @@ export default defineConfig({
     include: ['src/**/*.spec.ts', 'test/**/*.spec.ts'],
     env: { DATABASE_URL: testDatabaseUrl.toString() },
     globalSetup: ['test/global-setup.ts'],
+    coverage: {
+      // The target is on business rules only (see SPEC-foundation, Testing Strategy).
+      include: ['src/modules/*/{domain,application}/**/*.ts'],
+      exclude: ['**/*.spec.ts'],
+      reporter: ['text-summary', 'text'],
+    },
   },
   // SWC instead of esbuild: esbuild does not emit decorator metadata, which Nest DI relies on
   plugins: [swc.vite({ module: { type: 'es6' } })],
