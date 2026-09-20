@@ -218,14 +218,14 @@
 **Descrição:** `ChangePasswordUseCase`: exige a senha atual, valida a nova (12–128), grava o hash novo, incrementa `tokenVersion` e o controller reemite o cookie da sessão atual com a versão nova, o que derruba os outros dispositivos e mantém este.
 
 **Aceite:**
-- [ ] `204` + `Set-Cookie` novo; o token antigo (de outro "dispositivo") passa a responder `401` e o cookie reemitido continua válido
-- [ ] Senha atual errada → `422 INVALID_CURRENT_PASSWORD` (senha não é alterada, `tokenVersion` não muda); senha nova fora de 12–128 → `400`/`422` conforme o schema; sem sessão → `401`
-- [ ] A verificação da senha atual usa o mesmo hasher e não vaza o hash em erro nem em log
-- [ ] Login com a senha antiga passa a falhar e com a nova funciona
+- [x] `204` + `Set-Cookie` novo; o token antigo (de outro "dispositivo") passa a responder `401` e o cookie reemitido continua válido
+- [x] Senha atual errada → `422 INVALID_CURRENT_PASSWORD` (senha não é alterada, `tokenVersion` não muda); senha nova fora de 12–128 → `400`/`422` conforme o schema; sem sessão → `401`
+- [x] A verificação da senha atual usa o mesmo hasher e não vaza o hash em erro nem em log
+- [x] Login com a senha antiga passa a falhar e com a nova funciona
 
 **Verificação:**
-- [ ] `npm run test -w @septo/api` (unit com fakes; integração: dois tokens, troca por um, o outro cai)
-- [ ] `npm run codegen` (`meChangePassword`); teste de contrato verde
+- [x] `npm run test -w @septo/api` (unit com fakes; integração: dois tokens, troca por um, o outro cai)
+- [x] `npm run codegen` (`meChangePassword`); teste de contrato verde
 
 **Dependências:** T6, T8 (login para provar a senha nova)
 **Arquivos:** `apps/api/src/modules/identity/application/change-password.use-case.ts` (+ spec), `apps/api/src/modules/identity/presentation/{me.controller,me.schemas}.ts`, `apps/api/test/me-password.spec.ts`, `apps/api/openapi.json`
