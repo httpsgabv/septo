@@ -17,7 +17,7 @@ Projeto pessoal, usuário único, hospedado numa VPS.
 
 ## Começando
 
-Requisitos: Node ≥ 24.7 (o hash de senha usa `crypto.argon2`), npm 11, Docker.
+Requisitos: Node ≥ 24.7 (o hash de senha usa `crypto.argon2`; há um `.nvmrc`, então `nvm install && nvm use`), npm 11, Docker.
 
 ```bash
 npm install

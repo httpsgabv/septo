@@ -1,9 +1,17 @@
-import { argon2, randomBytes, timingSafeEqual } from 'node:crypto';
+import * as nodeCrypto from 'node:crypto';
+import { randomBytes, timingSafeEqual } from 'node:crypto';
 import { promisify } from 'node:util';
 import { Injectable } from '@nestjs/common';
 import { PasswordHasher } from '../domain/password-hasher.js';
 
-const argon2Async = promisify(argon2);
+// A namespace import (unlike a named one) lets us fail with a readable message on an old Node
+// instead of a SyntaxError from the ESM linker.
+if (typeof nodeCrypto.argon2 !== 'function') {
+  throw new Error(
+    `septo needs Node >= 24.7 for crypto.argon2, but this is Node ${process.versions.node}. See .nvmrc.`,
+  );
+}
+const argon2Async = promisify(nodeCrypto.argon2);
 
 // OWASP: m = 19 MiB, t = 2, p = 1. Changing these needs approval (see SPEC-identity).
 const MEMORY_KIB = 19_456;
