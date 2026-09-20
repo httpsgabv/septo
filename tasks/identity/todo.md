@@ -95,7 +95,7 @@
 
 - [x] `npm run user:set -w @septo/api -- gabriel` cria e, na segunda execução, reseta
 - [x] `lint`, `check-types`, `test` passam; `grep` de camadas limpo
-- [ ] Revisão com você antes de seguir
+- [x] Revisão com você antes de seguir
 
 ---
 
@@ -188,7 +188,7 @@
 - [x] `curl`: login → cookie → `GET /api/me` 200; sem cookie 401; 6ª falha 429 com `Retry-After`
 - [x] `/api/health` e `/api/docs` seguem `200` sem cookie
 - [x] Success Criteria 1, 2, 3, 4 e 5 da spec verificados
-- [ ] Revisão com você antes de seguir (pedir também um `security-auditor` sobre T5–T8, já que é o caminho crítico de segurança)
+- [x] Revisão com você antes de seguir (pedir também um `security-auditor` sobre T5–T8, já que é o caminho crítico de segurança)
 
 ---
 
@@ -258,13 +258,13 @@
 **Descrição:** Hoje o mutator repassa só o `cookie` do navegador para a API. Passa a devolver também os `Set-Cookie` da resposta da API para a resposta do SSR (`setResponseHeader`/equivalente do TanStack Start), para a renovação deslizante funcionar numa navegação direta. Junto, `redirect.ts` no domínio do web: só aceita path interno (começa com `/` e não com `//`, sem `\`, sem esquema); qualquer outra coisa cai em `/notes`.
 
 **Aceite:**
-- [ ] (verificado na T15) Numa requisição SSR com cookie de token > 15 dias, a resposta HTML do web traz `Set-Cookie: septo_session=…` renovado (mesmas flags), e o cookie do visitante não é duplicado nem perdido
+- [x] (verificado na T15) Numa requisição SSR com cookie de token > 15 dias, a resposta HTML do web traz `Set-Cookie: septo_session=…` renovado (mesmas flags), e o cookie do visitante não é duplicado nem perdido
 - [x] No navegador (cliente), o mutator continua sem mexer em cookies
 - [x] `parseRedirect("/notes")` → `/notes`; `//evil.com`, `https://evil.com`, `/\evil.com`, `javascript:alert(1)`, vazio e `undefined` → `/notes`; path com query (`/notes?x=1`) preservado
 
 **Verificação:**
 - [x] `npm run test -w @septo/web` (unit exaustivo do `redirect.ts`, escrito primeiro)
-- [ ] Manual: **adiado para a T15**. Nada no SSR chama uma rota protegida antes do guard do `_app`, então não há como observar o `Set-Cookie` renovado agora; o e2e da T15 (token de 16 dias) prova
+- [x] Manual: **verificado na T15** (e2e `a session older than 15 days is renewed on a server render`). Nada no SSR chama uma rota protegida antes do guard do `_app`, então não há como observar o `Set-Cookie` renovado agora; o e2e da T15 (token de 16 dias) prova
 
 **Dependências:** T6 (o guard que renova); pode rodar em paralelo com T9–T11
 **Arquivos:** `apps/web/src/shared/api/http-client.ts`, `apps/web/src/features/identity/domain/redirect.ts`, `apps/web/src/features/identity/domain/redirect.spec.ts`
@@ -397,9 +397,9 @@
 
 ### Checkpoint C: fluxo completo no navegador
 
-- [ ] `/notes` sem sessão → `/login?redirect=/notes` → login → `/notes`; `?redirect=//evil.com` ignorado
-- [ ] SSR de página protegida sem flash de conteúdo deslogado
-- [ ] `test:e2e` passa (suítes existentes autenticadas + novas); rodar 5 vezes seguidas para provar estabilidade
+- [x] `/notes` sem sessão → `/login?redirect=/notes` → login → `/notes`; `?redirect=//evil.com` ignorado
+- [x] SSR de página protegida sem flash de conteúdo deslogado
+- [x] `test:e2e` passa (suítes existentes autenticadas + novas); rodar 5 vezes seguidas para provar estabilidade
 - [ ] Revisão visual com você (desktop e 375 px)
 
 ---
@@ -411,14 +411,14 @@
 **Descrição:** Fechar o módulo: `JWT_SECRET` documentado (obrigatório em produção, ≥ 32 caracteres, como gerar) no `.env.example` e no compose de produção/README; README com login, CLI `user:set` (dev e `docker exec`) e o aviso do e2e; CLAUDE.md com as armadilhas novas (guard global, `@Public()`, `trust proxy`, cookie no SSR, e2e em `septo_test`); CAPABILITY-MAP com `identity` ✅ e a spec com status aprovado/implementado. Validar `docker exec … node dist/cli/set-user.js` dentro da imagem `node:24-alpine`.
 
 **Aceite:**
-- [ ] Clone limpo: `npm install && cp .env.example .env && docker compose up -d && npm run user:set -w @septo/api -- <user> && npm run dev` → login funciona em `http://localhost:5173` e em `https://localhost`
-- [ ] A imagem `septo-api` sobe com `NODE_ENV=production` + `JWT_SECRET` válido, falha o boot sem ele, e `docker exec -it septo-api node dist/cli/set-user.js <user>` cria/reseta o usuário
-- [ ] Todos os Success Criteria da spec verificados e marcados aqui; `openapi.json` atualizado; ≥ 90% de linhas em `domain/` e `application/` do identity (ver Open Questions do plano sobre como medir)
-- [ ] `lint`, `check-types`, `test` e `test:e2e` passam; segunda execução de `npm run build` é cache hit
+- [x] Clone limpo: `npm install && cp .env.example .env && docker compose up -d && npm run user:set -w @septo/api -- <user> && npm run dev` → login funciona em `http://localhost:5173` e em `https://localhost`
+- [x] A imagem `septo-api` sobe com `NODE_ENV=production` + `JWT_SECRET` válido, falha o boot sem ele, e `docker exec -it septo-api node dist/cli/set-user.js <user>` cria/reseta o usuário
+- [x] Todos os Success Criteria da spec verificados e marcados aqui; `openapi.json` atualizado; ≥ 90% de linhas em `domain/` e `application/` do identity (ver Open Questions do plano sobre como medir)
+- [x] `lint`, `check-types`, `test` e `test:e2e` passam; segunda execução de `npm run build` é cache hit
 
 **Verificação:**
-- [ ] `docker build` da API e do web a partir do clone limpo; teste do CLI dentro do container
-- [ ] `grep -rn "JWT_SECRET" --include=*.md --include=.env.example .` mostra a documentação, e `git grep` não acha nenhum valor real de segredo
+- [x] `docker build` da API e do web a partir do clone limpo; teste do CLI dentro do container
+- [x] `grep -rn "JWT_SECRET" --include=*.md --include=.env.example .` mostra a documentação, e `git grep` não acha nenhum valor real de segredo
 
 **Dependências:** T18
 **Arquivos:** `.env.example`, `README.md`, `CLAUDE.md`, `CAPABILITY-MAP.md`, `specs/SPEC-identity.md` (status), `tasks/identity/{plan,todo}.md`
@@ -428,6 +428,6 @@
 
 ### Checkpoint final
 
-- [ ] Todos os Success Criteria da spec verificados
-- [ ] Clone limpo → fluxo completo funciona
+- [x] Todos os Success Criteria da spec verificados
+- [x] Clone limpo → fluxo completo funciona
 - [ ] Revisão final com você (`/agent-skills:review` e `security-auditor` antes do PR)

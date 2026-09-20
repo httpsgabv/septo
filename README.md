@@ -43,6 +43,7 @@ O septo tem um único usuário e não há cadastro pela interface: `user:set` pe
 | `npm run build` | Build de tudo, com cache do Turbo |
 | `npm run check-types` | Type-check de todos os pacotes |
 | `npm run test` | Testes unitários e de integração (a API usa o banco `septo_test`, precisa do Postgres no ar) |
+| `npm run coverage -w @septo/api` | Cobertura de linhas e ramos das camadas `domain` e `application` (meta ≥ 90%) |
 | `npm run test:e2e` | Playwright; sobe a própria API (:3433) e o próprio web (:5273) no banco `septo_test`, com um usuário de teste, sem tocar nos servidores nem no banco de desenvolvimento (precisa do Postgres no ar e de `npx playwright install chromium` na primeira vez) |
 | `npm run user:set -w @septo/api -- <usuário>` | Cria o usuário único ou reseta a senha (derruba todas as sessões) |
 | `docker compose up -d` | Infra: Postgres + Caddy (https://localhost) |

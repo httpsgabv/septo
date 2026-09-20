@@ -1,6 +1,6 @@
 # Spec: identity
 
-> Módulo `identity` do [CAPABILITY-MAP](../CAPABILITY-MAP.md). Status: **rascunho**, aguardando aprovação.
+> Módulo `identity` do [CAPABILITY-MAP](../CAPABILITY-MAP.md). Status: **implementado**.
 > Herda as convenções globais de [SPEC-foundation](SPEC-foundation.md): camadas, contrato zod → OpenAPI → Orval, estilo, testes e limites. Aqui fica só o que é específico do módulo.
 
 ## Objetivo
@@ -39,11 +39,12 @@ Cadastro de usuário, multiusuário, recuperação de senha por e-mail (o reset 
 | Logout | Apaga o cookie. "Sair de todos" incrementa `tokenVersion` e também apaga o cookie atual | — |
 | Troca de senha | Exige a senha atual; incrementa `tokenVersion` e reemite o cookie da sessão atual | Derruba os outros dispositivos e mantém este |
 | Senha | 12 a 128 caracteres, sem outras regras de composição | NIST 800-63B |
+| Username | `[A-Za-z0-9._-]{1,50}`, validado no CLI | É só um identificador: sem espaços nem `@`, para digitar no celular |
 | Brute force | Por cliente (IPv4, ou prefixo /64 no IPv6): 5 falhas em 15 min → `429 TOO_MANY_ATTEMPTS` com `Retry-After`. A tentativa é contada antes da verificação da senha e o login bem-sucedido zera o contador, então tentativas paralelas não passam do limite. Contador em memória | Uma instância só; reiniciar a API zera, o que é aceitável. Um cliente IPv6 controla um /64 inteiro (revisão de segurança, 2026-09-20) |
 | Enumeração | Username inexistente também roda uma verificação argon2 contra um hash fixo; a resposta é sempre `401 INVALID_CREDENTIALS` | Mesmo tempo de resposta e mesma mensagem nos dois casos |
 | IP do cliente | `trust proxy` = 1 no Express (em produção o Caddy é o único salto) | `req.ip` correto para o rate limit e o último login |
 | CSRF | `SameSite=Lax` + mesma origem + corpo JSON obrigatório nas mutações | Lax bloqueia POST/PATCH/PUT/DELETE vindos de outro site; não precisa de token CSRF |
-| Guard da API | `AuthGuard` global; `@Public()` libera `health`, `auth/login`, `auth/logout` e os docs (Scalar e `openapi.json`) | Seguro por padrão: rota nova nasce protegida |
+| Guard da API | `AuthGuard` global; `@Public()` libera `health`, `auth/login` e `auth/logout`. Os docs (Scalar e `openapi.json`) são montados por `app.use`, fora do pipeline de guards, e seguem públicos | Seguro por padrão: rota nova nasce protegida |
 | Usuário no handler | Decorator `@CurrentUser()` injeta `{ id }` | — |
 | Guard do web | Rota de layout sem path (`_app`) com o shell. O `beforeLoad` garante `/api/me` e redireciona para `/login` no `401`. `/login` fica fora do shell | A página de login não mostra sidebar |
 | Cookie no SSR | O mutator já repassa o `cookie` do navegador para a API. Passa a repassar também o `Set-Cookie` da API para a resposta do SSR (renovação deslizante numa navegação direta) | Senão a renovação só aconteceria em chamadas feitas pelo navegador |
@@ -97,7 +98,7 @@ npm run user:set -w @septo/api -- <username>                 # dev: cria o usuá
 docker exec -it septo-api node dist/cli/set-user.js <username>   # produção
 ```
 
-Pede a senha duas vezes, sem eco (ou lê de `stdin` quando não é TTY, para os testes). Se não existe usuário, cria. Se existe, troca username e senha e incrementa `tokenVersion`, o que derruba todas as sessões. O comando valida a senha com as mesmas regras da API.
+Pede a senha duas vezes, sem eco (ou lê a primeira linha de `stdin` quando não é TTY, para os testes). Se não existe usuário, cria. Se existe, troca username e senha e incrementa `tokenVersion`, o que derruba todas as sessões. O comando valida a senha com as mesmas regras da API.
 
 ## Variáveis de ambiente (novas)
 
@@ -174,7 +175,7 @@ Meta: ≥ 90% de linhas em `domain/` e `application/` do identity, como no found
 | Risco | Mitigação |
 |---|---|
 | `crypto.argon2` é recente no Node (24.7) | A imagem é `node:24-alpine` (última 24.x) e o local é o 26. Fixar `engines.node >= 24.7`. Se a API mudar, trocar o adapter por `@node-rs/argon2` sem mexer na porta |
-| E2E precisa de um usuário conhecido, e o `user:set` sobrescreveria o usuário de dev | No plano: o e2e roda contra o banco `septo_test`, e um global setup cria o usuário de teste pelo mesmo CLI |
+| E2E precisa de um usuário conhecido, e o `user:set` sobrescreveria o usuário de dev | No plano: o e2e sobe a própria API (:3433) e o próprio web (:5273) contra o banco `septo_test`, e um seed cria o usuário de teste pelo mesmo CLI |
 | Cookie `Secure` em `http://localhost:5173` | Chrome e Firefox tratam `localhost` como contexto seguro e aceitam. `https://localhost` via Caddy também funciona |
 | Rate limit em memória zera ao reiniciar a API e não cobre um ataque distribuído entre IPs | Aceito para um usuário só: senha ≥ 12 caracteres + argon2. Marcado com `// ponytail:` |
 | Uma consulta ao banco por request autenticada (checagem do `tokenVersion`) | Insignificante com um usuário só |

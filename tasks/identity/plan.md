@@ -50,7 +50,7 @@ T18 ─▶ T19 docs, env, Docker e fechamento
 ### Checkpoint A: usuário existe
 - [x] `npm run user:set -w @septo/api -- gabriel` cria e, na segunda execução, reseta (`tokenVersion` sobe)
 - [x] `lint`, `check-types`, `test` passam
-- [ ] Revisão com você antes de seguir
+- [x] Revisão com você antes de seguir
 
 ### Fase 2: sessão e API protegida
 - [x] T5: Token service (JWT), helper do cookie de sessão e `DomainError` `unauthenticated` / `rate_limited`
@@ -61,7 +61,7 @@ T18 ─▶ T19 docs, env, Docker e fechamento
 ### Checkpoint B: API autenticada ponta a ponta
 - [x] `curl`: login → cookie → `GET /api/me` 200; sem cookie 401; 6ª falha 429 com `Retry-After`
 - [x] `/api/health` e `/api/docs` seguem `200` sem cookie
-- [ ] Revisão com você antes de seguir
+- [x] Revisão com você antes de seguir
 
 ### Fase 3: perfil e revogação (API)
 - [x] T9: `PATCH /api/me`
@@ -78,17 +78,17 @@ T18 ─▶ T19 docs, env, Docker e fechamento
 - [x] T18: Configurações → Conta: trocar senha e sair de todos os dispositivos
 
 ### Checkpoint C: fluxo completo no navegador
-- [ ] `/notes` sem sessão → `/login?redirect=/notes` → login → `/notes`; `?redirect=//evil.com` ignorado
-- [ ] SSR de página protegida sem flash de conteúdo deslogado
-- [ ] `test:e2e` passa (suítes existentes autenticadas + novas)
+- [x] `/notes` sem sessão → `/login?redirect=/notes` → login → `/notes`; `?redirect=//evil.com` ignorado
+- [x] SSR de página protegida sem flash de conteúdo deslogado
+- [x] `test:e2e` passa (suítes existentes autenticadas + novas)
 - [ ] Revisão visual com você (desktop e 375 px)
 
 ### Fase 5: fechamento
-- [ ] T19: `.env.example`, README, CLAUDE.md, CAPABILITY-MAP, imagem Docker com o CLI
+- [x] T19: `.env.example`, README, CLAUDE.md, CAPABILITY-MAP, imagem Docker com o CLI
 
 ### Checkpoint final
-- [ ] Todos os Success Criteria da spec verificados
-- [ ] Clone limpo → `npm install && cp .env.example .env && docker compose up -d && npm run user:set -w @septo/api -- <user> && npm run dev` funciona
+- [x] Todos os Success Criteria da spec verificados
+- [x] Clone limpo → `npm install && cp .env.example .env && docker compose up -d && npm run user:set -w @septo/api -- <user> && npm run dev` funciona
 - [ ] Revisão final com você
 
 ## Paralelização
