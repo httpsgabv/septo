@@ -124,16 +124,16 @@
 **Descrição:** `NotePrismaRepository` implementando a porta, com mapper Prisma ↔ domínio (sem vazar o model). A busca usa `contains` sobre `searchText` com a query normalizada pela mesma função do domínio; o filtro de tag usa `has`. `createdAt`/`updatedAt` vêm da entidade (o model não tem default), então o mapper os passa explicitamente. Cria o `NotesModule` ligando porta → implementação e o registra no `AppModule`.
 
 **Aceite:**
-- [ ] `findById`, `list(criteria)`, `save` (cria e atualiza), `delete`, `listTags` implementados
-- [ ] Mapper converte `pinnedAt`/`archivedAt`/`remindAt` `null` ↔ `null` e `tags` array ↔ VO
-- [ ] Ordenação e teto de 200 acontecem no banco (`orderBy` + `take`), não em memória
-- [ ] `NotesModule` registrado; DI resolve com o build SWC
-- [ ] Prisma aparece só em `infrastructure/`
+- [x] `findById`, `list(criteria)`, `save` (cria e atualiza), `delete`, `listTags` implementados
+- [x] Mapper converte `pinnedAt`/`archivedAt`/`remindAt` `null` ↔ `null` e `tags` array ↔ VO
+- [x] Ordenação e teto de 200 acontecem no banco (`orderBy` + `take`), não em memória
+- [x] `NotesModule` registrado; DI resolve com o build SWC
+- [x] Prisma aparece só em `infrastructure/`
 
 **Verificação:**
-- [ ] `npm run test -w @septo/api` — integração contra `septo_test` (banco real): criar e reler, `contains` acento-insensível, `has` de tag, ordenação com fixada, `take` de 200, `delete`
-- [ ] `npm run build -w @septo/api && node apps/api/dist/main.js` sobe sem erro de DI
-- [ ] `grep -rn "generated/prisma" apps/api/src/modules/notes` só acusa `infrastructure/`
+- [x] `npm run test -w @septo/api` — integração contra `septo_test` (banco real): criar e reler, `contains` acento-insensível, `has` de tag, ordenação com fixada, `take` de 200, `delete`
+- [x] `npm run build -w @septo/api && node apps/api/dist/main.js` sobe sem erro de DI
+- [x] `grep -rn "generated/prisma" apps/api/src/modules/notes` só acusa `infrastructure/`
 
 **Dependências:** T4, T5
 **Arquivos:** `apps/api/src/modules/notes/infrastructure/{note.prisma-repository,note.mapper}.ts` (+ specs), `apps/api/src/modules/notes/notes.module.ts`, `apps/api/src/app.module.ts`
