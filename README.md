@@ -35,6 +35,18 @@ O septo tem um único usuário e não há cadastro pela interface: `user:set` pe
 
 `docker compose up -d` sobe só a infra: o Postgres (porta **5433**, apenas em `127.0.0.1`, para não brigar com um Postgres local) e o Caddy, que dá HTTPS em https://localhost na frente dos servidores de dev (útil para Web Push e cookies `Secure`). O navegador avisa sobre o certificado local do Caddy até você confiar nele.
 
+## O que já existe
+
+- **Login** (`identity`): usuário único, sessão em cookie, troca de senha e nome de exibição em `/settings`.
+- **Notas** (`notes`), em `/notes`:
+  - editor WYSIWYG (Tiptap) que guarda **markdown**: `## `, `- `, `1. `, `> `, `**negrito**`, `*itálico*`, `~~riscado~~`, `` `código` ``, blocos de código, links e linha horizontal;
+  - **autosave**, sem botão Salvar (indicador "Salvando… / Salvo"); "Nova nota" abre um rascunho que só vira nota no primeiro salvamento com conteúdo;
+  - tags, fixar, arquivar (e desarquivar) e excluir com confirmação;
+  - busca por título e corpo, sem diferenciar acento nem caixa; busca, tag e aba (`Ativas`, `Lembretes`, `Arquivadas`) ficam na URL;
+  - lembrete (`remindAt`) em qualquer nota, com a aba "Lembretes" ordenada por data. O **aviso** (Web Push) é o módulo `reminders`, ainda pendente.
+
+Depois de atualizar o repositório, rode `npm run db:migrate -w @septo/api` para aplicar as migrações novas (a de notas cria a tabela `notes`).
+
 ## Comandos
 
 | Comando | O que faz |
