@@ -160,56 +160,57 @@ export function NoteEditor({ note, onCreated }: Props) {
   }, [autosave]);
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex min-h-6 items-center justify-end gap-2 text-sm">
-        {status === 'error' ? (
-          <p role="alert" className="flex items-center gap-2 text-destructive">
-            Erro ao salvar
-            <Button variant="outline" size="xs" onClick={() => autosave.retry()}>
-              Tentar de novo
-            </Button>
-          </p>
-        ) : tooLong ? (
-          <p role="alert" className="text-destructive">
-            A nota passou de 100.000 caracteres e não será salva enquanto não ficar menor.
-          </p>
-        ) : (
-          <p role="status" className="text-muted-foreground">
-            {STATUS_TEXT[status]}
-          </p>
-        )}
+    <div className="flex flex-col gap-2">
+      <div className="flex items-center gap-2">
+        <Input
+          value={title}
+          onChange={(event) => {
+            setTitle(event.target.value);
+            change({ title: event.target.value });
+          }}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter') {
+              event.preventDefault();
+              if (editor) focusAtStart(editor);
+            }
+          }}
+          aria-label="Título"
+          placeholder="Título"
+          maxLength={TITLE_MAX_LENGTH}
+          autoFocus={!note}
+          className="h-auto min-w-0 flex-1 border-0 bg-transparent px-0 py-1 text-2xl font-semibold shadow-none focus-visible:ring-0 md:text-2xl dark:bg-transparent"
+        />
+        <p role="status" className="shrink-0 text-sm text-muted-foreground">
+          {STATUS_TEXT[status]}
+        </p>
+        <ReminderField
+          value={remindAt}
+          onChange={(next) => {
+            setRemindAt(next);
+            change({ remindAt: next });
+          }}
+        />
         {savedNote && <NoteActions note={savedNote} />}
       </div>
-      <Input
-        value={title}
-        onChange={(event) => {
-          setTitle(event.target.value);
-          change({ title: event.target.value });
-        }}
-        onKeyDown={(event) => {
-          if (event.key === 'Enter') {
-            event.preventDefault();
-            if (editor) focusAtStart(editor);
-          }
-        }}
-        aria-label="Título"
-        placeholder="Título"
-        maxLength={TITLE_MAX_LENGTH}
-        autoFocus={!note}
-        className="h-auto border-0 bg-transparent px-0 py-1 text-2xl font-semibold shadow-none focus-visible:ring-0 md:text-2xl dark:bg-transparent"
-      />
+      {status === 'error' ? (
+        <p role="alert" className="flex items-center gap-2 text-sm text-destructive">
+          Erro ao salvar
+          <Button variant="outline" size="xs" onClick={() => autosave.retry()}>
+            Tentar de novo
+          </Button>
+        </p>
+      ) : (
+        tooLong && (
+          <p role="alert" className="text-sm text-destructive">
+            A nota passou de 100.000 caracteres e não será salva enquanto não ficar menor.
+          </p>
+        )
+      )}
       <TagInput
         value={tags}
         onChange={(next) => {
           setTags(next);
           change({ tags: next });
-        }}
-      />
-      <ReminderField
-        value={remindAt}
-        onChange={(next) => {
-          setRemindAt(next);
-          change({ remindAt: next });
         }}
       />
       <EditorToolbar editor={editor} />

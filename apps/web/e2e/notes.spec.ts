@@ -13,6 +13,8 @@ const rowMenu = (page: Page, title: string) =>
 const saved = (page: Page) => page.getByRole('status').filter({ hasText: 'Salvo' });
 const bodyEditor = (page: Page) => page.getByRole('textbox', { name: 'Corpo da nota' });
 const reminderField = (page: Page) => page.getByRole('textbox', { name: 'Lembrete', exact: true });
+/** The reminder lives in a popover behind the bell: open it before touching the field. */
+const openReminder = (page: Page) => page.getByRole('button', { name: 'Abrir lembrete' }).click();
 const titleField = (page: Page) => page.getByRole('textbox', { name: 'Título' });
 
 /** The editor's HTML without the empty paragraph it keeps at the end: markdown drops it, by design. */
@@ -72,9 +74,11 @@ test('title, body, tags and reminder come back the same after a reload', async (
   });
   await expect(bodyEditor(page)).toContainText('corpo com destaque');
 
+  await openReminder(page);
   const before = await snapshot();
   await page.reload();
   await expect(bodyEditor(page)).toContainText('corpo com destaque');
+  await openReminder(page);
 
   expect(await snapshot()).toEqual(before);
   expect(before).toMatchObject({ title: 'Completa', bold: 'destaque', tags: ['casa', 'ideias'] });
@@ -251,15 +255,18 @@ test('a reminder puts the note under Lembretes, and clearing it takes it out', a
   await createNote(request, { title: 'Sem lembrete' });
   await gotoHydrated(page, `/notes/${note.id}`);
 
+  await openReminder(page);
   await reminderField(page).fill('2030-01-01T09:00');
   await expect(page.getByText('Lembrar em')).toBeVisible();
   await expect(saved(page)).toBeVisible({ timeout: 3_000 });
+  await page.keyboard.press('Escape');
 
   await page.getByRole('link', { name: 'Lembretes' }).click();
   await expect(page).toHaveURL(/view=reminders/);
   await expect(noteItems(page)).toHaveCount(1);
   await expect(noteItems(page).first()).toContainText('Pagar a conta');
 
+  await openReminder(page);
   await page.getByRole('button', { name: 'Limpar lembrete' }).click();
   await expect(page.getByText('Nenhuma nota com lembrete.')).toBeVisible();
 });
@@ -268,6 +275,7 @@ test('a reminder in the past is saved, with a warning', async ({ page, request }
   const note = await createNote(request, { title: 'Já passou' });
   await gotoHydrated(page, `/notes/${note.id}`);
 
+  await openReminder(page);
   await reminderField(page).fill('2020-01-01T09:00');
 
   await expect(page.getByText('Essa data já passou.')).toBeVisible();

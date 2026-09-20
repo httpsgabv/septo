@@ -60,7 +60,7 @@ const NoteEditor = lazy(() =>
 
 function EditorSkeleton() {
   return (
-    <div className="flex flex-col gap-4" role="status" aria-label="Carregando o editor">
+    <div className="flex flex-col gap-2" role="status" aria-label="Carregando o editor">
       <Skeleton className="h-9 w-2/3" />
       <Skeleton className="h-10 w-full" />
       <Skeleton className="h-40 w-full" />
@@ -89,7 +89,7 @@ function NotePage() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl p-6 md:p-10">
+    <div className="mx-auto max-w-4xl px-6 py-4 md:px-10 md:py-6">
       <BackToList />
       <ClientOnly fallback={<EditorSkeleton />}>
         <Suspense fallback={<EditorSkeleton />}>
