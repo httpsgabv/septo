@@ -17,6 +17,7 @@ import { Autosave, type AutosaveStatus } from '../domain/autosave';
 import { noteExtensions, parseMarkdown, serializeMarkdown } from '../domain/markdown';
 import { EditorToolbar } from './editor-toolbar';
 import { NoteActions } from './note-actions';
+import { ReminderField } from './reminder-field';
 import { TagInput } from './tag-input';
 
 const TITLE_MAX_LENGTH = 200;
@@ -51,6 +52,7 @@ export function NoteEditor({ note, onCreated }: Props) {
   const queryClient = useQueryClient();
   const [title, setTitle] = useState(note?.title ?? '');
   const [tags, setTags] = useState(note?.tags ?? []);
+  const [remindAt, setRemindAt] = useState(note?.remindAt ?? null);
   const [savedId, setSavedId] = useState(note?.id ?? null);
   const [status, setStatus] = useState<AutosaveStatus>('idle');
   const [tooLong, setTooLong] = useState(false);
@@ -195,6 +197,13 @@ export function NoteEditor({ note, onCreated }: Props) {
         onChange={(next) => {
           setTags(next);
           change({ tags: next });
+        }}
+      />
+      <ReminderField
+        value={remindAt}
+        onChange={(next) => {
+          setRemindAt(next);
+          change({ remindAt: next });
         }}
       />
       <EditorToolbar editor={editor} />

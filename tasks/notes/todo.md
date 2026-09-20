@@ -276,14 +276,14 @@
 **Descrição:** `reminder-field.tsx` com `<input type="datetime-local">` (nativo, sem dependência), botão de limpar (`remindAt: null`) e aviso "essa data já passou" quando for o caso — aviso de UI, a API aceita. O item da lista mostra a data do lembrete e o segmento "Lembretes" (`view=reminders`) ordena por data.
 
 **Aceite:**
-- [ ] Definir data salva via autosave e a nota aparece em "Lembretes"; limpar a remove de lá
-- [ ] Data no passado salva e mostra o aviso (não bloqueia)
-- [ ] Conversão local ↔ ISO correta nos dois sentidos (o campo é hora local, o contrato é ISO)
-- [ ] Data formatada em PT-BR na lista e no editor
+- [x] Definir data salva via autosave e a nota aparece em "Lembretes"; limpar a remove de lá
+- [x] Data no passado salva e mostra o aviso (não bloqueia)
+- [x] Conversão local ↔ ISO correta nos dois sentidos (o campo é hora local, o contrato é ISO)
+- [x] Data formatada em PT-BR na lista e no editor
 
 **Verificação:**
-- [ ] `npm run test -w @septo/web` (unit da conversão local ↔ ISO e da checagem de data passada)
-- [ ] Manual: definir, recarregar, valor idêntico no campo
+- [x] `npm run test -w @septo/web` (unit da conversão local ↔ ISO e da checagem de data passada)
+- [x] Manual: definir, recarregar, valor idêntico no campo
 
 **Dependências:** T12
 **Arquivos:** `apps/web/src/features/notes/components/reminder-field.tsx`, `apps/web/src/features/notes/domain/remind-at.ts` (+ spec), `apps/web/src/features/notes/components/note-list-item.tsx`
