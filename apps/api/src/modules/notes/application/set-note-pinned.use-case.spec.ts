@@ -33,4 +33,14 @@ describe('SetNotePinnedUseCase', () => {
 
     await expect(useCase.execute({ id: 'gone', pinned: true })).rejects.toThrow(NoteNotFoundError);
   });
+  it('uses the real clock by default', async () => {
+    const { note } = await setup();
+    const notes = new InMemoryNoteRepository();
+    await notes.save(note);
+    const before = Date.now();
+
+    await new SetNotePinnedUseCase(notes).execute({ id: note.id, pinned: true });
+
+    expect(note.pinnedAt?.getTime()).toBeGreaterThanOrEqual(before);
+  });
 });

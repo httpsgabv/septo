@@ -103,15 +103,15 @@
 **Descrição:** `ListNotesUseCase` (filtros `q`, `tag`, `view` = `active` | `archived` | `reminders`; ordenação: fixadas por `pinnedAt` desc, depois `updatedAt` desc; `reminders` por `remindAt` asc; teto de 200 com `// ponytail:`) e `ListTagsUseCase` (tags distintas de notas não arquivadas, ordem alfabética). Testados com o fake.
 
 **Aceite:**
-- [ ] `view=active` exclui arquivadas; `view=archived` traz só arquivadas; `view=reminders` traz não arquivadas com `remindAt` não nulo, ordenadas por data
-- [ ] `q` casa título e corpo, acento- e caixa-insensível (compara contra `searchText`); `q` em branco é ignorado
-- [ ] `q` e `tag` combinam (interseção)
-- [ ] Fixadas vêm antes das demais mesmo com `updatedAt` mais antigo
-- [ ] Teto de 200 aplicado, com o comentário `// ponytail:` da spec
-- [ ] `ListTagsUseCase` devolve cada tag uma vez, alfabética, ignorando as de notas arquivadas (teste explícito desse comportamento — é o ponto listado em Open Questions do plano)
+- [x] `view=active` exclui arquivadas; `view=archived` traz só arquivadas; `view=reminders` traz não arquivadas com `remindAt` não nulo, ordenadas por data
+- [x] `q` casa título e corpo, acento- e caixa-insensível (compara contra `searchText`); `q` em branco é ignorado
+- [x] `q` e `tag` combinam (interseção)
+- [x] Fixadas vêm antes das demais mesmo com `updatedAt` mais antigo
+- [x] Teto de 200 aplicado, com o comentário `// ponytail:` da spec
+- [x] `ListTagsUseCase` devolve cada tag uma vez, alfabética, ignorando as de notas arquivadas (teste explícito desse comportamento — é o ponto listado em Open Questions do plano)
 
 **Verificação:**
-- [ ] `npm run test -w @septo/api`
+- [x] `npm run test -w @septo/api`
 
 **Dependências:** T3
 **Arquivos:** `apps/api/src/modules/notes/application/{list-notes,list-tags}.use-case.ts` (+ specs)

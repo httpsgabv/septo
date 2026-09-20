@@ -35,4 +35,14 @@ describe('SetNoteArchivedUseCase', () => {
       NoteNotFoundError,
     );
   });
+  it('uses the real clock by default', async () => {
+    const { note } = await setup();
+    const notes = new InMemoryNoteRepository();
+    await notes.save(note);
+    const before = Date.now();
+
+    await new SetNoteArchivedUseCase(notes).execute({ id: note.id, archived: true });
+
+    expect(note.archivedAt?.getTime()).toBeGreaterThanOrEqual(before);
+  });
 });

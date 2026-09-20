@@ -56,4 +56,12 @@ describe('UpdateNoteUseCase', () => {
 
     await expect(useCase.execute({ id: 'gone', title: 'x' })).rejects.toThrow(NoteNotFoundError);
   });
+  it('uses the real clock by default', async () => {
+    const { notes, note } = await setup();
+    const before = Date.now();
+
+    await new UpdateNoteUseCase(notes).execute({ id: note.id, title: 'Novo' });
+
+    expect(note.updatedAt.getTime()).toBeGreaterThanOrEqual(before);
+  });
 });

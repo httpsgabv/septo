@@ -35,4 +35,11 @@ describe('CreateNoteUseCase', () => {
     await expect(useCase.execute({ title: 'a', tags: ['a/b'] })).rejects.toThrow(InvalidTagError);
     expect(notes.saves).toBe(0);
   });
+  it('uses the real clock by default', async () => {
+    const before = Date.now();
+
+    const note = await new CreateNoteUseCase(new InMemoryNoteRepository()).execute({ title: 'a' });
+
+    expect(note.createdAt.getTime()).toBeGreaterThanOrEqual(before);
+  });
 });
