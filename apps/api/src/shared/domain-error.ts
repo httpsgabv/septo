@@ -5,7 +5,15 @@
 export abstract class DomainError extends Error {
   /** Stable, machine-readable identifier exposed to clients, e.g. `NOTE_NOT_FOUND`. */
   abstract readonly code: string;
-  abstract readonly kind: 'not_found' | 'conflict' | 'invalid' | 'forbidden';
+  abstract readonly kind:
+    | 'not_found'
+    | 'conflict'
+    | 'invalid'
+    | 'forbidden'
+    | 'unauthenticated'
+    | 'rate_limited';
+  /** Only for `rate_limited`: becomes the `Retry-After` header. */
+  readonly retryAfterSeconds?: number;
 
   constructor(message: string) {
     super(message);

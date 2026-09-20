@@ -106,14 +106,14 @@
 **Descrição:** `JoseTokenService` emite e verifica JWT HS256 com claims `sub`, `ver`, `iat`, `exp` (30 dias) usando `JWT_SECRET`. `session-cookie.ts` centraliza escrever o cookie (`septo_session`, `HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=2592000`), expirá-lo e ler o cookie pelo nome do header, sem `cookie-parser`. `DomainError` ganha os `kind`s `unauthenticated` → 401 e `rate_limited` → 429 com `retryAfterSeconds` que o filtro converte em `Retry-After`. Nascem aqui os erros `UNAUTHENTICATED` e `INVALID_CREDENTIALS` (`unauthenticated`) e `TOO_MANY_ATTEMPTS` (`rate_limited`).
 
 **Aceite:**
-- [ ] Token: emitir, verificar, expirado, assinatura inválida, `alg` diferente de HS256 (inclusive `none`) e claims faltando → todos rejeitados; `verify` devolve `{ userId, version, issuedAt }`
-- [ ] Relógio injetável no token service (para testar expiração e os 15 dias da renovação sem esperar)
-- [ ] `readSessionCookie` lê o valor certo com vários cookies, com espaços e com valor URL-encoded, e devolve `undefined` quando ausente
-- [ ] `ApiExceptionFilter` mapeia `unauthenticated` → 401 e `rate_limited` → 429 + header `Retry-After`; `errors.spec.ts` cobre os dois
-- [ ] Erros `UnauthenticatedError` (`UNAUTHENTICATED`), `InvalidCredentialsError` (`INVALID_CREDENTIALS`) e `TooManyAttemptsError` (`TOO_MANY_ATTEMPTS`, com `retryAfterSeconds`) em `domain/errors.ts`
+- [x] Token: emitir, verificar, expirado, assinatura inválida, `alg` diferente de HS256 (inclusive `none`) e claims faltando → todos rejeitados; `verify` devolve `{ userId, version, issuedAt }`
+- [x] Relógio injetável no token service (para testar expiração e os 15 dias da renovação sem esperar)
+- [x] `readSessionCookie` lê o valor certo com vários cookies, com espaços e com valor URL-encoded, e devolve `undefined` quando ausente
+- [x] `ApiExceptionFilter` mapeia `unauthenticated` → 401 e `rate_limited` → 429 + header `Retry-After`; `errors.spec.ts` cobre os dois
+- [x] Erros `UnauthenticatedError` (`UNAUTHENTICATED`), `InvalidCredentialsError` (`INVALID_CREDENTIALS`) e `TooManyAttemptsError` (`TOO_MANY_ATTEMPTS`, com `retryAfterSeconds`) em `domain/errors.ts`
 
 **Verificação:**
-- [ ] `npm run test -w @septo/api` (unit do token service e do helper; `errors.spec.ts` estendido)
+- [x] `npm run test -w @septo/api` (unit do token service e do helper; `errors.spec.ts` estendido)
 
 **Dependências:** T2
 **Arquivos:** `apps/api/src/modules/identity/infrastructure/jose-token-service.ts` (+ spec), `apps/api/src/modules/identity/presentation/session-cookie.ts` (+ spec), `apps/api/src/shared/domain-error.ts`, `apps/api/src/shared/http/api-exception.filter.ts`, `apps/api/test/errors.spec.ts`

@@ -31,3 +31,28 @@ export class InvalidUsernameError extends DomainError {
     super('Username must have 1 to 50 characters: letters, digits, dot, dash or underscore');
   }
 }
+
+export class UnauthenticatedError extends DomainError {
+  readonly code = 'UNAUTHENTICATED';
+  readonly kind = 'unauthenticated';
+  constructor() {
+    super('Authentication required');
+  }
+}
+
+/** Deliberately the same for an unknown username and a wrong password. */
+export class InvalidCredentialsError extends DomainError {
+  readonly code = 'INVALID_CREDENTIALS';
+  readonly kind = 'unauthenticated';
+  constructor() {
+    super('Invalid username or password');
+  }
+}
+
+export class TooManyAttemptsError extends DomainError {
+  readonly code = 'TOO_MANY_ATTEMPTS';
+  readonly kind = 'rate_limited';
+  constructor(readonly retryAfterSeconds: number) {
+    super('Too many failed attempts, try again later');
+  }
+}

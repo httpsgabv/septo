@@ -15,6 +15,8 @@ const STATUS_BY_KIND: Record<DomainError['kind'], HttpStatus> = {
   conflict: HttpStatus.CONFLICT,
   invalid: HttpStatus.UNPROCESSABLE_ENTITY,
   forbidden: HttpStatus.FORBIDDEN,
+  unauthenticated: HttpStatus.UNAUTHORIZED,
+  rate_limited: HttpStatus.TOO_MANY_REQUESTS,
 };
 
 /** Turns every thrown error into `{ code, message, details? }`; unexpected errors never leak. */
@@ -24,7 +26,11 @@ export class ApiExceptionFilter implements ExceptionFilter {
 
   catch(error: unknown, host: ArgumentsHost) {
     const [status, body] = this.toResponse(error);
-    host.switchToHttp().getResponse<Response>().status(status).json(body);
+    const res = host.switchToHttp().getResponse<Response>();
+    if (error instanceof DomainError && error.retryAfterSeconds !== undefined) {
+      res.setHeader('Retry-After', error.retryAfterSeconds);
+    }
+    res.status(status).json(body);
   }
 
   private toResponse(error: unknown): [number, ErrorResponse] {

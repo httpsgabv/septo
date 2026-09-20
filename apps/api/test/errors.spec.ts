@@ -24,6 +24,23 @@ class ThingAlreadyArchivedError extends DomainError {
   }
 }
 
+class NeedsLoginError extends DomainError {
+  readonly code = 'UNAUTHENTICATED';
+  readonly kind = 'unauthenticated';
+  constructor() {
+    super('Sign in first');
+  }
+}
+
+class SlowDownError extends DomainError {
+  readonly code = 'TOO_MANY_ATTEMPTS';
+  readonly kind = 'rate_limited';
+  readonly retryAfterSeconds = 42;
+  constructor() {
+    super('Slow down');
+  }
+}
+
 @Controller('things')
 class ThingsController {
   @Get('missing')
@@ -34,6 +51,16 @@ class ThingsController {
   @Get('archived')
   archived() {
     throw new ThingAlreadyArchivedError();
+  }
+
+  @Get('login')
+  login() {
+    throw new NeedsLoginError();
+  }
+
+  @Get('slow')
+  slow() {
+    throw new SlowDownError();
   }
 
   @Get('boom')
@@ -65,6 +92,19 @@ describe('error responses', () => {
     await request(app.getHttpServer())
       .get('/api/things/archived')
       .expect(409, { code: 'THING_ALREADY_ARCHIVED', message: 'Thing is already archived' });
+  });
+
+  it('maps unauthenticated to 401', async () => {
+    await request(app.getHttpServer())
+      .get('/api/things/login')
+      .expect(401, { code: 'UNAUTHENTICATED', message: 'Sign in first' });
+  });
+
+  it('maps rate_limited to 429 with Retry-After', async () => {
+    await request(app.getHttpServer())
+      .get('/api/things/slow')
+      .expect(429, { code: 'TOO_MANY_ATTEMPTS', message: 'Slow down' })
+      .expect('Retry-After', '42');
   });
 
   it('keeps the validation error shape', async () => {
