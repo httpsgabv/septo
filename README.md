@@ -23,6 +23,7 @@ Requisitos: Node ≥ 24.7 (o hash de senha usa `crypto.argon2`), npm 11, Docker.
 npm install
 cp .env.example .env
 docker compose up -d
+npm run db:migrate -w @septo/api
 npm run user:set -w @septo/api -- <usuário>
 npm run dev
 ```
