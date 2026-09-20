@@ -256,14 +256,14 @@
 **Descrição:** Ações na lista (menu de contexto no item) e no editor: fixar/desfixar (`useNotesPin`/`useNotesUnpin`), arquivar/desarquivar (`useNotesArchive`/`useNotesUnarchive`) e excluir (`useNotesDelete`) com `delete-note-dialog.tsx` usando `@septo/ui/components/dialog`. Depois de excluir ou arquivar, navega para `/notes` (a nota aberta deixou de existir na view atual).
 
 **Aceite:**
-- [ ] Fixar move a nota para o topo sem alterar o "editada em" exibido
-- [ ] Arquivar tira da lista ativa; em `view=archived` aparece com ação de desarquivar
-- [ ] Excluir abre dialog com texto explícito de que é definitivo; confirmar remove e redireciona; cancelar não faz nada
-- [ ] Ações acessíveis por teclado, com foco tratado no dialog (Base UI) e rótulos em PT-BR
+- [x] Fixar move a nota para o topo sem alterar o "editada em" exibido
+- [x] Arquivar tira da lista ativa; em `view=archived` aparece com ação de desarquivar
+- [x] Excluir abre dialog com texto explícito de que é definitivo; confirmar remove e redireciona; cancelar não faz nada
+- [x] Ações acessíveis por teclado, com foco tratado no dialog (Base UI) e rótulos em PT-BR
 
 **Verificação:**
-- [ ] `npm run check-types`, `npm run lint`, `npm run test`
-- [ ] Manual: as quatro ações mais o cancelar do dialog
+- [x] `npm run check-types`, `npm run lint`, `npm run test`
+- [x] Manual: as quatro ações mais o cancelar do dialog
 
 **Dependências:** T11
 **Arquivos:** `apps/web/src/features/notes/components/{note-list-item,note-editor,delete-note-dialog}.tsx`

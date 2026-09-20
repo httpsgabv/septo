@@ -49,7 +49,8 @@ export function NoteList() {
             <Link
               key={option}
               to="."
-              search={(prev) => ({ ...prev, view: option })}
+              // The default view stays out of the URL.
+              search={(prev) => ({ ...prev, view: option === 'active' ? undefined : option })}
               aria-current={option === view ? 'true' : undefined}
               className={buttonVariants({
                 variant: option === view ? 'secondary' : 'ghost',

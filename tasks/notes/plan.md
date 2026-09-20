@@ -68,7 +68,7 @@ T13 ─▶ T14 e2e do fluxo completo ─▶ T15 docs, cobertura e fechamento
 - [x] T9: Editor da nota (`/notes/$noteId`) com Tiptap sob demanda e toolbar
 - [x] T10: Autosave com debounce, mutação otimista e criação preguiçosa da nota nova
 - [x] T11: Tags: input na nota e filtro por tag na lista
-- [ ] T12: Fixar, arquivar/desarquivar e excluir com confirmação
+- [x] T12: Fixar, arquivar/desarquivar e excluir com confirmação
 - [ ] T13: Lembrete: `remindAt` no editor e filtro "Lembretes"
 
 ### Checkpoint C: fluxo completo no navegador

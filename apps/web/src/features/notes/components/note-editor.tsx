@@ -9,12 +9,14 @@ import {
   getNotesListQueryKey,
   notesCreate,
   notesUpdate,
+  useNotesGet,
 } from '../../../shared/api/generated/endpoints/notes/notes';
 import { getTagsListQueryKey } from '../../../shared/api/generated/endpoints/tags/tags';
 import type { Note, UpdateNoteRequest } from '../../../shared/api/generated/models';
 import { Autosave, type AutosaveStatus } from '../domain/autosave';
 import { noteExtensions, parseMarkdown, serializeMarkdown } from '../domain/markdown';
 import { EditorToolbar } from './editor-toolbar';
+import { NoteActions } from './note-actions';
 import { TagInput } from './tag-input';
 
 const TITLE_MAX_LENGTH = 200;
@@ -49,8 +51,18 @@ export function NoteEditor({ note, onCreated }: Props) {
   const queryClient = useQueryClient();
   const [title, setTitle] = useState(note?.title ?? '');
   const [tags, setTags] = useState(note?.tags ?? []);
+  const [savedId, setSavedId] = useState(note?.id ?? null);
   const [status, setStatus] = useState<AutosaveStatus>('idle');
   const [tooLong, setTooLong] = useState(false);
+  // The cached note carries the pinned/archived flags; the editor's own state does not track them.
+  // Never refetched here: a refetch could bring back a body older than what was just typed.
+  const { data: savedNote } = useNotesGet(savedId ?? '', {
+    query: {
+      enabled: savedId !== null,
+      staleTime: Number.POSITIVE_INFINITY,
+      refetchOnWindowFocus: false,
+    },
+  });
   const [initialContent] = useState(() => parseMarkdown(note?.body ?? ''));
 
   // Everything typed so far: creating a draft sends all of it, not just the last patch.
@@ -83,6 +95,7 @@ export function NoteEditor({ note, onCreated }: Props) {
           if (!title.trim() && !body.trim()) return 'skipped';
           const created = await notesCreate(current.current);
           noteId.current = created.id;
+          setSavedId(created.id);
           queryClient.setQueryData(getNotesGetQueryKey(created.id), created);
           await queryClient.invalidateQueries(listQuery);
           if (patch.tags) await queryClient.invalidateQueries({ queryKey: getTagsListQueryKey() });
@@ -157,6 +170,7 @@ export function NoteEditor({ note, onCreated }: Props) {
             {STATUS_TEXT[status]}
           </p>
         )}
+        {savedNote && <NoteActions note={savedNote} />}
       </div>
       <Input
         value={title}
