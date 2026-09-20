@@ -1,4 +1,5 @@
 import { PasswordHasher } from '../domain/password-hasher.js';
+import { type SessionClaims, TokenService } from '../domain/token-service.js';
 import type { User } from '../domain/user.js';
 import { UserRepository } from '../domain/user.repository.js';
 
@@ -29,5 +30,22 @@ export class FakePasswordHasher extends PasswordHasher {
   }
   verify(password: string, hash: string) {
     return Promise.resolve(hash === `hashed:${password}`);
+  }
+}
+
+/** Tokens are opaque handles into a map, so tests choose claims and issue dates freely. */
+export class FakeTokenService extends TokenService {
+  private readonly issued = new Map<string, SessionClaims>();
+
+  issue(claims: { userId: string; version: number }) {
+    return this.issueAt(claims, new Date());
+  }
+  issueAt(claims: { userId: string; version: number }, issuedAt: Date) {
+    const token = `token-${this.issued.size + 1}`;
+    this.issued.set(token, { ...claims, issuedAt });
+    return Promise.resolve(token);
+  }
+  verify(token: string) {
+    return Promise.resolve(this.issued.get(token) ?? null);
   }
 }

@@ -126,15 +126,15 @@
 **Descrição:** `AuthenticateUseCase` valida o token (assinatura, expiração) e compara `ver` com `tokenVersion` do usuário no banco (uma consulta por request). O `AuthGuard` é registrado como `APP_GUARD`; `@Public()` o dispensa; `@CurrentUser()` injeta `{ id }`. Se o token tem mais de 15 dias, o guard emite um cookie novo na resposta (renovação deslizante). `GET /api/me` devolve `Me` (schema da spec). `HealthController` fica `@Public()`.
 
 **Aceite:**
-- [ ] Sem cookie, com token adulterado, expirado, de versão antiga ou de usuário inexistente: `401 { code: "UNAUTHENTICATED" }`, sem diferenciar o motivo
-- [ ] `GET /api/health`, `/api/docs` e `/api/openapi.json` respondem `200` sem cookie
-- [ ] Token com > 15 dias e < 30 recebe `Set-Cookie` novo (mesmas flags, `Max-Age` de 30 dias); token com < 15 dias não recebe; token com > 30 dias → `401`
-- [ ] `Me` sem `passwordHash` nem `tokenVersion` (o schema não tem esses campos e o teste confere o corpo inteiro)
-- [ ] Rota sem `@Public()` nasce protegida (teste com controller de teste, no padrão do `errors.spec.ts`)
+- [x] Sem cookie, com token adulterado, expirado, de versão antiga ou de usuário inexistente: `401 { code: "UNAUTHENTICATED" }`, sem diferenciar o motivo
+- [x] `GET /api/health`, `/api/docs` e `/api/openapi.json` respondem `200` sem cookie
+- [x] Token com > 15 dias e < 30 recebe `Set-Cookie` novo (mesmas flags, `Max-Age` de 30 dias); token com < 15 dias não recebe; token com > 30 dias → `401`
+- [x] `Me` sem `passwordHash` nem `tokenVersion` (o schema não tem esses campos e o teste confere o corpo inteiro)
+- [x] Rota sem `@Public()` nasce protegida (teste com controller de teste, no padrão do `errors.spec.ts`)
 
 **Verificação:**
-- [ ] `npm run test -w @septo/api` (unit do `AuthenticateUseCase` com fakes; integração com usuário e tokens montados pelo `TokenService` + repositório reais, relógio falso na renovação)
-- [ ] `npm run codegen` e `openapi.json` commitado (`meGet`); teste de contrato verde
+- [x] `npm run test -w @septo/api` (unit do `AuthenticateUseCase` com fakes; integração com usuário e tokens montados pelo `TokenService` + repositório reais, relógio falso na renovação)
+- [x] `npm run codegen` e `openapi.json` commitado (`meGet`); teste de contrato verde
 
 **Dependências:** T3, T5
 **Arquivos:** `apps/api/src/modules/identity/application/{authenticate,get-me}.use-case.ts` (+ specs), `apps/api/src/modules/identity/presentation/{auth.guard,public.decorator,current-user.decorator,me.controller,me.schemas}.ts`, `apps/api/src/modules/health/presentation/health.controller.ts`, `apps/api/test/auth-guard.spec.ts`, `apps/api/openapi.json`

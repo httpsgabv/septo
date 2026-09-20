@@ -54,7 +54,7 @@ T18 ─▶ T19 docs, env, Docker e fechamento
 
 ### Fase 2: sessão e API protegida
 - [x] T5: Token service (JWT), helper do cookie de sessão e `DomainError` `unauthenticated` / `rate_limited`
-- [ ] T6: `AuthGuard` global, `@Public()`, `@CurrentUser()` e `GET /api/me` (com renovação deslizante)
+- [x] T6: `AuthGuard` global, `@Public()`, `@CurrentUser()` e `GET /api/me` (com renovação deslizante)
 - [ ] T7: Limite de tentativas de login (porta + implementação em memória)
 - [ ] T8: `POST /api/auth/login` e `POST /api/auth/logout`
 
