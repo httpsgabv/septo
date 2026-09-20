@@ -322,16 +322,16 @@
 **Descrição:** Fechar o módulo: medir cobertura da API, atualizar a documentação e marcar o módulo como implementado.
 
 **Aceite:**
-- [ ] `npm run coverage -w @septo/api` ≥ 90% de linhas em `modules/notes/{domain,application}`
-- [ ] README com o que o módulo entrega e qualquer comando novo
-- [ ] CLAUDE.md com as armadilhas que aparecerem no caminho (bridge markdown, editor sob demanda, `searchText` derivado, `GET /tags` fora de `notes`)
-- [ ] CAPABILITY-MAP: linha do `notes` com links de spec/plano e status implementado; `reminders` segue como próximo
-- [ ] SPEC-notes com status atualizado e qualquer decisão que mudou durante a implementação já refletida (regra do projeto: spec antes do código)
-- [ ] Os 11 Success Criteria da spec verificados um a um
+- [x] `npm run coverage -w @septo/api` ≥ 90% de linhas em `modules/notes/{domain,application}`
+- [x] README com o que o módulo entrega e qualquer comando novo
+- [x] CLAUDE.md com as armadilhas que aparecerem no caminho (bridge markdown, editor sob demanda, `searchText` derivado, `GET /tags` fora de `notes`)
+- [x] CAPABILITY-MAP: linha do `notes` com links de spec/plano e status implementado; `reminders` segue como próximo
+- [x] SPEC-notes com status atualizado e qualquer decisão que mudou durante a implementação já refletida (regra do projeto: spec antes do código)
+- [x] Os 11 Success Criteria da spec verificados um a um
 
 **Verificação:**
-- [ ] `npm run lint`, `npm run check-types`, `npm run test`, `npm run test:e2e`
-- [ ] Clone limpo: `npm install && cp .env.example .env && docker compose up -d && npm run db:migrate -w @septo/api && npm run user:set -w @septo/api -- <user> && npm run dev` chega em `/notes` funcionando
+- [x] `npm run lint`, `npm run check-types`, `npm run test`, `npm run test:e2e`
+- [x] Clone limpo: `npm install && cp .env.example .env && docker compose up -d && npm run db:migrate -w @septo/api && npm run user:set -w @septo/api -- <user> && npm run dev` chega em `/notes` funcionando
 - [ ] PR aberto referenciando a spec
 
 **Dependências:** T14

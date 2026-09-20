@@ -1,6 +1,6 @@
 # Spec: notes
 
-> Módulo `notes` do [CAPABILITY-MAP](../CAPABILITY-MAP.md). Status: **aprovada** em 2026-09-20. Plano: [tasks/notes/plan.md](../tasks/notes/plan.md).
+> Módulo `notes` do [CAPABILITY-MAP](../CAPABILITY-MAP.md). Status: **implementada** (aprovada em 2026-09-20). Plano: [tasks/notes/plan.md](../tasks/notes/plan.md).
 > Herda as convenções globais de [SPEC-foundation](SPEC-foundation.md): camadas, contrato zod → OpenAPI → Orval, estilo, testes e limites. Depende de [SPEC-identity](SPEC-identity.md) — toda rota deste módulo nasce protegida pelo `AuthGuard` global. Aqui fica só o que é específico do módulo.
 
 ## Objetivo
@@ -36,6 +36,12 @@ Blocos de código com destaque de sintaxe, checklists (`- [ ]`), tabelas, imagen
 | Ponte markdown ↔ editor | **Bridge próprio** com `prosemirror-markdown` (oficial, 1.13.7), em `features/notes/domain/markdown.ts`: um `MarkdownParser` e um `MarkdownSerializer` escritos contra o schema do Tiptap, com testes de round-trip | `tiptap-markdown` (comunidade, 0.9.0) está sem publicação desde 08/09/2025; não quero um 0.x parado no caminho dos meus dados. Os defaults do `prosemirror-markdown` usam nomes de nó `snake_case` (`bullet_list`) e o Tiptap usa `camelCase` (`bulletList`), então os mapas são escritos à mão de qualquer jeito |
 | Riscado no markdown | O tokenizer do `defaultMarkdownParser` do `prosemirror-markdown` (CommonMark, html desligado) ganha a regra `strikethrough`, e o serializer emite `~~` para a mark `strike` | CommonMark só não tem riscado. Reusar o tokenizer evita importar `markdown-it` direto, que não é dependência declarada (a tabela abaixo não o lista) |
 | Markdown fora do conjunto | Vira texto, sem perda de conteúdo, e a forma fica estável a partir do primeiro save: tabela → um parágrafo com as linhas coladas; imagem (regra desligada) → `\![alt](src)`; checklist → lista com `\[ \]`; html → texto literal. Normalizações: `*`/`+` → `-`, `__x__` → `**x**`, setext → `#`, lista frouxa → justa, título de link descartado, heading acima de h3 → h3, parágrafo vazio descartado, listas adjacentes se fundem no reload | Comportamento decidido e coberto por `markdown.spec.ts` (T1), não acidental |
+| Id que não é uuid | `404 NOTE_NOT_FOUND`, não `400`: o repositório responde `null`/`false` sem tocar o Postgres | A coluna `id` é `uuid` e o Postgres rejeita qualquer outra string com um erro (viraria `500`) |
+| Curingas na busca | `%`, `_` e `\` são texto comum: o repositório os escapa antes do `contains` | O `contains` do Prisma vira um `LIKE` **sem** escapar o que o usuário digitou (`%` casava tudo) |
+| Filtro por tag inválida | `?tag=a/b` devolve lista vazia, não `422` | Nenhuma nota pode ter essa tag; uma URL editada à mão não deve quebrar a página |
+| Início do editor | O editor começa do **cache do TanStack Query** (que ele mesmo mantém atualizado ao digitar), nunca do `useLoaderData` do router | O router devolve o dado do loader em cache ao revisitar uma nota; começar dele faria o próximo autosave sobrescrever a edição recente |
+| Aba padrão | `view=active` não aparece na URL | URL limpa; a API já assume `active` |
+| `updatedAt` no `edit` | Só se mexe quando algum valor muda de verdade | Um autosave repetido não reordena a lista |
 | Salvamento | **Autosave** com debounce de 800 ms, mutação otimista no TanStack Query e indicador "Salvando…/Salvo"; o autosave é liberado (flush) ao sair da nota ou desmontar o editor. Sem botão Salvar | Escolha do usuário. Um usuário só = sem edição concorrente, sem conflito a resolver |
 | Criação preguiçosa | "Nova nota" não chama a API: abre um rascunho local e o `POST /notes` acontece no primeiro autosave, quando já existe conteúdo; a URL é substituída pelo id real (`replace`) | Evita nota vazia no banco a cada clique. `POST` com título e corpo vazios responde `422 NOTE_EMPTY` |
 | Tags | Coluna `tags String[]` na nota | Sem tabela nem join; listar as tags existentes é um `distinct` sobre `unnest`. Sem cor nem descrição por tag (fora de escopo) |
@@ -120,7 +126,8 @@ Segunda migration do projeto (`npm run db:migrate -w @septo/api`). Sem `ownerId`
 apps/api/src/modules/notes/
   domain/          note.ts, note.repository.ts (porta), tags.ts (VO), search-text.ts, errors.ts
   application/     create-note, get-note, list-notes, update-note, set-note-pinned, set-note-archived,
-                   delete-note, list-tags — um *.use-case.ts cada
+                   delete-note, list-tags — um *.use-case.ts cada (+ require-note.ts, o "achar ou 404")
+  testing/         fakes.ts (InMemoryNoteRepository)
   infrastructure/  note.prisma-repository.ts, note.mapper.ts
   presentation/    notes.controller.ts, tags.controller.ts, notes.schemas.ts (zod + mappers de resposta)
   notes.module.ts
@@ -132,10 +139,13 @@ apps/web/src/
   features/notes/
     domain/markdown.ts             bridge prosemirror-markdown ↔ schema do Tiptap (puro, testável sem DOM)
     domain/tags.ts                 parse do input de tags (vírgula/Enter) e normalização, espelhando a API
+    domain/remind-at.ts            hora local (datetime-local) ↔ ISO, e "essa data já passou"
+    domain/new-note.ts             o id de rascunho `new` (/notes/new)
     domain/search-params.ts        schema zod de q/tag/view
     domain/autosave.ts             máquina de estado do autosave (idle/dirty/saving/saved) — pura
     components/                    note-list, note-list-item, note-editor, editor-toolbar, tag-input,
-                                   reminder-field, delete-note-dialog, new-note-button
+                                   reminder-field, note-actions, delete-note-dialog, new-note-button,
+                                   local-time
 ```
 
 ## Dependências novas (pedem aprovação)

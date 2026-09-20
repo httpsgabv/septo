@@ -49,6 +49,38 @@ test('typing a new note saves it on its own and it is there after a reload', asy
   await expect(noteList(page)).toContainText('Ideias para o fim de semana');
 });
 
+test('title, body, tags and reminder come back the same after a reload', async ({
+  page,
+  request,
+}) => {
+  const note = await createNote(request, {
+    title: 'Completa',
+    body: 'corpo com **destaque**',
+    tags: ['casa', 'ideias'],
+    remindAt: '2030-01-01T12:00:00.000Z',
+  });
+  await gotoHydrated(page, `/notes/${note.id}`);
+  const snapshot = async () => ({
+    title: await titleField(page).inputValue(),
+    body: await bodyEditor(page).innerText(),
+    bold: await bodyEditor(page).locator('strong').innerText(),
+    tags: await page
+      .getByRole('list', { name: 'Tags da nota' })
+      .getByRole('listitem')
+      .allInnerTexts(),
+    reminder: await reminderField(page).inputValue(),
+  });
+  await expect(bodyEditor(page)).toContainText('corpo com destaque');
+
+  const before = await snapshot();
+  await page.reload();
+  await expect(bodyEditor(page)).toContainText('corpo com destaque');
+
+  expect(await snapshot()).toEqual(before);
+  expect(before).toMatchObject({ title: 'Completa', bold: 'destaque', tags: ['casa', 'ideias'] });
+  expect(before.reminder).toMatch(/^2030-01-01T\d{2}:\d{2}$/);
+});
+
 test('an empty draft never leaves a note behind', async ({ page, request }) => {
   await startNewNote(page);
   await page.waitForTimeout(1_500);

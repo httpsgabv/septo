@@ -45,9 +45,9 @@ T13 ─▶ T14 e2e do fluxo completo ─▶ T15 docs, cobertura e fechamento
 - [x] T1: Dependências do Tiptap + bridge markdown com testes de round-trip ⚠️ risco alto
 
 ### Checkpoint A: o round-trip fecha
-- [ ] Tabela de casos (títulos, ênfases, riscado, código, listas aninhadas, citação, link, hr, quebra de linha, escapes, vazio) volta byte a byte
-- [ ] `lint`, `check-types`, `test` passam
-- [ ] Revisão com você antes de seguir — é aqui que "markdown no banco" se confirma
+- [x] Tabela de casos (títulos, ênfases, riscado, código, listas aninhadas, citação, link, hr, quebra de linha, escapes, vazio) volta byte a byte
+- [x] `lint`, `check-types`, `test` passam
+- [ ] Revisão com você antes de seguir — é aqui que "markdown no banco" se confirma → acontece na revisão do PR
 
 ### Fase 2: API
 - [x] T2: Model `Note` + migration
@@ -58,10 +58,10 @@ T13 ─▶ T14 e2e do fluxo completo ─▶ T15 docs, cobertura e fechamento
 - [x] T7: HTTP: `NotesController`, `TagsController`, schemas zod e `openapi.json`
 
 ### Checkpoint B: API completa
-- [ ] `curl` autenticado: criar → listar → buscar acento-insensível → filtrar por tag → fixar → arquivar → excluir
-- [ ] Sem cookie, toda rota do módulo responde `401`; `POST` vazio responde `422 NOTE_EMPTY`
-- [ ] As dez operações aparecem no Scalar em `/api/docs` e os hooks existem no client gerado
-- [ ] Revisão com você antes de seguir
+- [x] `curl` autenticado: criar → listar → buscar acento-insensível → filtrar por tag → fixar → arquivar → excluir
+- [x] Sem cookie, toda rota do módulo responde `401`; `POST` vazio responde `422 NOTE_EMPTY`
+- [x] As dez operações aparecem no Scalar em `/api/docs` e os hooks existem no client gerado
+- [ ] Revisão com você antes de seguir → acontece na revisão do PR
 
 ### Fase 3: web
 - [x] T8: Rota `/notes` como layout de duas colunas, lista no SSR e filtros na URL
@@ -72,19 +72,19 @@ T13 ─▶ T14 e2e do fluxo completo ─▶ T15 docs, cobertura e fechamento
 - [x] T13: Lembrete: `remindAt` no editor e filtro "Lembretes"
 
 ### Checkpoint C: fluxo completo no navegador
-- [ ] Digitar → "Salvo" → recarregar → conteúdo e formatação idênticos
-- [ ] Buscar, filtrar por tag, fixar, arquivar, excluir e definir lembrete funcionam pela UI
-- [ ] Revisão visual com você (desktop e 375 px), tema claro e escuro
-- [ ] A rota `/notes` não carrega o bundle do editor até abrir uma nota (aba Network)
+- [x] Digitar → "Salvo" → recarregar → conteúdo e formatação idênticos
+- [x] Buscar, filtrar por tag, fixar, arquivar, excluir e definir lembrete funcionam pela UI
+- [ ] Revisão visual com você (desktop e 375 px), tema claro e escuro → acontece na revisão do PR
+- [x] A rota `/notes` não carrega o bundle do editor até abrir uma nota (aba Network)
 
 ### Fase 4: fechamento
 - [x] T14: E2E do fluxo de notas
-- [ ] T15: Cobertura, README, CLAUDE.md, CAPABILITY-MAP e status da spec
+- [x] T15: Cobertura, README, CLAUDE.md, CAPABILITY-MAP e status da spec
 
 ### Checkpoint final
-- [ ] Todos os 11 Success Criteria da spec verificados
-- [ ] `lint`, `check-types`, `test`, `test:e2e` verdes; `openapi.json` commitado e igual ao gerado
-- [ ] Revisão final com você
+- [x] Todos os 11 Success Criteria da spec verificados
+- [x] `lint`, `check-types`, `test`, `test:e2e` verdes; `openapi.json` commitado e igual ao gerado
+- [ ] Revisão final com você → acontece na revisão do PR
 
 ## Paralelização
 
@@ -111,3 +111,19 @@ T13 ─▶ T14 e2e do fluxo completo ─▶ T15 docs, cobertura e fechamento
 
 - **Meta de cobertura ≥ 90%**: o `@vitest/coverage-v8` já está na API (adicionado no identity), então `npm run coverage -w @septo/api` mede `domain/` e `application/` do notes sem dependência nova. No **web** não há coverage configurado; a T15 vai medir só a API e tratar a meta do web (o bridge e as funções puras) como diretriz de TDD, sem número medido — a menos que você queira configurar coverage no web também.
 - **`GET /tags` ignora notas arquivadas** (decisão da spec). Se uma tag só existir em notas arquivadas, ela desaparece do filtro; desarquivar a nota a traz de volta. Comportamento intencional, mas é o tipo de coisa que surpreende depois — está coberto por teste na T5.
+
+## Verificação dos Success Criteria (2026-09-20)
+
+| # | Critério | Como foi verificado |
+|---|---|---|
+| 1 | `GET /api/notes`: `401` sem cookie, `200 []` com sessão em banco limpo | `apps/api/test/notes.spec.ts` (autenticação das dez rotas; lista vazia) |
+| 2 | Digitar cria no primeiro autosave e mostra "Salvo" em < 2 s; recarregar traz título, corpo, tags e lembrete iguais | Medido: ~1,4 s do último toque ao "Salvo" (script no navegador); e2e "typing a new note…" e "title, body, tags and reminder come back the same after a reload" |
+| 3 | `## `, `- `, `**`, `~~`, `> ` e link voltam idênticos após reload; `body` legível em markdown | e2e "formatting typed with markdown shortcuts…" compara o HTML antes/depois e confere o markdown guardado; `markdown.spec.ts` (round-trip) |
+| 4 | `POST` vazio → `422 NOTE_EMPTY`; "Nova nota" e sair não deixa nota | `notes.spec.ts` (API) e e2e "an empty draft never leaves a note behind" |
+| 5 | "anotacao" acha "Anotação"; `?q=` sobrevive ao reload, já no SSR | e2e "search finds a note…" e "the list is rendered on the server, already filtered" |
+| 6 | `Trabalho `, `  trabalho` e `trabalho` são a mesma tag; `GET /api/tags` lista cada uma uma vez | `tags.spec.ts` (domínio, API e web) e `notes.spec.ts` |
+| 7 | Fixar leva ao topo sem mudar "editada em"; arquivar/desarquivar | `notes.spec.ts` (`updatedAt` igual após pin/archive) e e2e "pinning…" / "archiving…" |
+| 8 | Lembrete aparece em "Lembretes" por data; `null` remove; `reminders` lê sem migration | `notes.spec.ts` (ordem, `remindAt: null`), e2e "a reminder puts the note under Lembretes…" |
+| 9 | Excluir pede confirmação; depois, `GET` responde `404` | e2e "deleting asks first…" |
+| 10 | Desktop e 375 px sem scroll horizontal; `/notes` não carrega o editor | e2e mobile (375 px) e "/notes does not download the editor bundle…"; conferido também no **build de produção**: o Tiptap está só em `note-editor-*.js` (175 KB gz), referenciado por `import()` dinâmico da rota `$noteId`. Tema escuro conferido nas duas larguras |
+| 11 | `lint`, `check-types`, `test`, `test:e2e` verdes; `openapi.json`, README, CLAUDE.md e mapa atualizados | 576 testes unit/integração (API 358, web 218), 48 e2e (3 execuções seguidas sem flake); clone limpo: `npm ci`, `codegen` sem diff, lint, tipos e testes; cobertura de `domain`/`application` em 100% de linhas |
