@@ -332,7 +332,7 @@
 **Verificação:**
 - [x] `npm run lint`, `npm run check-types`, `npm run test`, `npm run test:e2e`
 - [x] Clone limpo: `npm install && cp .env.example .env && docker compose up -d && npm run db:migrate -w @septo/api && npm run user:set -w @septo/api -- <user> && npm run dev` chega em `/notes` funcionando
-- [ ] PR aberto referenciando a spec
+- [x] PR aberto referenciando a spec (httpsgabv/septo#3)
 
 **Dependências:** T14
 **Arquivos:** `README.md`, `CLAUDE.md`, `CAPABILITY-MAP.md`, `specs/SPEC-notes.md`, `tasks/notes/{plan,todo}.md`
