@@ -85,6 +85,18 @@ describe('LoginUseCase', () => {
     expect(hasher.verified).toEqual([]);
   });
 
+  it('counts the attempt before the slow verification, so parallel guesses cannot exceed the limit', async () => {
+    const results = await Promise.allSettled(
+      Array.from({ length: 10 }, () => login('wrong-password-000')),
+    );
+
+    const blocked = results.filter(
+      (r) => r.status === 'rejected' && r.reason instanceof TooManyAttemptsError,
+    );
+    expect(hasher.verified).toHaveLength(5);
+    expect(blocked).toHaveLength(5);
+  });
+
   it('counts failures per IP', async () => {
     await failTimes(5);
 

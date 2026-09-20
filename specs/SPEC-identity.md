@@ -39,7 +39,7 @@ Cadastro de usuário, multiusuário, recuperação de senha por e-mail (o reset 
 | Logout | Apaga o cookie. "Sair de todos" incrementa `tokenVersion` e também apaga o cookie atual | — |
 | Troca de senha | Exige a senha atual; incrementa `tokenVersion` e reemite o cookie da sessão atual | Derruba os outros dispositivos e mantém este |
 | Senha | 12 a 128 caracteres, sem outras regras de composição | NIST 800-63B |
-| Brute force | Por IP: 5 falhas em 15 min → `429 TOO_MANY_ATTEMPTS` com `Retry-After`. Login bem-sucedido zera o contador. Contador em memória | Uma instância só; reiniciar a API zera, o que é aceitável |
+| Brute force | Por cliente (IPv4, ou prefixo /64 no IPv6): 5 falhas em 15 min → `429 TOO_MANY_ATTEMPTS` com `Retry-After`. A tentativa é contada antes da verificação da senha e o login bem-sucedido zera o contador, então tentativas paralelas não passam do limite. Contador em memória | Uma instância só; reiniciar a API zera, o que é aceitável. Um cliente IPv6 controla um /64 inteiro (revisão de segurança, 2026-09-20) |
 | Enumeração | Username inexistente também roda uma verificação argon2 contra um hash fixo; a resposta é sempre `401 INVALID_CREDENTIALS` | Mesmo tempo de resposta e mesma mensagem nos dois casos |
 | IP do cliente | `trust proxy` = 1 no Express (em produção o Caddy é o único salto) | `req.ip` correto para o rate limit e o último login |
 | CSRF | `SameSite=Lax` + mesma origem + corpo JSON obrigatório nas mutações | Lax bloqueia POST/PATCH/PUT/DELETE vindos de outro site; não precisa de token CSRF |

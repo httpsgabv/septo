@@ -8,7 +8,7 @@ describe('InMemoryLoginAttempts', () => {
   let attempts: InMemoryLoginAttempts;
   let now: number;
   const fail = (ip: string, times: number) => {
-    for (let i = 0; i < times; i++) attempts.recordFailure(ip);
+    for (let i = 0; i < times; i++) attempts.recordAttempt(ip);
   };
 
   beforeEach(() => {
@@ -81,5 +81,45 @@ describe('InMemoryLoginAttempts', () => {
     fail('3.3.3.3', 1);
 
     expect(attempts.size).toBe(1);
+  });
+
+  describe('client key', () => {
+    it('groups IPv6 addresses of the same /64, which one client controls entirely', () => {
+      fail('2001:db8:1:2::1', 3);
+      fail('2001:db8:1:2:ffff:ffff:ffff:9', 2);
+
+      expect(attempts.retryAfterSeconds('2001:db8:1:2:abcd::7')).toBeGreaterThan(0);
+    });
+
+    it('treats different /64 prefixes as different clients', () => {
+      fail('2001:db8:1:2::1', 5);
+
+      expect(attempts.retryAfterSeconds('2001:db8:1:3::1')).toBe(0);
+    });
+
+    it('ignores case and leading zeros in IPv6', () => {
+      fail('2001:DB8:0001:0002::1', 5);
+
+      expect(attempts.retryAfterSeconds('2001:db8:1:2::9')).toBeGreaterThan(0);
+    });
+
+    it('treats an IPv4-mapped IPv6 address as the IPv4 address', () => {
+      fail('::ffff:203.0.113.7', 5);
+
+      expect(attempts.retryAfterSeconds('203.0.113.7')).toBeGreaterThan(0);
+      expect(attempts.retryAfterSeconds('203.0.113.8')).toBe(0);
+    });
+
+    it('keeps IPv4 addresses separate', () => {
+      fail('203.0.113.7', 5);
+
+      expect(attempts.retryAfterSeconds('203.0.113.8')).toBe(0);
+    });
+
+    it('does not group anything that is not an IP under one bucket', () => {
+      fail('unknown', 5);
+
+      expect(attempts.retryAfterSeconds('203.0.113.7')).toBe(0);
+    });
   });
 });

@@ -33,15 +33,16 @@ export class LoginUseCase {
     const retryAfterSeconds = this.attempts.retryAfterSeconds(input.ip);
     if (retryAfterSeconds > 0) throw new TooManyAttemptsError(retryAfterSeconds);
 
+    // Counted up front, in the same tick as the check above: N parallel guesses can then run at most
+    // `limit` verifications. A correct password resets the counter below.
+    this.attempts.recordAttempt(input.ip);
+
     const user = await this.users.findByUsername(input.username);
     const passwordMatches = await this.hasher.verify(
       input.password,
       user?.passwordHash ?? TIMING_DECOY_HASH,
     );
-    if (!user || !passwordMatches) {
-      this.attempts.recordFailure(input.ip);
-      throw new InvalidCredentialsError();
-    }
+    if (!user || !passwordMatches) throw new InvalidCredentialsError();
 
     this.attempts.reset(input.ip);
     user.recordLogin(input.ip, this.now());
