@@ -23,3 +23,11 @@ export class InvalidCurrentPasswordError extends DomainError {
     super('Current password is incorrect');
   }
 }
+
+export class InvalidUsernameError extends DomainError {
+  readonly code = 'INVALID_USERNAME';
+  readonly kind = 'invalid';
+  constructor() {
+    super('Username must have 1 to 50 characters: letters, digits, dot, dash or underscore');
+  }
+}

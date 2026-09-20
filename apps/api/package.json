@@ -10,6 +10,7 @@
     "dev": "nest start --watch",
     "build": "nest build",
     "start": "node dist/main.js",
+    "user:set": "nest build && node dist/cli/set-user.js",
     "check-types": "tsc --noEmit",
     "test": "vitest run",
     "openapi": "node dist/generate-openapi.js",

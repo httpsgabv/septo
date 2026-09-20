@@ -45,6 +45,16 @@ describe('User', () => {
     expect(user.tokenVersion).toBe(0);
   });
 
+  it('renames without touching the display name or the sessions', () => {
+    const user = newUser();
+
+    user.rename('gabriel.b');
+
+    expect(user.username).toBe('gabriel.b');
+    expect(user.displayName).toBe('gabriel');
+    expect(user.tokenVersion).toBe(0);
+  });
+
   describe('updateProfile', () => {
     it('sets the display name', () => {
       const user = newUser();

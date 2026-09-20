@@ -72,18 +72,18 @@
 
 ### T4: `SetUserUseCase` + CLI `user:set`
 
-**Descrição:** Caso de uso que cria o usuário único ou, se já existe, troca username e senha e incrementa `tokenVersion` (derruba todas as sessões). O CLI (`src/cli/set-user.ts`) pede a senha duas vezes sem eco em TTY, ou lê de `stdin` quando não é TTY, valida com a política de senha e chama o caso de uso via `createApplicationContext`.
+**Descrição:** Caso de uso que cria o usuário único ou, se já existe, troca username e senha e incrementa `tokenVersion` (derruba todas as sessões). O CLI (`src/cli/set-user.ts`) pede a senha duas vezes sem eco em TTY, ou lê a primeira linha de `stdin` quando não é TTY (sem confirmação), valida com a política de senha e chama o caso de uso via `createApplicationContext`.
 
 **Aceite:**
-- [ ] `npm run user:set -w @septo/api -- gabriel` cria o usuário; segunda execução com outra senha atualiza o mesmo registro (continua 1 linha em `users`) e sobe `tokenVersion`
-- [ ] Senhas diferentes nas duas digitações, ou fora de 12–128 caracteres, abortam com mensagem clara e exit code ≠ 0, sem tocar no banco
-- [ ] Senha nunca aparece em log nem em saída; `displayName` inicial = username na criação (no reset, o `displayName` editado é mantido)
-- [ ] O build gera `dist/cli/set-user.js`, o caminho usado no `docker exec` de produção
-- [ ] O script `user:set` faz `nest build` e roda `node dist/cli/set-user.js` (o `AppModule` usa decorators, que o type stripping do Node não executa, então não dá para rodar o `.ts` direto)
+- [x] `npm run user:set -w @septo/api -- gabriel` cria o usuário; segunda execução com outra senha atualiza o mesmo registro (continua 1 linha em `users`) e sobe `tokenVersion`
+- [x] Senhas diferentes nas duas digitações (TTY), ou fora de 12–128 caracteres, ou username fora de `[A-Za-z0-9._-]{1,50}`, abortam com mensagem clara e exit code ≠ 0, sem tocar no banco
+- [x] Senha nunca aparece em log nem em saída; `displayName` inicial = username na criação (no reset, o `displayName` editado é mantido)
+- [x] O build gera `dist/cli/set-user.js`, o caminho usado no `docker exec` de produção
+- [x] O script `user:set` faz `nest build` e roda `node dist/cli/set-user.js` (o `AppModule` usa decorators, que o type stripping do Node não executa, então não dá para rodar o `.ts` direto)
 
 **Verificação:**
-- [ ] `npm run test -w @septo/api` (unit do caso de uso com fakes; integração: executa o CLI com `stdin` e confere criar → resetar → hash trocado → `tokenVersion` incrementado)
-- [ ] Manual: `printf 'senha-de-teste-123\nsenha-de-teste-123\n' | npm run user:set -w @septo/api -- gabriel` e conferir a linha no Postgres
+- [x] `npm run test -w @septo/api` (unit do caso de uso com fakes; integração: executa o CLI com `stdin` e confere criar → resetar → hash trocado → `tokenVersion` incrementado)
+- [x] Manual: `printf 'senha-de-teste-123\n' | npm run user:set -w @septo/api -- gabriel` e conferir a linha no Postgres
 
 **Dependências:** T3
 **Arquivos:** `apps/api/src/modules/identity/application/set-user.use-case.ts` (+ spec), `apps/api/src/cli/set-user.ts`, `apps/api/package.json` (script `user:set`), `apps/api/test/set-user.cli.spec.ts`

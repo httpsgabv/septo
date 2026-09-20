@@ -55,6 +55,10 @@ export class User {
     return this.props.lastLoginIp;
   }
 
+  rename(username: string) {
+    this.props.username = username;
+  }
+
   /** Receives an already hashed password; drops every other session. */
   changePassword(passwordHash: string) {
     this.props.passwordHash = passwordHash;
