@@ -56,7 +56,7 @@ T18 ─▶ T19 docs, env, Docker e fechamento
 - [x] T5: Token service (JWT), helper do cookie de sessão e `DomainError` `unauthenticated` / `rate_limited`
 - [x] T6: `AuthGuard` global, `@Public()`, `@CurrentUser()` e `GET /api/me` (com renovação deslizante)
 - [x] T7: Limite de tentativas de login (porta + implementação em memória)
-- [ ] T8: `POST /api/auth/login` e `POST /api/auth/logout`
+- [x] T8: `POST /api/auth/login` e `POST /api/auth/logout`
 
 ### Checkpoint B: API autenticada ponta a ponta
 - [ ] `curl`: login → cookie → `GET /api/me` 200; sem cookie 401; 6ª falha 429 com `Retry-After`

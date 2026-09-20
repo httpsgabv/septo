@@ -165,17 +165,17 @@
 **Descrição:** `LoginUseCase`: checa o limite por IP; busca o usuário; verifica a senha (para username inexistente roda o argon2 contra um hash fixo, mesmo tempo e mesma resposta); em sucesso zera o contador, registra `lastLoginAt`/`lastLoginIp` e emite o token. O controller escreve o cookie e devolve `Me`. Logout apaga o cookie (`204`). Ambos `@Public()` com a justificativa em comentário. `trust proxy = 1` no Express via `configureApp`.
 
 **Aceite:**
-- [ ] Login correto: `200 Me` + `Set-Cookie: septo_session=…; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=2592000`; `lastLoginAt`/`lastLoginIp` gravados
-- [ ] Senha errada e usuário inexistente: `401 INVALID_CREDENTIALS`, corpo e mensagem idênticos
-- [ ] 6ª tentativa errada do mesmo IP em 15 min: `429 TOO_MANY_ATTEMPTS` + `Retry-After`; após login bem-sucedido, o contador zera
-- [ ] Com `X-Forwarded-For` e `trust proxy = 1`, o IP do cliente (não o do proxy) vai para o limite e para `lastLoginIp`
-- [ ] Body sem `username`/`password` ou fora do JSON → `400 VALIDATION_ERROR`; logout sem cookie também responde `204`
-- [ ] Senha e hash nunca aparecem em log nem em resposta de erro
+- [x] Login correto: `200 Me` + `Set-Cookie: septo_session=…; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=2592000`; `lastLoginAt`/`lastLoginIp` gravados
+- [x] Senha errada e usuário inexistente: `401 INVALID_CREDENTIALS`, corpo e mensagem idênticos
+- [x] 6ª tentativa errada do mesmo IP em 15 min: `429 TOO_MANY_ATTEMPTS` + `Retry-After`; após login bem-sucedido, o contador zera
+- [x] Com `X-Forwarded-For` e `trust proxy = 1`, o IP do cliente (não o do proxy) vai para o limite e para `lastLoginIp`
+- [x] Body sem `username`/`password` ou fora do JSON → `400 VALIDATION_ERROR`; logout sem cookie também responde `204`
+- [x] Senha e hash nunca aparecem em log nem em resposta de erro
 
 **Verificação:**
-- [ ] `npm run test -w @septo/api` (unit do `LoginUseCase` com fakes, incluindo a verificação argon2 contra hash fixo quando o usuário não existe; integração: fluxo completo, flags do cookie, 401 idêntico, 429, `X-Forwarded-For`)
-- [ ] `npm run codegen` (`authLogin`, `authLogout`); teste de contrato verde
-- [ ] Manual: `curl -i -X POST localhost:3333/api/auth/login -H 'content-type: application/json' -d '{...}'` e depois `curl -b` em `/api/me`
+- [x] `npm run test -w @septo/api` (unit do `LoginUseCase` com fakes, incluindo a verificação argon2 contra hash fixo quando o usuário não existe; integração: fluxo completo, flags do cookie, 401 idêntico, 429, `X-Forwarded-For`)
+- [x] `npm run codegen` (`authLogin`, `authLogout`); teste de contrato verde
+- [x] Manual: `curl -i -X POST localhost:3333/api/auth/login -H 'content-type: application/json' -d '{...}'` e depois `curl -b` em `/api/me`
 
 **Dependências:** T4, T6, T7
 **Arquivos:** `apps/api/src/modules/identity/application/login.use-case.ts` (+ spec), `apps/api/src/modules/identity/presentation/{auth.controller,auth.schemas}.ts`, `apps/api/src/app.ts` (`trust proxy`), `apps/api/test/auth-login.spec.ts`, `apps/api/openapi.json`

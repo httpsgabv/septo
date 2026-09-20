@@ -25,10 +25,14 @@ export class InMemoryUserRepository extends UserRepository {
 
 /** Deterministic and instant; argon2 has its own spec. */
 export class FakePasswordHasher extends PasswordHasher {
+  /** Every hash `verify` was asked to check, to prove the work is done even for unknown users. */
+  readonly verified: string[] = [];
+
   hash(password: string) {
     return Promise.resolve(`hashed:${password}`);
   }
   verify(password: string, hash: string) {
+    this.verified.push(hash);
     return Promise.resolve(hash === `hashed:${password}`);
   }
 }
