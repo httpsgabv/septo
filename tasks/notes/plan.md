@@ -42,7 +42,7 @@ T13 ─▶ T14 e2e do fluxo completo ─▶ T15 docs, cobertura e fechamento
 ## Task List
 
 ### Fase 1: risco — ponte markdown (web, isolado)
-- [ ] T1: Dependências do Tiptap + bridge markdown com testes de round-trip ⚠️ risco alto
+- [x] T1: Dependências do Tiptap + bridge markdown com testes de round-trip ⚠️ risco alto
 
 ### Checkpoint A: o round-trip fecha
 - [ ] Tabela de casos (títulos, ênfases, riscado, código, listas aninhadas, citação, link, hr, quebra de linha, escapes, vazio) volta byte a byte

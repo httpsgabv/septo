@@ -14,19 +14,19 @@
 
 ### T1: Dependências do Tiptap + bridge markdown com testes de round-trip ⚠️ risco alto
 
-**Descrição:** Instalar `@tiptap/react`, `@tiptap/core`, `@tiptap/pm`, `@tiptap/starter-kit` (3.31.3) e `prosemirror-markdown` (1.13.7) no web, e escrever `features/notes/domain/markdown.ts`: `parseMarkdown(md): JSONContent` e `serializeMarkdown(doc): string`, construídos sobre `getSchema(noteExtensions)` do Tiptap. Os mapas de token e de serialização são escritos à mão contra os nomes de nó do Tiptap (`bulletList`, `orderedList`, `listItem`, `codeBlock`, `horizontalRule`, `hardBreak`), **não** copiados dos defaults `snake_case` do `prosemirror-markdown`. O `markdown-it` é instanciado no preset `default` para habilitar `~~riscado~~`, e o serializer emite `~~` para a mark `strike`. `noteExtensions` (o StarterKit configurado com o conjunto aprovado: h1–h3, bold, italic, strike, code, codeBlock, bulletList, orderedList, listItem, blockquote, link, horizontalRule, hardBreak, paragraph, text) fica neste arquivo e é a fonte única usada depois pelo editor. **Sem UI nesta tarefa.**
+**Descrição:** Instalar `@tiptap/react`, `@tiptap/core`, `@tiptap/pm`, `@tiptap/starter-kit` (3.31.3) e `prosemirror-markdown` (1.13.7) no web, e escrever `features/notes/domain/markdown.ts`: `parseMarkdown(md): JSONContent` e `serializeMarkdown(doc): string`, construídos sobre `getSchema(noteExtensions)` do Tiptap. Os mapas de token e de serialização são escritos à mão contra os nomes de nó do Tiptap (`bulletList`, `orderedList`, `listItem`, `codeBlock`, `horizontalRule`, `hardBreak`), **não** copiados dos defaults `snake_case` do `prosemirror-markdown`. O tokenizer do `defaultMarkdownParser` (CommonMark) ganha a regra `strikethrough` para habilitar `~~riscado~~` (sem importar `markdown-it` direto, que não é dependência declarada), e o serializer emite `~~` para a mark `strike`. `noteExtensions` (o StarterKit configurado com o conjunto aprovado: h1–h3, bold, italic, strike, code, codeBlock, bulletList, orderedList, listItem, blockquote, link, horizontalRule, hardBreak, paragraph, text) fica neste arquivo e é a fonte única usada depois pelo editor. **Sem UI nesta tarefa.**
 
 **Aceite:**
-- [ ] `parseMarkdown` e `serializeMarkdown` exportados de `features/notes/domain/markdown.ts`, puros, sem import de React
-- [ ] Round-trip fecha (`serialize(parse(md)) === md`) para a tabela de casos: h1/h2/h3, negrito, itálico, riscado, código inline, bloco de código, lista com marcador, lista numerada, lista aninhada de dois níveis, citação, link, linha horizontal, quebra de linha, parágrafos múltiplos, texto com `*`/`_`/`#` que precisam de escape, e documento vazio
-- [ ] Round-trip inverso (`parse(serialize(doc))`) preserva o documento nos mesmos casos
-- [ ] Markdown com construção fora do conjunto (tabela GFM, imagem, `- [ ]`) tem comportamento **decidido e testado** — preservar como texto ou descartar — documentado no próprio teste
-- [ ] `noteExtensions` exportado; nenhum nó do schema fica sem regra no serializer (teste percorre `schema.nodes` e `schema.marks` e falha se faltar mapeamento)
+- [x] `parseMarkdown` e `serializeMarkdown` exportados de `features/notes/domain/markdown.ts`, puros, sem import de React
+- [x] Round-trip fecha (`serialize(parse(md)) === md`) para a tabela de casos: h1/h2/h3, negrito, itálico, riscado, código inline, bloco de código, lista com marcador, lista numerada, lista aninhada de dois níveis, citação, link, linha horizontal, quebra de linha, parágrafos múltiplos, texto com `*`/`_`/`#` que precisam de escape, e documento vazio
+- [x] Round-trip inverso (`parse(serialize(doc))`) preserva o documento nos mesmos casos
+- [x] Markdown com construção fora do conjunto (tabela GFM, imagem, `- [x]`) tem comportamento **decidido e testado** — preservar como texto ou descartar — documentado no próprio teste
+- [x] `noteExtensions` exportado; nenhum nó do schema fica sem regra no serializer (teste percorre `schema.nodes` e `schema.marks` e falha se faltar mapeamento)
 
 **Verificação:**
-- [ ] `npm run test -w @septo/web` (specs escritos antes da implementação)
-- [ ] `npm run check-types` e `npm run lint`
-- [ ] Se o import do StarterKit quebrar no ambiente `node` do Vitest: tentar `getSchema()` sem tocar na view; se não resolver, **parar e pedir aprovação** para a devDependency `jsdom` (fora da tabela da spec)
+- [x] `npm run test -w @septo/web` (specs escritos antes da implementação)
+- [x] `npm run check-types` e `npm run lint`
+- [x] Se o import do StarterKit quebrar no ambiente `node` do Vitest: tentar `getSchema()` sem tocar na view; se não resolver, **parar e pedir aprovação** para a devDependency `jsdom` (fora da tabela da spec)
 
 **Dependências:** nenhuma
 **Arquivos:** `apps/web/src/features/notes/domain/markdown.ts`, `apps/web/src/features/notes/domain/markdown.spec.ts`, `apps/web/package.json`, `package-lock.json`
