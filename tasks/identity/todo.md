@@ -147,12 +147,12 @@
 **Descrição:** `LoginAttempts` (porta) e `InMemoryLoginAttempts`: por IP, 5 falhas em 15 min bloqueiam; login bem-sucedido zera o contador; a implementação diz quantos segundos faltam para liberar. Relógio injetável. Marcado com `// ponytail:` (em memória, zera ao reiniciar, não cobre ataque distribuído).
 
 **Aceite:**
-- [ ] A 5ª falha ainda permite tentar; a 6ª tentativa (após 5 falhas) já é bloqueada e informa `retryAfterSeconds` > 0
-- [ ] Falhas antigas (> 15 min) saem da janela; sucesso zera; IPs diferentes têm contadores independentes
-- [ ] Sem crescimento ilimitado: entradas expiradas são descartadas
+- [x] A 5ª falha ainda permite tentar; a 6ª tentativa (após 5 falhas) já é bloqueada e informa `retryAfterSeconds` > 0
+- [x] Falhas antigas (> 15 min) saem da janela; sucesso zera; IPs diferentes têm contadores independentes
+- [x] Sem crescimento ilimitado: entradas expiradas são descartadas
 
 **Verificação:**
-- [ ] `npm run test -w @septo/api` (unit com relógio falso: limite, janela deslizante, reset, IPs independentes, limpeza)
+- [x] `npm run test -w @septo/api` (unit com relógio falso: limite, janela deslizante, reset, IPs independentes, limpeza)
 
 **Dependências:** T2
 **Arquivos:** `apps/api/src/modules/identity/infrastructure/in-memory-login-attempts.ts` (+ spec)
