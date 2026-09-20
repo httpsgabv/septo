@@ -64,7 +64,7 @@ T18 ─▶ T19 docs, env, Docker e fechamento
 - [ ] Revisão com você antes de seguir
 
 ### Fase 3: perfil e revogação (API)
-- [ ] T9: `PATCH /api/me`
+- [x] T9: `PATCH /api/me`
 - [ ] T10: `PUT /api/me/password`
 - [ ] T11: `DELETE /api/me/sessions`
 

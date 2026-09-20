@@ -1,18 +1,38 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Patch } from '@nestjs/common';
 import { errorResponse } from '../../../shared/http/error-response.schema.js';
-import { ZodResponse } from '../../../shared/http/zod.decorators.js';
+import { ZodBody, ZodResponse } from '../../../shared/http/zod.decorators.js';
 import { GetMeUseCase } from '../application/get-me.use-case.js';
+import { UpdateProfileUseCase } from '../application/update-profile.use-case.js';
 import { type AuthenticatedUser, CurrentUser } from './current-user.decorator.js';
-import { type MeResponse, meResponse, toMeResponse } from './me.schemas.js';
+import {
+  type MeResponse,
+  meResponse,
+  toMeResponse,
+  type UpdateMeRequest,
+  updateMeRequest,
+} from './me.schemas.js';
 
 @Controller('me')
 export class MeController {
-  constructor(private readonly getMe: GetMeUseCase) {}
+  constructor(
+    private readonly getMe: GetMeUseCase,
+    private readonly updateProfile: UpdateProfileUseCase,
+  ) {}
 
   @Get()
   @ZodResponse(200, meResponse)
   @ZodResponse(401, errorResponse)
   async get(@CurrentUser() current: AuthenticatedUser): Promise<MeResponse> {
     return toMeResponse(await this.getMe.execute(current.id));
+  }
+
+  @Patch()
+  @ZodResponse(200, meResponse)
+  @ZodResponse(401, errorResponse)
+  async update(
+    @CurrentUser() current: AuthenticatedUser,
+    @ZodBody(updateMeRequest) body: UpdateMeRequest,
+  ): Promise<MeResponse> {
+    return toMeResponse(await this.updateProfile.execute({ userId: current.id, ...body }));
   }
 }

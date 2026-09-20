@@ -4,6 +4,7 @@ import { AuthenticateUseCase } from './application/authenticate.use-case.js';
 import { GetMeUseCase } from './application/get-me.use-case.js';
 import { LoginUseCase } from './application/login.use-case.js';
 import { SetUserUseCase } from './application/set-user.use-case.js';
+import { UpdateProfileUseCase } from './application/update-profile.use-case.js';
 import { LoginAttempts } from './domain/login-attempts.js';
 import { PasswordHasher } from './domain/password-hasher.js';
 import { TokenService } from './domain/token-service.js';
@@ -23,6 +24,7 @@ import { MeController } from './presentation/me.controller.js';
     AuthenticateUseCase,
     GetMeUseCase,
     LoginUseCase,
+    UpdateProfileUseCase,
     { provide: UserRepository, useClass: PrismaUserRepository },
     { provide: PasswordHasher, useClass: Argon2PasswordHasher },
     { provide: TokenService, useClass: JoseTokenService },

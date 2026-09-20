@@ -199,13 +199,13 @@
 **Descrição:** `UpdateProfileUseCase` altera o `displayName` do usuário logado (1–50 caracteres, sem espaços nas pontas; a validação de tamanho no schema zod e a regra no domínio).
 
 **Aceite:**
-- [ ] `200 Me` com o nome novo; nome vazio, só espaços ou > 50 → `400 VALIDATION_ERROR`; sem sessão → `401`
-- [ ] Espaços nas pontas são rejeitados (não "consertados" em silêncio), conforme a spec
-- [ ] Outros campos do corpo (`username`, `tokenVersion`) são ignorados ou rejeitados, nunca gravados
+- [x] `200 Me` com o nome novo; nome vazio, só espaços ou > 50 → `400 VALIDATION_ERROR`; sem sessão → `401`
+- [x] Espaços nas pontas são rejeitados (não "consertados" em silêncio), conforme a spec
+- [x] Outros campos do corpo (`username`, `tokenVersion`) são ignorados ou rejeitados, nunca gravados
 
 **Verificação:**
-- [ ] `npm run test -w @septo/api` (unit com fakes; integração: sucesso, inválido, sem sessão)
-- [ ] `npm run codegen` (`meUpdate`); teste de contrato verde
+- [x] `npm run test -w @septo/api` (unit com fakes; integração: sucesso, inválido, sem sessão)
+- [x] `npm run codegen` (`meUpdate`); teste de contrato verde
 
 **Dependências:** T6
 **Arquivos:** `apps/api/src/modules/identity/application/update-profile.use-case.ts` (+ spec), `apps/api/src/modules/identity/presentation/{me.controller,me.schemas}.ts`, `apps/api/test/me-profile.spec.ts`, `apps/api/openapi.json`

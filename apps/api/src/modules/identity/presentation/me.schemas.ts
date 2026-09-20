@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import type { User } from '../domain/user.js';
+import { DISPLAY_NAME_MAX_LENGTH, type User } from '../domain/user.js';
 
 export const meResponse = z
   .object({
@@ -22,3 +22,15 @@ export function toMeResponse(user: User): MeResponse {
     lastLoginIp: user.lastLoginIp,
   };
 }
+
+export const updateMeRequest = z
+  .object({
+    displayName: z
+      .string()
+      .min(1)
+      .max(DISPLAY_NAME_MAX_LENGTH)
+      // No leading or trailing whitespace: a single non-space char, or non-space at both ends.
+      .regex(/^(?:\S|\S[\s\S]*\S)$/),
+  })
+  .meta({ id: 'UpdateMeRequest' });
+export type UpdateMeRequest = z.infer<typeof updateMeRequest>;
