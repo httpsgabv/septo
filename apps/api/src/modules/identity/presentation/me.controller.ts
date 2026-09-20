@@ -1,9 +1,10 @@
-import { Controller, Get, HttpCode, Patch, Put, Res } from '@nestjs/common';
+import { Controller, Delete, Get, HttpCode, Patch, Put, Res } from '@nestjs/common';
 import type { Response } from 'express';
 import { errorResponse } from '../../../shared/http/error-response.schema.js';
 import { ZodBody, ZodResponse } from '../../../shared/http/zod.decorators.js';
 import { ChangePasswordUseCase } from '../application/change-password.use-case.js';
 import { GetMeUseCase } from '../application/get-me.use-case.js';
+import { RevokeSessionsUseCase } from '../application/revoke-sessions.use-case.js';
 import { UpdateProfileUseCase } from '../application/update-profile.use-case.js';
 import { type AuthenticatedUser, CurrentUser } from './current-user.decorator.js';
 import {
@@ -15,7 +16,7 @@ import {
   type UpdateMeRequest,
   updateMeRequest,
 } from './me.schemas.js';
-import { setSessionCookie } from './session-cookie.js';
+import { clearSessionCookie, setSessionCookie } from './session-cookie.js';
 
 @Controller('me')
 export class MeController {
@@ -23,6 +24,7 @@ export class MeController {
     private readonly getMe: GetMeUseCase,
     private readonly updateProfile: UpdateProfileUseCase,
     private readonly changePasswordUseCase: ChangePasswordUseCase,
+    private readonly revokeSessionsUseCase: RevokeSessionsUseCase,
   ) {}
 
   @Get()
@@ -55,5 +57,18 @@ export class MeController {
     const { token } = await this.changePasswordUseCase.execute({ userId: current.id, ...body });
     // Reissued for the new tokenVersion: this device stays signed in, the others are dropped.
     setSessionCookie(res, token);
+  }
+
+  @Delete('sessions')
+  @HttpCode(204)
+  @ZodResponse(204)
+  @ZodResponse(401, errorResponse)
+  async revokeSessions(
+    @CurrentUser() current: AuthenticatedUser,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<void> {
+    await this.revokeSessionsUseCase.execute(current.id);
+    // "Sign out everywhere" includes this browser.
+    clearSessionCookie(res);
   }
 }

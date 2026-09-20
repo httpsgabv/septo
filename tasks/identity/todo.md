@@ -238,12 +238,12 @@
 **Descrição:** `RevokeSessionsUseCase` incrementa `tokenVersion`; o controller responde `204` e expira o cookie atual ("Sair de todos" também desloga este navegador).
 
 **Aceite:**
-- [ ] `204` + cookie expirado; todos os tokens emitidos antes respondem `401`; um novo login depois funciona
-- [ ] Sem sessão → `401`
+- [x] `204` + cookie expirado; todos os tokens emitidos antes respondem `401`; um novo login depois funciona
+- [x] Sem sessão → `401`
 
 **Verificação:**
-- [ ] `npm run test -w @septo/api` (unit com fakes; integração com dois tokens)
-- [ ] `npm run codegen` (`meRevokeSessions`); teste de contrato verde
+- [x] `npm run test -w @septo/api` (unit com fakes; integração com dois tokens)
+- [x] `npm run codegen` (`meRevokeSessions`); teste de contrato verde
 
 **Dependências:** T6
 **Arquivos:** `apps/api/src/modules/identity/application/revoke-sessions.use-case.ts` (+ spec), `apps/api/src/modules/identity/presentation/me.controller.ts`, `apps/api/test/me-sessions.spec.ts`, `apps/api/openapi.json`

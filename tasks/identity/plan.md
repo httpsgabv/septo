@@ -66,7 +66,7 @@ T18 ─▶ T19 docs, env, Docker e fechamento
 ### Fase 3: perfil e revogação (API)
 - [x] T9: `PATCH /api/me`
 - [x] T10: `PUT /api/me/password`
-- [ ] T11: `DELETE /api/me/sessions`
+- [x] T11: `DELETE /api/me/sessions`
 
 ### Fase 4: web
 - [ ] T12: Repassar `Set-Cookie` da API no SSR e validador de `?redirect=`
