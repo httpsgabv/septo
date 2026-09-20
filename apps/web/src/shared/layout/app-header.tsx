@@ -2,6 +2,7 @@ import { Button } from '@septo/ui/components/button';
 import { SidebarTrigger } from '@septo/ui/components/sidebar';
 import { SearchIcon } from 'lucide-react';
 import { useState, useSyncExternalStore } from 'react';
+import { UserMenu } from '../../features/identity/components/user-menu';
 import { CommandPalette } from './command-palette';
 
 export function AppHeader() {
@@ -27,6 +28,7 @@ export function AppHeader() {
           {shortcut}
         </kbd>
       </Button>
+      <UserMenu />
 
       <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} />
     </header>

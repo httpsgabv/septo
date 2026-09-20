@@ -27,4 +27,11 @@ App pessoal que centraliza ferramentas (notas/lembretes, dev tools). Monorepo Tu
 - **Compose = só infra** (Postgres + Caddy). API e web rodam no host em dev e como imagens avulsas na rede `septo` em produção; o Caddy aponta via `API_UPSTREAM`/`WEB_UPSTREAM`.
 - **Postgres do container na porta 5433**, só em `127.0.0.1` (há um Postgres local na 5432).
 - **Vite escuta em `127.0.0.1`** (não `localhost`/`::1`) para o Caddy alcançá-lo via `host.docker.internal`.
+- **Identity**: `AuthGuard` global — rota nova na API nasce protegida; `@Public()` só em `health` e `auth/login|logout` (justifique no PR). Os docs (Scalar/`openapi.json`) são `app.use` e ficam fora do guard.
+- **Sessão**: JWT HS256 no cookie `septo_session` (`HttpOnly; Secure; SameSite=Lax`), 30 dias deslizantes; revogar = incrementar `users.tokenVersion`. Mutação exige corpo JSON (415 caso contrário) — é a defesa de CSRF junto com o `SameSite`. `trust proxy = 1`: só o Caddy fica na frente da API.
+- **Login**: o limite por cliente conta a tentativa *antes* do argon2 e zera no sucesso; IPv6 conta por /64. Não mude sem perguntar (é regra de "Perguntar antes" da spec).
+- **Node ≥ 24.7** por causa do `crypto.argon2`. O usuário é criado por `npm run user:set -w @septo/api -- <usuário>` (build + CLI; no container, `node dist/cli/set-user.js`).
+- **Testes de integração da API rodam em série** (`fileParallelism: false`) no banco `septo_test`, migrado pelo `globalSetup`.
+- **e2e** sobe a própria API (:3433) e o próprio web (:5273) em `septo_test`, com o usuário `e2e`, e nunca reaproveita os servidores de dev. Suítes que mudam senha/sessão/nome são `*.destructive.spec.ts` e rodam sozinhas, depois das demais.
+- **Cookie no SSR**: o mutator repassa o `cookie` do navegador para a API e devolve os `Set-Cookie` da API na resposta da página (renovação deslizante). O 401 no navegador vai para `/login` (`features/identity/domain/unauthorized.ts` diz quando).
 - **e2e**: espere `body[data-hydrated]` (helper `gotoHydrated`) antes de interagir.

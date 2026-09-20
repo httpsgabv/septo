@@ -43,3 +43,6 @@ apps/api/src/generated
 test-results
 playwright-report
 blob-report
+
+# Playwright signed-in session (written by e2e/global-setup.ts)
+apps/web/e2e/.auth/

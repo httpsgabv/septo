@@ -2,14 +2,30 @@ import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { z } from 'zod';
 
-const envSchema = z.object({
-  API_PORT: z.coerce.number().int().positive().default(3333),
-  API_DOCS_ENABLED: z.stringbool().default(true),
-  // Default keeps codegen/CI working without a .env; production always sets it.
-  DATABASE_URL: z
-    .url({ protocol: /^postgres(ql)?$/ })
-    .default('postgresql://septo:septo@localhost:5433/septo'),
-});
+// Lets codegen and CI boot the AppModule without a .env; production must set its own.
+const DEV_JWT_SECRET = 'septo-dev-only-jwt-secret-never-use-in-production';
+
+const envSchema = z
+  .object({
+    NODE_ENV: z.string().optional(),
+    API_PORT: z.coerce.number().int().positive().default(3333),
+    API_DOCS_ENABLED: z.stringbool().default(true),
+    // Default keeps codegen/CI working without a .env; production always sets it.
+    DATABASE_URL: z
+      .url({ protocol: /^postgres(ql)?$/ })
+      .default('postgresql://septo:septo@localhost:5433/septo'),
+    JWT_SECRET: z.string().optional(),
+  })
+  .superRefine((env, ctx) => {
+    if (env.NODE_ENV === 'production' && (env.JWT_SECRET?.length ?? 0) < 32) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['JWT_SECRET'],
+        message: 'is required in production and must have at least 32 characters',
+      });
+    }
+  })
+  .transform((env) => ({ ...env, JWT_SECRET: env.JWT_SECRET ?? DEV_JWT_SECRET }));
 
 export type Env = z.infer<typeof envSchema>;
 

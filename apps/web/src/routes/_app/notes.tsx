@@ -1,8 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { NotebookPenIcon } from 'lucide-react';
-import { EmptyState, Page } from '../shared/layout/page';
+import { EmptyState, Page } from '../../shared/layout/page';
 
-export const Route = createFileRoute('/notes')({
+export const Route = createFileRoute('/_app/notes')({
   head: () => ({ meta: [{ title: 'Notas · septo' }] }),
   component: NotesPage,
 });

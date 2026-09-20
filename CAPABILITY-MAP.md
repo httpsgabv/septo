@@ -8,7 +8,7 @@ septo é um app pessoal que centraliza ferramentas hoje espalhadas em N apps avu
 | Module id | Responsabilidade | Depende de | Spec |
 |---|---|---|---|
 | `foundation` | Monorepo (TanStack Start + NestJS), contrato zod → OpenAPI (Scalar) → Orval, Docker Compose (Postgres, Caddy/HTTPS), design system `@septo/ui`, shell do app, convenções globais | — | [SPEC-foundation](specs/SPEC-foundation.md) · [plano](tasks/foundation/plan.md) · ✅ implementado |
-| `identity` | Login de usuário único, sessão em cookie httpOnly, guard de rotas (API e web) | foundation | _pendente_ |
+| `identity` | Login de usuário único (username + senha), sessão JWT em cookie httpOnly, guard de rotas (API e web), perfil (nome de exibição), troca de senha, sair de todos | foundation | [SPEC-identity](specs/SPEC-identity.md) · [plano](tasks/identity/plan.md) · ✅ implementado |
 | `notes` | Notas markdown: CRUD, tags, fixar, arquivar, busca. Lembrete = nota com `remindAt` | identity | _pendente_ |
 | `reminders` | Web Push: assinaturas, scheduler na API, disparo, service worker/PWA | notes | _pendente_ |
 | `dev-tools` | Formatador JSON, gerador RSA, conversor (imagens, dados, encodings), leitor de README — 100% no navegador | foundation | _pendente_ |
@@ -34,7 +34,7 @@ Separações deliberadamente **não** feitas (reavaliar quando houver 2º consum
 | Tema | Decisão |
 |---|---|
 | Deploy | VPS, usuário único. Compose só com infra (Postgres + Caddy); API e web como imagens Docker avulsas na rede `septo`. Caddy com HTTPS também em dev |
-| Auth | e-mail + hash argon2 em env, sessão em cookie httpOnly, sem signup |
+| Auth | username + senha (argon2id do `node:crypto`), usuário único na tabela `users` criado por CLI, sessão JWT (30 dias, deslizante) em cookie httpOnly, revogação por `tokenVersion`, sem signup — revisado em 2026-09-18 (antes: e-mail + hash em env) |
 | Banco | PostgreSQL + Prisma |
 | Lembretes | Web Push (VAPID), sem recorrência na v1, scheduler por polling de 1 min |
 | Conversor | imagens, dados estruturados (JSON/YAML/CSV/XML), encodings |

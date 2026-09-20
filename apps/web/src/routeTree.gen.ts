@@ -10,63 +10,94 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as DevToolsRouteImport } from './routes/dev-tools'
-import { Route as NotesRouteImport } from './routes/notes'
-import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as AppRouteImport } from './routes/_app'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as AppSplatRouteImport } from './routes/_app/$'
+import { Route as AppDevToolsRouteImport } from './routes/_app/dev-tools'
+import { Route as AppNotesRouteImport } from './routes/_app/notes'
+import { Route as AppSettingsRouteImport } from './routes/_app/settings'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DevToolsRoute = DevToolsRouteImport.update({
+const AppRoute = AppRouteImport.update({
+  id: '/_app',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppSplatRoute = AppSplatRouteImport.update({
+  id: '/$',
+  path: '/$',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppDevToolsRoute = AppDevToolsRouteImport.update({
   id: '/dev-tools',
   path: '/dev-tools',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AppRoute,
 } as any)
-const NotesRoute = NotesRouteImport.update({
+const AppNotesRoute = AppNotesRouteImport.update({
   id: '/notes',
   path: '/notes',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AppRoute,
 } as any)
-const SettingsRoute = SettingsRouteImport.update({
+const AppSettingsRoute = AppSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AppRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/dev-tools': typeof DevToolsRoute
-  '/notes': typeof NotesRoute
-  '/settings': typeof SettingsRoute
+  '/login': typeof LoginRoute
+  '/$': typeof AppSplatRoute
+  '/dev-tools': typeof AppDevToolsRoute
+  '/notes': typeof AppNotesRoute
+  '/settings': typeof AppSettingsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/dev-tools': typeof DevToolsRoute
-  '/notes': typeof NotesRoute
-  '/settings': typeof SettingsRoute
+  '/login': typeof LoginRoute
+  '/$': typeof AppSplatRoute
+  '/dev-tools': typeof AppDevToolsRoute
+  '/notes': typeof AppNotesRoute
+  '/settings': typeof AppSettingsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/dev-tools': typeof DevToolsRoute
-  '/notes': typeof NotesRoute
-  '/settings': typeof SettingsRoute
+  '/_app': typeof AppRouteWithChildren
+  '/login': typeof LoginRoute
+  '/_app/$': typeof AppSplatRoute
+  '/_app/dev-tools': typeof AppDevToolsRoute
+  '/_app/notes': typeof AppNotesRoute
+  '/_app/settings': typeof AppSettingsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dev-tools' | '/notes' | '/settings'
+  fullPaths: '/' | '/login' | '/$' | '/dev-tools' | '/notes' | '/settings'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dev-tools' | '/notes' | '/settings'
-  id: '__root__' | '/' | '/dev-tools' | '/notes' | '/settings'
+  to: '/' | '/login' | '/$' | '/dev-tools' | '/notes' | '/settings'
+  id:
+    | '__root__'
+    | '/'
+    | '/_app'
+    | '/login'
+    | '/_app/$'
+    | '/_app/dev-tools'
+    | '/_app/notes'
+    | '/_app/settings'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  DevToolsRoute: typeof DevToolsRoute
-  NotesRoute: typeof NotesRoute
-  SettingsRoute: typeof SettingsRoute
+  AppRoute: typeof AppRouteWithChildren
+  LoginRoute: typeof LoginRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -78,35 +109,71 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/dev-tools': {
-      id: '/dev-tools'
+    '/_app': {
+      id: '/_app'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_app/$': {
+      id: '/_app/$'
+      path: '/$'
+      fullPath: '/$'
+      preLoaderRoute: typeof AppSplatRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/dev-tools': {
+      id: '/_app/dev-tools'
       path: '/dev-tools'
       fullPath: '/dev-tools'
-      preLoaderRoute: typeof DevToolsRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AppDevToolsRouteImport
+      parentRoute: typeof AppRoute
     }
-    '/notes': {
-      id: '/notes'
+    '/_app/notes': {
+      id: '/_app/notes'
       path: '/notes'
       fullPath: '/notes'
-      preLoaderRoute: typeof NotesRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AppNotesRouteImport
+      parentRoute: typeof AppRoute
     }
-    '/settings': {
-      id: '/settings'
+    '/_app/settings': {
+      id: '/_app/settings'
       path: '/settings'
       fullPath: '/settings'
-      preLoaderRoute: typeof SettingsRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AppSettingsRouteImport
+      parentRoute: typeof AppRoute
     }
   }
 }
 
+interface AppRouteChildren {
+  AppSplatRoute: typeof AppSplatRoute
+  AppDevToolsRoute: typeof AppDevToolsRoute
+  AppNotesRoute: typeof AppNotesRoute
+  AppSettingsRoute: typeof AppSettingsRoute
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  AppSplatRoute: AppSplatRoute,
+  AppDevToolsRoute: AppDevToolsRoute,
+  AppNotesRoute: AppNotesRoute,
+  AppSettingsRoute: AppSettingsRoute,
+}
+
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  DevToolsRoute: DevToolsRoute,
-  NotesRoute: NotesRoute,
-  SettingsRoute: SettingsRoute,
+  AppRoute: AppRouteWithChildren,
+  LoginRoute: LoginRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

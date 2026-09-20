@@ -14,8 +14,17 @@ testDatabaseUrl.pathname = '/septo_test';
 
 export default defineConfig({
   test: {
+    // Integration tests share one database and clean tables between tests.
+    fileParallelism: false,
     include: ['src/**/*.spec.ts', 'test/**/*.spec.ts'],
     env: { DATABASE_URL: testDatabaseUrl.toString() },
+    globalSetup: ['test/global-setup.ts'],
+    coverage: {
+      // The target is on business rules only (see SPEC-foundation, Testing Strategy).
+      include: ['src/modules/*/{domain,application}/**/*.ts'],
+      exclude: ['**/*.spec.ts'],
+      reporter: ['text-summary', 'text'],
+    },
   },
   // SWC instead of esbuild: esbuild does not emit decorator metadata, which Nest DI relies on
   plugins: [swc.vite({ module: { type: 'es6' } })],

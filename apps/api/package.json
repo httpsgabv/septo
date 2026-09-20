@@ -3,12 +3,17 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=24.7"
+  },
   "scripts": {
     "dev": "nest start --watch",
     "build": "nest build",
     "start": "node dist/main.js",
+    "user:set": "prisma generate && nest build && node dist/cli/set-user.js",
     "check-types": "tsc --noEmit",
     "test": "vitest run",
+    "coverage": "vitest run --coverage",
     "openapi": "node dist/generate-openapi.js",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev"
@@ -22,6 +27,7 @@
     "@types/express": "5.0.6",
     "@types/node": "26.6.1",
     "@types/supertest": "7.2.1",
+    "@vitest/coverage-v8": "5.0.1",
     "supertest": "7.2.2",
     "typescript": "6.0.3",
     "unplugin-swc": "1.6.0",
@@ -35,6 +41,7 @@
     "@prisma/adapter-pg": "7.10.0",
     "@prisma/client": "7.10.0",
     "@scalar/nestjs-api-reference": "1.2.19",
+    "jose": "6.2.12",
     "prisma": "7.10.0",
     "reflect-metadata": "0.2.2",
     "rxjs": "7.8.2",

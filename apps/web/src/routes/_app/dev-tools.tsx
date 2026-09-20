@@ -1,8 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { CodeXmlIcon } from 'lucide-react';
-import { EmptyState, Page } from '../shared/layout/page';
+import { EmptyState, Page } from '../../shared/layout/page';
 
-export const Route = createFileRoute('/dev-tools')({
+export const Route = createFileRoute('/_app/dev-tools')({
   head: () => ({ meta: [{ title: 'Dev Tools · septo' }] }),
   component: DevToolsPage,
 });

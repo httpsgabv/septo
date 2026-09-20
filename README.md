@@ -17,16 +17,20 @@ Projeto pessoal, usuário único, hospedado numa VPS.
 
 ## Começando
 
-Requisitos: Node ≥ 24, npm 11, Docker.
+Requisitos: Node ≥ 24.7 (o hash de senha usa `crypto.argon2`; há um `.nvmrc`, então `nvm install && nvm use`), npm 11, Docker.
 
 ```bash
 npm install
 cp .env.example .env
 docker compose up -d
+npm run db:migrate -w @septo/api
+npm run user:set -w @septo/api -- <usuário>
 npm run dev
 ```
 
-- App: http://localhost:5173 ou https://localhost (via Caddy)
+O septo tem um único usuário e não há cadastro pela interface: `user:set` pede a senha (12 a 128 caracteres) duas vezes, sem eco, e cria o usuário. Rodar de novo troca username e senha e derruba todas as sessões, então também serve para resetar uma senha esquecida.
+
+- App: http://localhost:5173 ou https://localhost (via Caddy); sem sessão, qualquer página leva a `/login`
 - Docs da API (Scalar): http://localhost:5173/api/docs
 
 `docker compose up -d` sobe só a infra: o Postgres (porta **5433**, apenas em `127.0.0.1`, para não brigar com um Postgres local) e o Caddy, que dá HTTPS em https://localhost na frente dos servidores de dev (útil para Web Push e cookies `Secure`). O navegador avisa sobre o certificado local do Caddy até você confiar nele.
@@ -39,7 +43,9 @@ npm run dev
 | `npm run build` | Build de tudo, com cache do Turbo |
 | `npm run check-types` | Type-check de todos os pacotes |
 | `npm run test` | Testes unitários e de integração (a API usa o banco `septo_test`, precisa do Postgres no ar) |
-| `npm run test:e2e` | Playwright; sobe os servidores de dev sozinho (precisa do Postgres no ar) |
+| `npm run coverage -w @septo/api` | Cobertura de linhas e ramos das camadas `domain` e `application` (meta ≥ 90%) |
+| `npm run test:e2e` | Playwright; sobe a própria API (:3433) e o próprio web (:5273) no banco `septo_test`, com um usuário de teste, sem tocar nos servidores nem no banco de desenvolvimento (precisa do Postgres no ar e de `npx playwright install chromium` na primeira vez) |
+| `npm run user:set -w @septo/api -- <usuário>` | Cria o usuário único ou reseta a senha (derruba todas as sessões) |
 | `docker compose up -d` | Infra: Postgres + Caddy (https://localhost) |
 | `npm run lint` / `npm run format` | Biome: verificar / corrigir |
 | `npm run codegen` | Gera `apps/api/openapi.json` e o client do web |
@@ -68,7 +74,15 @@ docker build -f apps/web/Dockerfile -t septo-web .
 ```
 
 ```bash
-docker run -d --name septo-api --network septo --restart unless-stopped -e DATABASE_URL=postgresql://septo:<senha>@postgres:5432/septo septo-api
+docker run -d --name septo-api --network septo --restart unless-stopped -e DATABASE_URL=postgresql://septo:<senha>@postgres:5432/septo -e JWT_SECRET=<segredo> -e API_DOCS_ENABLED=false septo-api
+```
+
+`JWT_SECRET` assina as sessões e é obrigatório em produção (a API não sobe sem ele), com pelo menos 32 caracteres. Gere um com `openssl rand -base64 48`. Trocá-lo derruba todas as sessões. `API_DOCS_ENABLED=false` tira o Scalar e o `openapi.json` do ar; deixe `true` só se quiser os docs públicos.
+
+Crie o usuário (uma vez) e, quando precisar, resete a senha com o mesmo comando:
+
+```bash
+docker exec -it septo-api node dist/cli/set-user.js <usuário>
 ```
 
 ```bash
