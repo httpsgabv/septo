@@ -48,8 +48,8 @@ T18 ─▶ T19 docs, env, Docker e fechamento
 - [x] T4: `SetUserUseCase` + CLI `user:set`
 
 ### Checkpoint A: usuário existe
-- [ ] `npm run user:set -w @septo/api -- gabriel` cria e, na segunda execução, reseta (`tokenVersion` sobe)
-- [ ] `lint`, `check-types`, `test` passam
+- [x] `npm run user:set -w @septo/api -- gabriel` cria e, na segunda execução, reseta (`tokenVersion` sobe)
+- [x] `lint`, `check-types`, `test` passam
 - [ ] Revisão com você antes de seguir
 
 ### Fase 2: sessão e API protegida
@@ -59,8 +59,8 @@ T18 ─▶ T19 docs, env, Docker e fechamento
 - [x] T8: `POST /api/auth/login` e `POST /api/auth/logout`
 
 ### Checkpoint B: API autenticada ponta a ponta
-- [ ] `curl`: login → cookie → `GET /api/me` 200; sem cookie 401; 6ª falha 429 com `Retry-After`
-- [ ] `/api/health` e `/api/docs` seguem `200` sem cookie
+- [x] `curl`: login → cookie → `GET /api/me` 200; sem cookie 401; 6ª falha 429 com `Retry-After`
+- [x] `/api/health` e `/api/docs` seguem `200` sem cookie
 - [ ] Revisão com você antes de seguir
 
 ### Fase 3: perfil e revogação (API)

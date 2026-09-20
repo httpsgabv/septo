@@ -93,8 +93,8 @@
 
 ### Checkpoint A: usuário existe
 
-- [ ] `npm run user:set -w @septo/api -- gabriel` cria e, na segunda execução, reseta
-- [ ] `lint`, `check-types`, `test` passam; `grep` de camadas limpo
+- [x] `npm run user:set -w @septo/api -- gabriel` cria e, na segunda execução, reseta
+- [x] `lint`, `check-types`, `test` passam; `grep` de camadas limpo
 - [ ] Revisão com você antes de seguir
 
 ---
@@ -185,9 +185,9 @@
 
 ### Checkpoint B: API autenticada ponta a ponta
 
-- [ ] `curl`: login → cookie → `GET /api/me` 200; sem cookie 401; 6ª falha 429 com `Retry-After`
-- [ ] `/api/health` e `/api/docs` seguem `200` sem cookie
-- [ ] Success Criteria 1, 2, 3, 4 e 5 da spec verificados
+- [x] `curl`: login → cookie → `GET /api/me` 200; sem cookie 401; 6ª falha 429 com `Retry-After`
+- [x] `/api/health` e `/api/docs` seguem `200` sem cookie
+- [x] Success Criteria 1, 2, 3, 4 e 5 da spec verificados
 - [ ] Revisão com você antes de seguir (pedir também um `security-auditor` sobre T5–T8, já que é o caminho crítico de segurança)
 
 ---
