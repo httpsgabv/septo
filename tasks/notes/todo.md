@@ -41,12 +41,12 @@
 **Descrição:** Model `Note` exatamente como na spec (sem `ownerId`, sem índices, `createdAt`/`updatedAt` sem default — o domínio controla) e migration aplicada em `septo` e `septo_test`.
 
 **Aceite:**
-- [ ] `apps/api/prisma/schema.prisma` com o model `Note` da spec, `@@map("notes")`
-- [ ] Migration `prisma/migrations/<ts>_create_notes` aplicada nos dois bancos
-- [ ] `prisma generate` roda e o client tipado expõe `note`
+- [x] `apps/api/prisma/schema.prisma` com o model `Note` da spec, `@@map("notes")`
+- [x] Migration `prisma/migrations/<ts>_create_notes` aplicada nos dois bancos
+- [x] `prisma generate` roda e o client tipado expõe `note`
 
 **Verificação:**
-- [ ] `npm run db:migrate -w @septo/api`; `docker compose down -v && docker compose up -d && npm run test -w @septo/api` (o `globalSetup` aplica as migrations no banco de teste do zero)
+- [x] `npm run db:migrate -w @septo/api`; `docker compose down -v && docker compose up -d && npm run test -w @septo/api` (o `globalSetup` aplica as migrations no banco de teste do zero)
 
 **Dependências:** nenhuma
 **Arquivos:** `apps/api/prisma/schema.prisma`, `apps/api/prisma/migrations/*`

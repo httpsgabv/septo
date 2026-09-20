@@ -50,7 +50,7 @@ T13 ─▶ T14 e2e do fluxo completo ─▶ T15 docs, cobertura e fechamento
 - [ ] Revisão com você antes de seguir — é aqui que "markdown no banco" se confirma
 
 ### Fase 2: API
-- [ ] T2: Model `Note` + migration
+- [x] T2: Model `Note` + migration
 - [ ] T3: Domínio: entidade `Note`, tags, `searchText`, erros e porta
 - [ ] T4: Casos de uso de escrita (criar, atualizar, fixar, arquivar, excluir, obter)
 - [ ] T5: Casos de uso de leitura (listar notas com filtros e ordenação, listar tags)

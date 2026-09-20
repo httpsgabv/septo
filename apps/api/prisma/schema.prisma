@@ -22,3 +22,18 @@ model User {
 
   @@map("users")
 }
+
+model Note {
+  id         String    @id @default(uuid()) @db.Uuid
+  title      String
+  body       String // markdown
+  searchText String // title + body normalized (derived by the entity, never comes from the API)
+  tags       String[]  @default([])
+  pinnedAt   DateTime?
+  archivedAt DateTime?
+  remindAt   DateTime?
+  createdAt  DateTime // no defaults: the domain owns both timestamps
+  updatedAt  DateTime
+
+  @@map("notes")
+}
