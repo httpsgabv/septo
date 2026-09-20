@@ -1,4 +1,4 @@
-import { type BrowserContext, expect, type Page } from '@playwright/test';
+import { type APIRequestContext, type BrowserContext, expect, type Page } from '@playwright/test';
 import { E2E_PASSWORD, E2E_USERNAME } from './constants';
 
 /** Navigates and waits until React has hydrated, so clicks and shortcuts reach live handlers. */
@@ -13,4 +13,24 @@ export async function signInViaApi(context: BrowserContext, password = E2E_PASSW
     data: { username: E2E_USERNAME, password },
   });
   expect(res.ok()).toBe(true);
+}
+
+/** Removes every note (active and archived) through the API, so each test starts from an empty list. */
+export async function resetNotes(request: APIRequestContext) {
+  for (const view of ['active', 'archived']) {
+    const res = await request.get(`/api/notes?view=${view}`);
+    for (const note of (await res.json()) as { id: string }[]) {
+      await request.delete(`/api/notes/${note.id}`);
+    }
+  }
+}
+
+/** Creates a note through the API and returns it. */
+export async function createNote(
+  request: APIRequestContext,
+  data: { title?: string; body?: string; tags?: string[]; remindAt?: string },
+) {
+  const res = await request.post('/api/notes', { data });
+  expect(res.status()).toBe(201);
+  return (await res.json()) as { id: string; title: string; body: string };
 }

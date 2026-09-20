@@ -17,7 +17,7 @@ import {
   SquareCodeIcon,
   StrikethroughIcon,
 } from 'lucide-react';
-import { type FormEvent, useState } from 'react';
+import { useState } from 'react';
 
 type Action = {
   label: string;
@@ -120,13 +120,15 @@ export function EditorToolbar({ editor }: { editor: Editor | null }) {
   });
   if (!editor) return null;
 
-  function applyLink(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const input = new FormData(event.currentTarget).get('href');
-    const href = typeof input === 'string' ? input.trim() : '';
-    const chain = editor?.chain().focus().extendMarkRange('link');
-    if (href) chain?.setLink({ href: toHref(href) }).run();
-    else chain?.unsetLink().run();
+  function applyLink(input: string) {
+    if (!editor) return;
+    const href = input.trim();
+    // `view.focus()` is synchronous, unlike `chain().focus()`: keys typed right after must reach the
+    // editor, not the field that is about to close.
+    editor.view.focus();
+    const chain = editor.chain().extendMarkRange('link');
+    if (href) chain.setLink({ href: toHref(href) }).run();
+    else chain.unsetLink().run();
     setLinkOpen(false);
   }
 
@@ -170,7 +172,13 @@ export function EditorToolbar({ editor }: { editor: Editor | null }) {
       </div>
 
       {linkOpen && (
-        <form onSubmit={applyLink} className="flex gap-2">
+        <form
+          onSubmit={(event) => {
+            event.preventDefault();
+            applyLink(new FormData(event.currentTarget).get('href')?.toString() ?? '');
+          }}
+          className="flex gap-2"
+        >
           <Input
             name="href"
             defaultValue={editor.getAttributes('link').href ?? ''}
@@ -178,9 +186,15 @@ export function EditorToolbar({ editor }: { editor: Editor | null }) {
             placeholder="https://…"
             autoFocus
             onKeyDown={(event) => {
-              if (event.key === 'Escape') {
+              if (event.key === 'Enter') {
+                // Handled here, not by the form: submitting moves focus to the editor in the middle
+                // of this key press, and the rest of the Enter would land in the editor, replacing
+                // the selected text with a line break.
+                event.preventDefault();
+                applyLink(event.currentTarget.value);
+              } else if (event.key === 'Escape') {
                 setLinkOpen(false);
-                editor.chain().focus().run();
+                editor.view.focus();
               }
             }}
           />

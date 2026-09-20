@@ -78,7 +78,7 @@ T13 ─▶ T14 e2e do fluxo completo ─▶ T15 docs, cobertura e fechamento
 - [ ] A rota `/notes` não carrega o bundle do editor até abrir uma nota (aba Network)
 
 ### Fase 4: fechamento
-- [ ] T14: E2E do fluxo de notas
+- [x] T14: E2E do fluxo de notas
 - [ ] T15: Cobertura, README, CLAUDE.md, CAPABILITY-MAP e status da spec
 
 ### Checkpoint final

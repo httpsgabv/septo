@@ -298,18 +298,18 @@
 **Descrição:** `apps/web/e2e/notes.spec.ts` (autenticado com o `storageState` existente, **não** destrutivo) cobrindo o fluxo completo. Usa `gotoHydrated` antes de interagir.
 
 **Aceite:**
-- [ ] Criar nota digitando, ver "Salvo", recarregar e encontrar o conteúdo
-- [ ] Escrever `## Título`, `- item`, `**negrito**`, `~~riscado~~`, `> citação` e um link; recarregar e a formatação voltar idêntica (prova do round-trip na aplicação real)
-- [ ] Buscar por termo com acento diferente do digitado e achar a nota
-- [ ] Adicionar tag e filtrar por ela
-- [ ] Fixar e conferir que está no topo
-- [ ] Arquivar, ver em "Arquivadas", desarquivar
-- [ ] Definir lembrete e ver em "Lembretes"
-- [ ] Excluir com confirmação e conferir que saiu da lista
-- [ ] Editar, trocar de nota e voltar: a alteração foi salva (flush do autosave)
+- [x] Criar nota digitando, ver "Salvo", recarregar e encontrar o conteúdo
+- [x] Escrever `## Título`, `- item`, `**negrito**`, `~~riscado~~`, `> citação` e um link; recarregar e a formatação voltar idêntica (prova do round-trip na aplicação real)
+- [x] Buscar por termo com acento diferente do digitado e achar a nota
+- [x] Adicionar tag e filtrar por ela
+- [x] Fixar e conferir que está no topo
+- [x] Arquivar, ver em "Arquivadas", desarquivar
+- [x] Definir lembrete e ver em "Lembretes"
+- [x] Excluir com confirmação e conferir que saiu da lista
+- [x] Editar, trocar de nota e voltar: a alteração foi salva (flush do autosave)
 
 **Verificação:**
-- [ ] `npm run test:e2e` verde, suíte inteira, em 3 execuções seguidas (sem flake)
+- [x] `npm run test:e2e` verde, suíte inteira, em 3 execuções seguidas (sem flake)
 
 **Dependências:** T13
 **Arquivos:** `apps/web/e2e/notes.spec.ts`, `apps/web/e2e/support/*` (helpers, se precisar de criação de nota via API)

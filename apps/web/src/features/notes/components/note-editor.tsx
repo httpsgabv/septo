@@ -125,7 +125,13 @@ export function NoteEditor({ note, onCreated }: Props) {
     // Tiptap has no server rendering: the editor mounts on the client, the route shows a skeleton.
     immediatelyRender: false,
     editorProps: {
-      attributes: { class: 'note-content min-h-64 outline-none', 'aria-label': 'Corpo da nota' },
+      attributes: {
+        class: 'note-content min-h-64 outline-none',
+        // A contenteditable div is not announced as an editor unless it says so.
+        role: 'textbox',
+        'aria-multiline': 'true',
+        'aria-label': 'Corpo da nota',
+      },
     },
     onUpdate: ({ editor }) => {
       // ponytail: serializes on every update; debounce it if a 100k-character note feels slow
