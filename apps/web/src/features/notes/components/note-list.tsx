@@ -3,7 +3,7 @@ import { Input } from '@septo/ui/components/input';
 import { Skeleton } from '@septo/ui/components/skeleton';
 import { keepPreviousData } from '@tanstack/react-query';
 import { Link, useNavigate, useSearch } from '@tanstack/react-router';
-import { NotebookPenIcon, SearchIcon } from 'lucide-react';
+import { NotebookPenIcon, SearchIcon, XIcon } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { useNotesList } from '../../../shared/api/generated/endpoints/notes/notes';
 import { EmptyState } from '../../../shared/layout/page';
@@ -60,6 +60,17 @@ export function NoteList() {
             </Link>
           ))}
         </nav>
+        {search.tag && (
+          <Link
+            to="."
+            search={(prev) => ({ ...prev, tag: undefined })}
+            aria-label={`Limpar o filtro da tag ${search.tag}`}
+            className="inline-flex w-fit items-center gap-1 rounded-full bg-brand-subtle py-0.5 pr-1.5 pl-2.5 text-sm text-brand-text outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+          >
+            {search.tag}
+            <XIcon className="size-3" aria-hidden="true" />
+          </Link>
+        )}
       </header>
 
       <div className="min-h-0 flex-1 overflow-y-auto">

@@ -15,6 +15,7 @@ import type { Note, UpdateNoteRequest } from '../../../shared/api/generated/mode
 import { Autosave, type AutosaveStatus } from '../domain/autosave';
 import { noteExtensions, parseMarkdown, serializeMarkdown } from '../domain/markdown';
 import { EditorToolbar } from './editor-toolbar';
+import { TagInput } from './tag-input';
 
 const TITLE_MAX_LENGTH = 200;
 const BODY_MAX_LENGTH = 100_000;
@@ -47,6 +48,7 @@ type Props = {
 export function NoteEditor({ note, onCreated }: Props) {
   const queryClient = useQueryClient();
   const [title, setTitle] = useState(note?.title ?? '');
+  const [tags, setTags] = useState(note?.tags ?? []);
   const [status, setStatus] = useState<AutosaveStatus>('idle');
   const [tooLong, setTooLong] = useState(false);
   const [initialContent] = useState(() => parseMarkdown(note?.body ?? ''));
@@ -173,6 +175,13 @@ export function NoteEditor({ note, onCreated }: Props) {
         maxLength={TITLE_MAX_LENGTH}
         autoFocus={!note}
         className="h-auto border-0 bg-transparent px-0 py-1 text-2xl font-semibold shadow-none focus-visible:ring-0 md:text-2xl dark:bg-transparent"
+      />
+      <TagInput
+        value={tags}
+        onChange={(next) => {
+          setTags(next);
+          change({ tags: next });
+        }}
       />
       <EditorToolbar editor={editor} />
       <EditorContent editor={editor} />

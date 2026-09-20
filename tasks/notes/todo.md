@@ -236,14 +236,14 @@
 **Descrição:** `features/notes/domain/tags.ts` no web: parse do input (vírgula ou Enter) e a **mesma** normalização da API, com spec espelhando os casos da T3. `tag-input.tsx` mostra as tags como chips removíveis, sugere as existentes (`useTagsList`) e bloqueia acima de 10. Clicar numa tag na lista aplica `?tag=`, com chip de filtro ativo e um jeito de limpar.
 
 **Aceite:**
-- [ ] Adicionar, remover e sugerir tags funciona; duplicata e tag inválida não entram (mensagem em PT-BR)
-- [ ] A normalização do web bate com a da API caso a caso (a spec do web usa a mesma tabela da T3)
-- [ ] Clicar na tag filtra a lista e a URL; limpar volta ao estado anterior
-- [ ] Mudança de tags passa pelo autosave (não tem botão próprio)
+- [x] Adicionar, remover e sugerir tags funciona; duplicata e tag inválida não entram (mensagem em PT-BR)
+- [x] A normalização do web bate com a da API caso a caso (a spec do web usa a mesma tabela da T3)
+- [x] Clicar na tag filtra a lista e a URL; limpar volta ao estado anterior
+- [x] Mudança de tags passa pelo autosave (não tem botão próprio)
 
 **Verificação:**
-- [ ] `npm run test -w @septo/web`
-- [ ] Manual: tag criada numa nota aparece na sugestão de outra
+- [x] `npm run test -w @septo/web`
+- [x] Manual: tag criada numa nota aparece na sugestão de outra
 
 **Dependências:** T10
 **Arquivos:** `apps/web/src/features/notes/domain/tags.ts` (+ spec), `apps/web/src/features/notes/components/{tag-input,note-list-item}.tsx`
