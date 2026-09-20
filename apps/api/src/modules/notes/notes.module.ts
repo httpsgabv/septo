@@ -9,8 +9,11 @@ import { SetNotePinnedUseCase } from './application/set-note-pinned.use-case.js'
 import { UpdateNoteUseCase } from './application/update-note.use-case.js';
 import { NoteRepository } from './domain/note.repository.js';
 import { PrismaNoteRepository } from './infrastructure/note.prisma-repository.js';
+import { NotesController } from './presentation/notes.controller.js';
+import { TagsController } from './presentation/tags.controller.js';
 
 @Module({
+  controllers: [NotesController, TagsController],
   providers: [
     CreateNoteUseCase,
     GetNoteUseCase,

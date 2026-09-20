@@ -146,16 +146,16 @@
 **Descrição:** Presentation completa: schemas zod de request/response com `.meta({ id })` para `Note` e `NoteSummary`, mappers domínio → response (incluindo o trecho de 160 caracteres e `pinned`/`archived` booleanos), `NotesController` com as nove rotas e `TagsController` com `GET /tags` (controller separado para não disputar rota com `GET /notes/:id`). Limites de entrada: `title` ≤ 200, `body` ≤ 100.000, `q` ≤ 200, até 10 tags. Roda `codegen` e commita o `openapi.json`.
 
 **Aceite:**
-- [ ] As dez operações da spec respondem nos status certos, com os `operationId` esperados (`notesList`, `notesCreate`, `notesGet`, `notesUpdate`, `notesPin`, `notesUnpin`, `notesArchive`, `notesUnarchive`, `notesDelete`, `tagsList`)
-- [ ] `PATCH` com corpo parcial funciona; `remindAt: null` limpa; `remindAt` é `z.iso.datetime()` no contrato
-- [ ] Erros documentados: `400` (validação), `401`, `404 NOTE_NOT_FOUND`, `422 NOTE_EMPTY`
-- [ ] `openapi.json` regenerado e commitado; `Note` e `NoteSummary` viram `components/schemas` nomeados
-- [ ] Nenhum `@Public()` no módulo
+- [x] As dez operações da spec respondem nos status certos, com os `operationId` esperados (`notesList`, `notesCreate`, `notesGet`, `notesUpdate`, `notesPin`, `notesUnpin`, `notesArchive`, `notesUnarchive`, `notesDelete`, `tagsList`)
+- [x] `PATCH` com corpo parcial funciona; `remindAt: null` limpa; `remindAt` é `z.iso.datetime()` no contrato
+- [x] Erros documentados: `400` (validação), `401`, `404 NOTE_NOT_FOUND`, `422 NOTE_EMPTY`
+- [x] `openapi.json` regenerado e commitado; `Note` e `NoteSummary` viram `components/schemas` nomeados
+- [x] Nenhum `@Public()` no módulo
 
 **Verificação:**
-- [ ] `npm run test -w @septo/api` — integração HTTP: CRUD ponta a ponta, `401` em todas as rotas sem cookie, `q` acento-insensível, filtro por tag, `view=archived`/`reminders`, fixada no topo, `GET /tags` distinto e sem arquivadas, `404` depois do delete, `422` no `POST` vazio, `415` em mutação com corpo não-JSON
-- [ ] `npm run codegen && npm run check-types` — o teste de contrato do `openapi.json` passa
-- [ ] `/api/docs` lista as dez operações
+- [x] `npm run test -w @septo/api` — integração HTTP: CRUD ponta a ponta, `401` em todas as rotas sem cookie, `q` acento-insensível, filtro por tag, `view=archived`/`reminders`, fixada no topo, `GET /tags` distinto e sem arquivadas, `404` depois do delete, `422` no `POST` vazio, `415` em mutação com corpo não-JSON
+- [x] `npm run codegen && npm run check-types` — o teste de contrato do `openapi.json` passa
+- [x] `/api/docs` lista as dez operações
 
 **Dependências:** T6
 **Arquivos:** `apps/api/src/modules/notes/presentation/{notes.controller,tags.controller,notes.schemas}.ts`, `apps/api/test/notes*.spec.ts`, `apps/api/openapi.json`
