@@ -82,15 +82,15 @@
 **Descrição:** `CreateNoteUseCase`, `UpdateNoteUseCase`, `GetNoteUseCase`, `SetNotePinnedUseCase`, `SetNoteArchivedUseCase`, `DeleteNoteUseCase`, cada um em seu arquivo com `execute`, testados contra um `FakeNoteRepository` em `modules/notes/testing/fakes.ts` e `now` fixo (padrão `now = () => new Date()` do identity). `UpdateNoteUseCase` aplica patch parcial: campo ausente não muda, `remindAt: null` limpa.
 
 **Aceite:**
-- [ ] Cada caso de uso tem spec com caminho felizes e `NOTE_NOT_FOUND` quando o id não existe
-- [ ] `UpdateNoteUseCase` distingue "campo ausente" de `null` e rejeita edição que deixe título e corpo vazios (`NOTE_EMPTY`)
-- [ ] `SetNotePinned`/`SetNoteArchived` recebem booleano e devolvem a nota atualizada
-- [ ] `DeleteNoteUseCase` remove e lança `NOTE_NOT_FOUND` para id inexistente
-- [ ] `FakeNoteRepository` não duplica regra de domínio (só guarda e devolve)
+- [x] Cada caso de uso tem spec com caminho felizes e `NOTE_NOT_FOUND` quando o id não existe
+- [x] `UpdateNoteUseCase` distingue "campo ausente" de `null` e rejeita edição que deixe título e corpo vazios (`NOTE_EMPTY`)
+- [x] `SetNotePinned`/`SetNoteArchived` recebem booleano e devolvem a nota atualizada
+- [x] `DeleteNoteUseCase` remove e lança `NOTE_NOT_FOUND` para id inexistente
+- [x] `FakeNoteRepository` não duplica regra de domínio (só guarda e devolve)
 
 **Verificação:**
-- [ ] `npm run test -w @septo/api`
-- [ ] `npm run coverage -w @septo/api` mostra ≥ 90% de linhas em `modules/notes/{domain,application}`
+- [x] `npm run test -w @septo/api`
+- [x] `npm run coverage -w @septo/api` mostra ≥ 90% de linhas em `modules/notes/{domain,application}`
 
 **Dependências:** T3
 **Arquivos:** `apps/api/src/modules/notes/application/*.use-case.ts` (+ specs), `apps/api/src/modules/notes/testing/fakes.ts`

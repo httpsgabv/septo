@@ -52,7 +52,7 @@ T13 ─▶ T14 e2e do fluxo completo ─▶ T15 docs, cobertura e fechamento
 ### Fase 2: API
 - [x] T2: Model `Note` + migration
 - [x] T3: Domínio: entidade `Note`, tags, `searchText`, erros e porta
-- [ ] T4: Casos de uso de escrita (criar, atualizar, fixar, arquivar, excluir, obter)
+- [x] T4: Casos de uso de escrita (criar, atualizar, fixar, arquivar, excluir, obter)
 - [ ] T5: Casos de uso de leitura (listar notas com filtros e ordenação, listar tags)
 - [ ] T6: Repositório Prisma + mapper
 - [ ] T7: HTTP: `NotesController`, `TagsController`, schemas zod e `openapi.json`
