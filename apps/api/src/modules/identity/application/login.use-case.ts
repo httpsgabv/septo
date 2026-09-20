@@ -45,7 +45,7 @@ export class LoginUseCase {
 
     this.attempts.reset(input.ip);
     user.recordLogin(input.ip, this.now());
-    await this.users.save(user);
+    await this.users.saveLastLogin(user);
     const token = await this.tokens.issue({ userId: user.id, version: user.tokenVersion });
     return { user, token };
   }

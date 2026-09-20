@@ -7,4 +7,9 @@ export abstract class UserRepository {
   abstract findFirst(): Promise<User | null>;
   /** Inserts or updates by id. */
   abstract save(user: User): Promise<void>;
+  /**
+   * Writes only `lastLoginAt` and `lastLoginIp`. A login holds a user loaded before the (slow)
+   * password check, so it must not write back a password or `tokenVersion` changed meanwhile.
+   */
+  abstract saveLastLogin(user: User): Promise<void>;
 }

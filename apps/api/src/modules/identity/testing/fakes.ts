@@ -6,6 +6,8 @@ import { UserRepository } from '../domain/user.repository.js';
 export class InMemoryUserRepository extends UserRepository {
   readonly users = new Map<string, User>();
   saves = 0;
+  fullSaves = 0;
+  lastLoginSaves = 0;
 
   findById(id: string) {
     return Promise.resolve(this.users.get(id) ?? null);
@@ -18,6 +20,13 @@ export class InMemoryUserRepository extends UserRepository {
   }
   save(user: User) {
     this.saves += 1;
+    this.fullSaves += 1;
+    this.users.set(user.id, user);
+    return Promise.resolve();
+  }
+  saveLastLogin(user: User) {
+    this.saves += 1;
+    this.lastLoginSaves += 1;
     this.users.set(user.id, user);
     return Promise.resolve();
   }

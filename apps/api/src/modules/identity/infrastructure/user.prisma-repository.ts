@@ -37,6 +37,13 @@ export class PrismaUserRepository extends UserRepository {
       update: data,
     });
   }
+
+  async saveLastLogin(user: User) {
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: { lastLoginAt: user.lastLoginAt, lastLoginIp: user.lastLoginIp },
+    });
+  }
 }
 
 function toDomain(record: UserRecord | null): User | null {

@@ -45,6 +45,15 @@ describe('LoginUseCase', () => {
     expect((await users.findById(user.id))?.lastLoginIp).toBe(IP);
   });
 
+  it('only writes the last login, never the whole user', async () => {
+    const fullSavesBefore = users.fullSaves;
+
+    await login(PASSWORD);
+
+    expect(users.fullSaves).toBe(fullSavesBefore);
+    expect(users.lastLoginSaves).toBe(1);
+  });
+
   it('rejects a wrong password', async () => {
     await expect(login('wrong-password-000')).rejects.toThrow(InvalidCredentialsError);
     expect(user.lastLoginAt).toBeNull();

@@ -1,3 +1,4 @@
+import { isIP } from 'node:net';
 import { Controller, HttpCode, Post, Req, Res } from '@nestjs/common';
 import type { Request, Response } from 'express';
 import { errorResponse } from '../../../shared/http/error-response.schema.js';
@@ -25,7 +26,9 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ): Promise<MeResponse> {
     // `req.ip` honors `trust proxy` (see configureApp), so behind Caddy it is the real client.
-    const { user, token } = await this.loginUseCase.execute({ ...body, ip: req.ip ?? 'unknown' });
+    // Express does not validate X-Forwarded-For entries, and this value is stored.
+    const ip = req.ip && isIP(req.ip) ? req.ip : 'unknown';
+    const { user, token } = await this.loginUseCase.execute({ ...body, ip });
     setSessionCookie(res, token);
     return toMeResponse(user);
   }

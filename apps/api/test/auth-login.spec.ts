@@ -130,6 +130,12 @@ describe('auth login and logout', () => {
       expect(res.body.lastLoginIp).toBe('203.0.113.200');
     });
 
+    it('stores "unknown" instead of an address that is not an IP', async () => {
+      const res = await login({ username: 'gabriel', password: PASSWORD }, 'not-an-ip');
+
+      expect(res.body.lastLoginIp).toBe('unknown');
+    });
+
     it.each([
       ['no body', {}],
       ['no password', { username: 'gabriel' }],
