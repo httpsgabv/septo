@@ -13,6 +13,15 @@ test('/ opens Notas', async ({ page }) => {
   await expect(page.getByRole('heading', { level: 1, name: 'Notas' })).toBeVisible();
 });
 
+test('an unknown URL renders the 404 inside the shell', async ({ page }) => {
+  await gotoHydrated(page, '/nao-existe');
+
+  await expect(
+    page.getByRole('heading', { level: 1, name: 'Página não encontrada' }),
+  ).toBeVisible();
+  await expect(page.locator('[data-sidebar="sidebar"]')).toBeVisible();
+});
+
 test('sidebar navigates between sections and marks the active one', async ({ page }) => {
   await gotoHydrated(page, '/notes');
   const sidebar = page.locator('[data-sidebar="sidebar"]');

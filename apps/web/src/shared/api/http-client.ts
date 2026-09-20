@@ -1,8 +1,29 @@
 import { createIsomorphicFn } from '@tanstack/react-start';
 import { getRequestHeader, getResponse } from '@tanstack/react-start/server';
-import axios, { type AxiosError, type AxiosRequestConfig } from 'axios';
+import axios, { type AxiosError, type AxiosRequestConfig, isAxiosError } from 'axios';
+import { shouldRedirectOnUnauthorized } from '../../features/identity/domain/unauthorized';
 
 const instance = axios.create({ withCredentials: true });
+
+let onSessionExpired: (() => void) | undefined;
+
+/** Browser only (see router.tsx): what to do when a call fails with 401 in the middle of use. */
+export function setSessionExpiredHandler(handler: () => void) {
+  onSessionExpired = handler;
+}
+
+instance.interceptors.response.use(undefined, (error: unknown) => {
+  if (
+    typeof window !== 'undefined' &&
+    isAxiosError(error) &&
+    error.response?.status === 401 &&
+    error.config &&
+    shouldRedirectOnUnauthorized(error.config, window.location.pathname)
+  ) {
+    onSessionExpired?.();
+  }
+  return Promise.reject(error);
+});
 
 /**
  * Browser: same-origin `/api` (Caddy in prod, Nitro devProxy in dev).

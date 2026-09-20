@@ -70,12 +70,12 @@ T18 ─▶ T19 docs, env, Docker e fechamento
 
 ### Fase 4: web
 - [x] T12: Repassar `Set-Cookie` da API no SSR e validador de `?redirect=`
-- [ ] T13: Mover shell e rotas para o layout `_app` (refactor, sem mudança de comportamento)
-- [ ] T14: E2E autenticado: banco `septo_test`, usuário de teste e `storageState`
-- [ ] T15: Tela `/login` e guard do web
-- [ ] T16: Menu do usuário (Sair) e tratamento de `401` no cliente
-- [ ] T17: Configurações → Conta: nome de exibição e último login
-- [ ] T18: Configurações → Conta: trocar senha e sair de todos os dispositivos
+- [x] T13: Mover shell e rotas para o layout `_app` (refactor, sem mudança de comportamento)
+- [x] T14: E2E autenticado: banco `septo_test`, usuário de teste e `storageState`
+- [x] T15: Tela `/login` e guard do web
+- [x] T16: Menu do usuário (Sair) e tratamento de `401` no cliente
+- [x] T17: Configurações → Conta: nome de exibição e último login
+- [x] T18: Configurações → Conta: trocar senha e sair de todos os dispositivos
 
 ### Checkpoint C: fluxo completo no navegador
 - [ ] `/notes` sem sessão → `/login?redirect=/notes` → login → `/notes`; `?redirect=//evil.com` ignorado

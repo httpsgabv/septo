@@ -277,14 +277,14 @@
 **Descrição:** Rota de layout sem path `routes/_app.tsx` com o shell (`SidebarProvider`, `AppSidebar`, `AppHeader`, `Outlet`); `notes`, `dev-tools`, `settings` (e o redirect de `/`) passam para `routes/_app/`. O `__root.tsx` fica só com documento, `head`, script de preferências, `notFound` e o marcador `data-hydrated`. A URL de cada página não muda. O `/login` (T15) ficará fora do shell.
 
 **Aceite:**
-- [ ] Todas as URLs atuais funcionam igual (`/`, `/notes`, `/dev-tools`, `/settings`); páginas renderizam dentro do shell
-- [ ] `routeTree.gen.ts` regenerado e links tipados (`to="/notes"`) seguem compilando
-- [ ] Nenhuma mudança visual; a suíte e2e existente (shell, configurações, mobile 375 px) passa sem edição
-- [ ] O `loader` do health (`ApiStatus`) continua alimentando o shell sem quebrar quando a API cai (prefetch, não ensure)
+- [x] Todas as URLs atuais funcionam igual (`/`, `/notes`, `/dev-tools`, `/settings`); páginas renderizam dentro do shell
+- [x] `routeTree.gen.ts` regenerado e links tipados (`to="/notes"`) seguem compilando
+- [x] Nenhuma mudança visual; a suíte e2e existente (shell, configurações, mobile 375 px) passa sem edição
+- [x] O `loader` do health (`ApiStatus`) continua alimentando o shell sem quebrar quando a API cai (prefetch, não ensure)
 
 **Verificação:**
-- [ ] `npm run check-types -w @septo/web` e `npm run test -w @septo/web`
-- [ ] `npm run test:e2e` (suítes existentes intactas)
+- [x] `npm run check-types -w @septo/web` e `npm run test -w @septo/web`
+- [x] `npm run test:e2e` (suítes existentes intactas)
 
 **Dependências:** T12
 **Arquivos:** `apps/web/src/routes/__root.tsx`, `apps/web/src/routes/_app.tsx`, `apps/web/src/routes/_app/{notes,dev-tools,settings,index}.tsx`, `apps/web/src/routeTree.gen.ts` (gerado)
@@ -297,14 +297,14 @@
 **Descrição:** O Playwright passa a subir API e web com `DATABASE_URL` de `septo_test` e `reuseExistingServer: false`. Um `global-setup` aplica as migrations no banco de teste, cria o usuário de teste pelo mesmo CLI (`user:set`, via `stdin`) e faz `POST /api/auth/login` para gravar `storageState`, que todas as suítes usam. Assim, quando o guard do web ligar (T15), as suítes existentes continuam verdes sem UI de login.
 
 **Aceite:**
-- [ ] `npm run test:e2e` roda contra `septo_test`; o banco `septo` (dev) não é tocado e o usuário de dev não é sobrescrito
-- [ ] O `storageState` contém o cookie `septo_session`; o cookie `Secure` funciona em `http://localhost` (tanto no navegador do Playwright quanto no `request` fixture) — se não funcionar, parar e trazer o plano B da spec/plano para decisão
-- [ ] Credenciais de teste em constantes do e2e (não em `.env` nem no README com valor real); README documenta que as portas 5173/3333 precisam estar livres
-- [ ] Suíte existente verde, sem edição nos specs (`test.use({ storageState })` no config)
+- [x] `npm run test:e2e` roda contra `septo_test`; o banco `septo` (dev) não é tocado e o usuário de dev não é sobrescrito
+- [x] O `storageState` contém o cookie `septo_session`; o cookie `Secure` funciona em `http://localhost` (tanto no navegador do Playwright quanto no `request` fixture) — se não funcionar, parar e trazer o plano B da spec/plano para decisão
+- [x] Credenciais de teste em constantes do e2e (não em `.env` nem no README com valor real); README documenta que as portas 5173/3333 precisam estar livres
+- [x] Suíte existente verde, sem edição nos specs (`test.use({ storageState })` no config)
 
 **Verificação:**
-- [ ] `npm run test:e2e` (toda a suíte atual, autenticada) e uma segunda execução seguida, para provar idempotência do setup
-- [ ] Conferir no Postgres: `septo.users` sem linhas novas, `septo_test.users` com 1
+- [x] `npm run test:e2e` (toda a suíte atual, autenticada) e uma segunda execução seguida, para provar idempotência do setup
+- [x] Conferir no Postgres: `septo.users` sem linhas novas, `septo_test.users` com 1
 
 **Dependências:** T8, T13
 **Arquivos:** `apps/web/playwright.config.ts`, `apps/web/e2e/global-setup.ts`, `apps/web/e2e/constants.ts`, `.gitignore` (`e2e/.auth/`), `README.md` (trecho do e2e)
@@ -317,16 +317,16 @@
 **Descrição:** `routes/login.tsx` (fora do shell) com `LoginForm` (username + senha, validação com o schema gerado pelo Orval, mensagem "Usuário ou senha inválidos", e no `429` o tempo de espera lido do `Retry-After`). O `beforeLoad` de `_app` faz `ensureQueryData(getMeQueryOptions())` e, no `401`, redireciona para `/login?redirect=<página>`. `/login` com sessão válida redireciona para `/notes`. Depois do login, navega para `parseRedirect(search.redirect)`. O SSR renderiza sem flash de conteúdo deslogado.
 
 **Aceite:**
-- [ ] Sem sessão, abrir `/notes` (SSR e navegação direta) responde redirecionamento para `/login?redirect=/notes`; o login volta para `/notes`; `?redirect=//evil.com` é ignorado e vai para `/notes`
-- [ ] Credencial errada mostra "Usuário ou senha inválidos" (uma mensagem só para os dois casos); `429` mostra quanto esperar
-- [ ] `/login` com sessão válida → `/notes`; a página de login não mostra sidebar nem header do shell
-- [ ] Nenhum conteúdo do shell aparece no HTML de uma requisição SSR sem cookie
-- [ ] Formulário acessível: labels, `autocomplete="username"` / `current-password`, foco no erro, botão desabilitado enquanto envia; UI em PT-BR
+- [x] Sem sessão, abrir `/notes` (SSR e navegação direta) responde redirecionamento para `/login?redirect=/notes`; o login volta para `/notes`; `?redirect=//evil.com` é ignorado e vai para `/notes`
+- [x] Credencial errada mostra "Usuário ou senha inválidos" (uma mensagem só para os dois casos); `429` mostra quanto esperar
+- [x] `/login` com sessão válida → `/notes`; a página de login não mostra sidebar nem header do shell
+- [x] Nenhum conteúdo do shell aparece no HTML de uma requisição SSR sem cookie
+- [x] Formulário acessível: labels, `autocomplete="username"` / `current-password`, foco no erro, botão desabilitado enquanto envia; UI em PT-BR
 
 **Verificação:**
-- [ ] `npm run check-types` e `npm run test -w @septo/web`
-- [ ] e2e novo `e2e/auth.spec.ts` (sem `storageState`): redireciona e volta; credencial errada; `//evil.com` ignorado; `/login` logado vai para `/notes`; SSR sem sessão não contém o shell (`request.get` com `maxRedirects: 0`)
-- [ ] `npm run test:e2e` completo
+- [x] `npm run check-types` e `npm run test -w @septo/web`
+- [x] e2e novo `e2e/auth.spec.ts` (sem `storageState`): redireciona e volta; credencial errada; `//evil.com` ignorado; `/login` logado vai para `/notes`; SSR sem sessão não contém o shell (`request.get` com `maxRedirects: 0`)
+- [x] `npm run test:e2e` completo
 
 **Dependências:** T14
 **Arquivos:** `apps/web/src/routes/login.tsx`, `apps/web/src/routes/_app.tsx`, `apps/web/src/features/identity/components/login-form.tsx`, `apps/web/e2e/auth.spec.ts`, `apps/web/src/routeTree.gen.ts` (gerado)
@@ -339,15 +339,15 @@
 **Descrição:** `UserMenu` no shell mostra o nome de exibição (lido de `/api/me`) e "Sair"; sair chama `authLogout`, limpa o cache do TanStack Query e navega para `/login`. Interceptor do axios **no navegador**: `401` fora de `/login` limpa o cache e navega para `/login?redirect=<página atual>` (sessão que expira no meio do uso).
 
 **Aceite:**
-- [ ] O menu mostra o `displayName`; em 375 px cabe no header/drawer sem scroll horizontal
-- [ ] "Sair" encerra a sessão deste navegador e leva a `/login`; voltar com o botão do navegador não mostra conteúdo protegido
-- [ ] Um `401` em qualquer chamada do cliente (cookie apagado por fora) leva a `/login?redirect=…` sem loop; `401` da própria chamada de login não redireciona
-- [ ] O interceptor não roda no SSR
+- [x] O menu mostra o `displayName`; em 375 px cabe no header/drawer sem scroll horizontal
+- [x] "Sair" encerra a sessão deste navegador e leva a `/login`; voltar com o botão do navegador não mostra conteúdo protegido
+- [x] Um `401` em qualquer chamada do cliente (cookie apagado por fora) leva a `/login?redirect=…` sem loop; `401` da própria chamada de login não redireciona
+- [x] O interceptor não roda no SSR
 
 **Verificação:**
-- [ ] `npm run check-types` e `npm run test -w @septo/web` (unit da regra do interceptor: quando redireciona e quando não)
-- [ ] e2e: sair e cair em `/login`; apagar o cookie no meio do uso e disparar uma navegação leva a `/login?redirect=`
-- [ ] Manual: 375 px
+- [x] `npm run check-types` e `npm run test -w @septo/web` (unit da regra do interceptor: quando redireciona e quando não)
+- [x] e2e: sair e cair em `/login`; apagar o cookie no meio do uso e disparar uma navegação leva a `/login?redirect=`
+- [x] Manual: 375 px
 
 **Dependências:** T15
 **Arquivos:** `apps/web/src/features/identity/components/user-menu.tsx`, `apps/web/src/shared/layout/{app-header,app-sidebar}.tsx` (onde encaixar), `apps/web/src/shared/api/http-client.ts`, `apps/web/e2e/auth.spec.ts`
@@ -360,13 +360,13 @@
 **Descrição:** Nova seção "Conta" acima de "Aparência" em `/settings`, com `AccountSettings`: formulário de nome de exibição (`PATCH /me`, validação do schema gerado) e leitura do último login (data formatada em PT-BR e IP; "Nunca" se `null`). O nome atualizado reflete no menu do usuário sem recarregar.
 
 **Aceite:**
-- [ ] Editar o nome (1–50 caracteres, sem espaços nas pontas) salva, mostra confirmação e atualiza o menu do usuário na hora; erros de validação aparecem no campo
-- [ ] Mostra `lastLoginAt` e `lastLoginIp` como vêm de `Me` (data formatada em PT-BR e IP; "Nunca" se `null`) — ver Open Questions do plano sobre o "último login" ser o da sessão atual
-- [ ] Sem regressão nas linhas de tema e acento
+- [x] Editar o nome (1–50 caracteres, sem espaços nas pontas) salva, mostra confirmação e atualiza o menu do usuário na hora; erros de validação aparecem no campo
+- [x] Mostra `lastLoginAt` e `lastLoginIp` como vêm de `Me` (data formatada em PT-BR e IP; "Nunca" se `null`) — ver Open Questions do plano sobre o "último login" ser o da sessão atual
+- [x] Sem regressão nas linhas de tema e acento
 
 **Verificação:**
-- [ ] `npm run check-types` e `npm run test -w @septo/web`
-- [ ] e2e novo `e2e/account.spec.ts`: editar o nome de exibição e ver no menu; recarregar e persistir
+- [x] `npm run check-types` e `npm run test -w @septo/web`
+- [x] e2e novo `e2e/account.spec.ts`: editar o nome de exibição e ver no menu; recarregar e persistir
 
 **Dependências:** T16, T9
 **Arquivos:** `apps/web/src/features/identity/components/account-settings.tsx`, `apps/web/src/routes/_app/settings.tsx`, `apps/web/e2e/account.spec.ts`
@@ -379,15 +379,15 @@
 **Descrição:** Duas ações na seção Conta: formulário de troca de senha (senha atual, nova, confirmação; 12–128 caracteres) com `PUT /me/password`, e "Sair de todos os dispositivos" com confirmação, `DELETE /me/sessions`, limpeza do cache e navegação para `/login`. A troca de senha mantém a sessão atual (cookie reemitido).
 
 **Aceite:**
-- [ ] Senha atual errada mostra o erro no campo (`INVALID_CURRENT_PASSWORD`); nova fora de 12–128 ou confirmação diferente bloqueia no formulário; sucesso limpa os campos, confirma e mantém o usuário logado
-- [ ] Depois de trocar a senha, outra sessão (contexto de navegador separado) cai no próximo request; a atual segue funcionando
-- [ ] "Sair de todos" pede confirmação, derruba todas as sessões, inclusive esta, e leva a `/login`
-- [ ] Campos com `autocomplete="current-password"` / `new-password`; nada de senha em `localStorage` nem na URL
+- [x] Senha atual errada mostra o erro no campo (`INVALID_CURRENT_PASSWORD`); nova fora de 12–128 ou confirmação diferente bloqueia no formulário; sucesso limpa os campos, confirma e mantém o usuário logado
+- [x] Depois de trocar a senha, outra sessão (contexto de navegador separado) cai no próximo request; a atual segue funcionando
+- [x] "Sair de todos" pede confirmação, derruba todas as sessões, inclusive esta, e leva a `/login`
+- [x] Campos com `autocomplete="current-password"` / `new-password`; nada de senha em `localStorage` nem na URL
 
 **Verificação:**
-- [ ] `npm run check-types` e `npm run test -w @septo/web`
-- [ ] e2e em `account.spec.ts`: trocar a senha (e restaurar a original ao final, para não quebrar as demais suítes) e checar a segunda sessão; "Sair de todos" leva a `/login` e o `storageState` antigo deixa de valer (rodar isolado, sem afetar o `storageState` compartilhado — usar um usuário/contexto próprio ou logar de novo no teste)
-- [ ] Manual: 375 px
+- [x] `npm run check-types` e `npm run test -w @septo/web`
+- [x] e2e em `account.spec.ts`: trocar a senha (e restaurar a original ao final, para não quebrar as demais suítes) e checar a segunda sessão; "Sair de todos" leva a `/login` e o `storageState` antigo deixa de valer (rodar isolado, sem afetar o `storageState` compartilhado — usar um usuário/contexto próprio ou logar de novo no teste)
+- [x] Manual: 375 px
 
 **Dependências:** T17, T10, T11
 **Arquivos:** `apps/web/src/features/identity/components/account-settings.tsx`, `apps/web/src/features/identity/components/change-password-form.tsx`, `apps/web/e2e/account.spec.ts`
