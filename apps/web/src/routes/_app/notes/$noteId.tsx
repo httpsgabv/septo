@@ -1,17 +1,23 @@
-import { Button } from '@septo/ui/components/button';
+import { buttonVariants } from '@septo/ui/components/button';
 import { Skeleton } from '@septo/ui/components/skeleton';
-import { ClientOnly, createFileRoute, Link, notFound } from '@tanstack/react-router';
+import { useQueryClient } from '@tanstack/react-query';
+import { ClientOnly, createFileRoute, Link, notFound, useNavigate } from '@tanstack/react-router';
 import { isAxiosError } from 'axios';
 import { ArrowLeftIcon } from 'lucide-react';
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useState } from 'react';
+import { NEW_NOTE_ID } from '../../../features/notes/domain/new-note';
 import {
+  getNotesGetQueryKey,
   getNotesGetQueryOptions,
-  useNotesGet,
 } from '../../../shared/api/generated/endpoints/notes/notes';
+import type { Note } from '../../../shared/api/generated/models';
 import { EmptyState } from '../../../shared/layout/page';
 
 export const Route = createFileRoute('/_app/notes/$noteId')({
+  // Only warms the query cache (and turns a 404 into the not-found view): the editor starts from
+  // the cache, not from loader data, which the router may hand back stale when a note is revisited.
   loader: async ({ context, params }) => {
+    if (params.noteId === NEW_NOTE_ID) return;
     try {
       await context.queryClient.ensureQueryData(getNotesGetQueryOptions(params.noteId));
     } catch (error) {
@@ -25,16 +31,14 @@ export const Route = createFileRoute('/_app/notes/$noteId')({
 
 function BackToList() {
   return (
-    <Button
-      variant="ghost"
-      size="sm"
-      nativeButton={false}
-      className="mb-4 md:hidden"
-      render={<Link to="/notes" search={(prev) => prev} />}
+    <Link
+      to="/notes"
+      search={(prev) => prev}
+      className={`${buttonVariants({ variant: 'ghost', size: 'sm' })} mb-4 md:hidden`}
     >
       <ArrowLeftIcon />
       Notas
-    </Button>
+    </Link>
   );
 }
 
@@ -66,15 +70,47 @@ function EditorSkeleton() {
 
 function NotePage() {
   const { noteId } = Route.useParams();
-  const { data: note } = useNotesGet(noteId);
-  if (!note) return null;
+  const navigate = useNavigate();
+  // Read from the cache, which the editor keeps current as the user types: leaving a note and
+  // coming back must show what was typed, and a stale start would overwrite it on the next save.
+  const queryClient = useQueryClient();
+  const note =
+    noteId === NEW_NOTE_ID
+      ? null
+      : (queryClient.getQueryData<Note>(getNotesGetQueryKey(noteId)) ?? null);
+
+  // The editor is remounted when another note is opened, but not when a draft becomes its own
+  // note: the URL changes from /notes/new to the new id while the user keeps typing.
+  const [editorKey, setEditorKey] = useState(noteId);
+  const [adopted, setAdopted] = useState<string>();
+  if (noteId !== editorKey && noteId !== adopted) {
+    setEditorKey(noteId);
+    setAdopted(undefined);
+  }
 
   return (
     <div className="mx-auto max-w-3xl p-6 md:p-10">
       <BackToList />
       <ClientOnly fallback={<EditorSkeleton />}>
         <Suspense fallback={<EditorSkeleton />}>
-          <NoteEditor key={note.id} note={note} />
+          {/* Never a draft for an id that exists: without its cached note, wait instead of creating. */}
+          {note || noteId === NEW_NOTE_ID ? (
+            <NoteEditor
+              key={editorKey}
+              note={note}
+              onCreated={(id) => {
+                setAdopted(id);
+                navigate({
+                  to: '/notes/$noteId',
+                  params: { noteId: id },
+                  search: (prev) => prev,
+                  replace: true,
+                });
+              }}
+            />
+          ) : (
+            <EditorSkeleton />
+          )}
         </Suspense>
       </ClientOnly>
     </div>

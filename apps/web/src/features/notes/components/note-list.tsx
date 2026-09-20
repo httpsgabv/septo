@@ -1,4 +1,4 @@
-import { Button } from '@septo/ui/components/button';
+import { Button, buttonVariants } from '@septo/ui/components/button';
 import { Input } from '@septo/ui/components/input';
 import { Skeleton } from '@septo/ui/components/skeleton';
 import { keepPreviousData } from '@tanstack/react-query';
@@ -8,6 +8,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useNotesList } from '../../../shared/api/generated/endpoints/notes/notes';
 import { EmptyState } from '../../../shared/layout/page';
 import { NOTES_VIEWS, type NotesView, toListParams } from '../domain/search-params';
+import { NewNoteButton } from './new-note-button';
 import { NoteListItem } from './note-list-item';
 
 const VIEW_LABELS: Record<NotesView, string> = {
@@ -38,20 +39,25 @@ export function NoteList() {
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <header className="flex flex-col gap-3 border-b p-4">
-        <h1 className="text-2xl font-semibold">Notas</h1>
+        <div className="flex items-center justify-between gap-2">
+          <h1 className="text-2xl font-semibold">Notas</h1>
+          <NewNoteButton />
+        </div>
         <SearchField />
         <nav aria-label="Filtro das notas" className="flex gap-1">
           {NOTES_VIEWS.map((option) => (
-            <Button
+            <Link
               key={option}
-              variant={option === view ? 'secondary' : 'ghost'}
-              size="sm"
-              nativeButton={false}
+              to="."
+              search={(prev) => ({ ...prev, view: option })}
               aria-current={option === view ? 'true' : undefined}
-              render={<Link to="." search={(prev) => ({ ...prev, view: option })} />}
+              className={buttonVariants({
+                variant: option === view ? 'secondary' : 'ghost',
+                size: 'sm',
+              })}
             >
               {VIEW_LABELS[option]}
-            </Button>
+            </Link>
           ))}
         </nav>
       </header>

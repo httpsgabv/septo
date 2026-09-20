@@ -215,15 +215,15 @@
 **Descrição:** `features/notes/domain/autosave.ts`: máquina de estado pura (`idle` → `dirty` → `saving` → `saved`, com `dirty` durante um save pendente) e debounce de 800 ms, testada com relógio falso. No editor: `useNotesUpdate` com atualização otimista do detalhe, invalidação da lista ao concluir, indicador "Salvando…/Salvo/Erro ao salvar (tentar de novo)", e flush ao desmontar ou trocar de nota. "Nova nota" abre rascunho local em `/notes/new`; o primeiro save chama `useNotesCreate` e substitui a URL pelo id real (`replace`), sem remontar o editor.
 
 **Aceite:**
-- [ ] Parar de digitar salva em ~800 ms; digitar durante um save agenda o próximo (nada se perde)
-- [ ] Sair da nota ou desmontar o editor faz flush do que estava pendente
-- [ ] Indicador reflete os quatro estados; falha de rede mostra erro e permite tentar de novo, sem perder o texto
-- [ ] Rascunho vazio não cria nota; o primeiro conteúdo cria e a URL passa a ser `/notes/<id>` sem recarregar
-- [ ] A nota não "pula" de lugar na lista enquanto digito (invalidação só ao concluir)
+- [x] Parar de digitar salva em ~800 ms; digitar durante um save agenda o próximo (nada se perde)
+- [x] Sair da nota ou desmontar o editor faz flush do que estava pendente
+- [x] Indicador reflete os quatro estados; falha de rede mostra erro e permite tentar de novo, sem perder o texto
+- [x] Rascunho vazio não cria nota; o primeiro conteúdo cria e a URL passa a ser `/notes/<id>` sem recarregar
+- [x] A nota não "pula" de lugar na lista enquanto digito (invalidação só ao concluir)
 
 **Verificação:**
-- [ ] `npm run test -w @septo/web` (unit de `autosave.ts`, incluindo save durante save e flush)
-- [ ] Manual: digitar, recarregar, conteúdo persistido; abrir Network offline e ver o estado de erro
+- [x] `npm run test -w @septo/web` (unit de `autosave.ts`, incluindo save durante save e flush)
+- [x] Manual: digitar, recarregar, conteúdo persistido; abrir Network offline e ver o estado de erro
 
 **Dependências:** T9
 **Arquivos:** `apps/web/src/features/notes/domain/autosave.ts` (+ spec), `apps/web/src/features/notes/components/{note-editor,new-note-button}.tsx`, `apps/web/src/routes/_app/notes/$noteId.tsx`
