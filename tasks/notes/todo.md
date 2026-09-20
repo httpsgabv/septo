@@ -59,17 +59,17 @@
 **Descrição:** TS puro, sem framework, com TDD. Entidade `Note` com `create`, `edit` (título, corpo, tags, `remindAt`), `setPinned`, `setArchived`. `edit` atualiza `updatedAt` e recalcula `searchText`; `setPinned`/`setArchived` **não** tocam `updatedAt`. Value object de tags com a normalização da spec (trim, minúsculas, dedupe, espaço → `-`, 1–30 caracteres, padrão `[\p{L}\p{N}._-]+`, máximo 10). `searchText` é derivado (título + corpo, `NFD` sem diacrítico, minúsculas) dentro da entidade. Erros `NOTE_NOT_FOUND` (`kind: 'not_found'`), `NOTE_EMPTY` e `INVALID_TAG` (`kind: 'invalid'`). Porta `NoteRepository` como `abstract class`, incluindo o critério de listagem (`{ query?, tag?, view }`).
 
 **Aceite:**
-- [ ] `create` rejeita título e corpo vazios (ou só espaços) com `NoteEmptyError`; aceita só título ou só corpo
-- [ ] `edit` sobe `updatedAt` para o `now` recebido e recalcula `searchText`; `setPinned`/`setArchived` preservam `updatedAt`
-- [ ] Fixar/arquivar duas vezes é idempotente (não sobrescreve `pinnedAt`/`archivedAt` existente); desfazer volta para `null`
-- [ ] `remindAt` aceita `Date` e `null` (limpar); não há validação de data no passado
-- [ ] Tags: `"  Trabalho "`, `"trabalho"` e `"TRABALHO"` colapsam numa só; `"a b"` → `"a-b"`; 11ª tag, tag vazia, tag com 31 caracteres e tag com caractere inválido lançam `InvalidTagError`
-- [ ] `searchText` de "Anotação" contém "anotacao"; não existe setter público de `searchText` (teste garante que só `create`/`edit` o produzem)
-- [ ] Nenhum import de Nest, Prisma ou `node:` em `domain/`
+- [x] `create` rejeita título e corpo vazios (ou só espaços) com `NoteEmptyError`; aceita só título ou só corpo
+- [x] `edit` sobe `updatedAt` para o `now` recebido e recalcula `searchText`; `setPinned`/`setArchived` preservam `updatedAt`
+- [x] Fixar/arquivar duas vezes é idempotente (não sobrescreve `pinnedAt`/`archivedAt` existente); desfazer volta para `null`
+- [x] `remindAt` aceita `Date` e `null` (limpar); não há validação de data no passado
+- [x] Tags: `"  Trabalho "`, `"trabalho"` e `"TRABALHO"` colapsam numa só; `"a b"` → `"a-b"`; 11ª tag, tag vazia, tag com 31 caracteres e tag com caractere inválido lançam `InvalidTagError`
+- [x] `searchText` de "Anotação" contém "anotacao"; não existe setter público de `searchText` (teste garante que só `create`/`edit` o produzem)
+- [x] Nenhum import de Nest, Prisma ou `node:` em `domain/`
 
 **Verificação:**
-- [ ] `npm run test -w @septo/api` (`note.spec.ts`, `tags.spec.ts`, `search-text.spec.ts`, escritos antes)
-- [ ] `grep -rn "@nestjs\|generated/prisma\|node:" apps/api/src/modules/notes/domain` sem resultado
+- [x] `npm run test -w @septo/api` (`note.spec.ts`, `tags.spec.ts`, `search-text.spec.ts`, escritos antes)
+- [x] `grep -rn "@nestjs\|generated/prisma\|node:" apps/api/src/modules/notes/domain` sem resultado
 
 **Dependências:** T2
 **Arquivos:** `apps/api/src/modules/notes/domain/{note,note.repository,tags,search-text,errors}.ts` (+ specs)
