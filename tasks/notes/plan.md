@@ -64,7 +64,7 @@ T13 ─▶ T14 e2e do fluxo completo ─▶ T15 docs, cobertura e fechamento
 - [ ] Revisão com você antes de seguir
 
 ### Fase 3: web
-- [ ] T8: Rota `/notes` como layout de duas colunas, lista no SSR e filtros na URL
+- [x] T8: Rota `/notes` como layout de duas colunas, lista no SSR e filtros na URL
 - [ ] T9: Editor da nota (`/notes/$noteId`) com Tiptap sob demanda e toolbar
 - [ ] T10: Autosave com debounce, mutação otimista e criação preguiçosa da nota nova
 - [ ] T11: Tags: input na nota e filtro por tag na lista

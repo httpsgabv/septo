@@ -170,17 +170,17 @@
 **Descrição:** `routes/_app/notes.tsx` deixa de ser folha e passa a ser layout: coluna da lista + `Outlet`. `validateSearch` com zod para `q`, `tag` e `view` (`features/notes/domain/search-params.ts`). O loader chama `ensureQueryData(getNotesListQueryOptions(...))` para a lista sair renderizada no SSR. `routes/_app/notes/index.tsx` é o estado vazio ("selecione ou crie uma nota"). Componentes `note-list` e `note-list-item` (título ou "Sem título", trecho, tags, marcador de fixada/lembrete), campo de busca com debounce que escreve em `?q=`, abas/segmentos para `view`. Em telas estreitas, a lista ocupa a tela toda. Ainda **sem** editor: clicar numa nota navega para `/notes/$noteId`, que nesta tarefa só mostra título e corpo em texto.
 
 **Aceite:**
-- [ ] `/notes` renderiza a lista no SSR (visível com JS desligado); `?q=`/`?tag=`/`?view=` sobrevivem ao reload e valores inválidos caem no default
-- [ ] Busca digitada atualiza a URL com `replace` (não polui o histórico)
-- [ ] Estados de lista vazia, carregando (skeleton) e erro tratados
-- [ ] Layout de duas colunas em desktop; em 375 px a lista ocupa a tela sem scroll horizontal
-- [ ] `navigation.ts` e `not-found.tsx` continuam apontando para `/notes` (rotas tipadas compilando)
+- [x] `/notes` renderiza a lista no SSR (visível com JS desligado); `?q=`/`?tag=`/`?view=` sobrevivem ao reload e valores inválidos caem no default
+- [x] Busca digitada atualiza a URL com `replace` (não polui o histórico)
+- [x] Estados de lista vazia, carregando (skeleton) e erro tratados
+- [x] Layout de duas colunas em desktop; em 375 px a lista ocupa a tela sem scroll horizontal
+- [x] `navigation.ts` e `not-found.tsx` continuam apontando para `/notes` (rotas tipadas compilando)
 
 **Verificação:**
-- [ ] `npm run test -w @septo/web` (unit de `search-params.ts`)
-- [ ] `npm run check-types` (o `routeTree.gen.ts` regenerado)
-- [ ] `npm run test:e2e` — as suítes existentes de shell/configurações continuam verdes
-- [ ] Conferência manual em desktop e 375 px
+- [x] `npm run test -w @septo/web` (unit de `search-params.ts`)
+- [x] `npm run check-types` (o `routeTree.gen.ts` regenerado)
+- [x] `npm run test:e2e` — as suítes existentes de shell/configurações continuam verdes
+- [x] Conferência manual em desktop e 375 px
 
 **Dependências:** T7
 **Arquivos:** `apps/web/src/routes/_app/notes.tsx`, `apps/web/src/routes/_app/notes/index.tsx`, `apps/web/src/routes/_app/notes/$noteId.tsx`, `apps/web/src/features/notes/domain/search-params.ts` (+ spec), `apps/web/src/features/notes/components/{note-list,note-list-item}.tsx`
