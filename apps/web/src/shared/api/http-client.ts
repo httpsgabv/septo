@@ -1,5 +1,5 @@
 import { createIsomorphicFn } from '@tanstack/react-start';
-import { getRequestHeader } from '@tanstack/react-start/server';
+import { getRequestHeader, getResponse } from '@tanstack/react-start/server';
 import axios, { type AxiosError, type AxiosRequestConfig } from 'axios';
 
 const instance = axios.create({ withCredentials: true });
@@ -18,18 +18,30 @@ const requestDefaults = createIsomorphicFn()
   })
   .client((): AxiosRequestConfig => ({}));
 
+/**
+ * SSR only: the API renews a session cookie that is older than 15 days. Handing its `Set-Cookie`
+ * to the page response is what makes the renewal reach the browser on a direct navigation.
+ */
+const forwardSetCookies = createIsomorphicFn()
+  .server((cookies: string[]) => {
+    const { headers } = getResponse();
+    for (const cookie of cookies) headers.append('set-cookie', cookie);
+  })
+  .client((_cookies: string[]) => {});
+
 /** Orval mutator: every generated request goes through here. */
 export async function httpClient<T>(
   config: AxiosRequestConfig,
   options?: AxiosRequestConfig,
 ): Promise<T> {
   const defaults = requestDefaults();
-  const { data } = await instance.request<T>({
+  const { data, headers } = await instance.request<T>({
     ...defaults,
     ...config,
     ...options,
     headers: { ...defaults.headers, ...config.headers, ...options?.headers },
   });
+  forwardSetCookies(headers['set-cookie'] ?? []);
   return data;
 }
 

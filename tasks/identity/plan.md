@@ -69,7 +69,7 @@ T18 ─▶ T19 docs, env, Docker e fechamento
 - [x] T11: `DELETE /api/me/sessions`
 
 ### Fase 4: web
-- [ ] T12: Repassar `Set-Cookie` da API no SSR e validador de `?redirect=`
+- [x] T12: Repassar `Set-Cookie` da API no SSR e validador de `?redirect=`
 - [ ] T13: Mover shell e rotas para o layout `_app` (refactor, sem mudança de comportamento)
 - [ ] T14: E2E autenticado: banco `septo_test`, usuário de teste e `storageState`
 - [ ] T15: Tela `/login` e guard do web

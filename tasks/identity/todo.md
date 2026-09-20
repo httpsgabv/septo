@@ -258,13 +258,13 @@
 **Descrição:** Hoje o mutator repassa só o `cookie` do navegador para a API. Passa a devolver também os `Set-Cookie` da resposta da API para a resposta do SSR (`setResponseHeader`/equivalente do TanStack Start), para a renovação deslizante funcionar numa navegação direta. Junto, `redirect.ts` no domínio do web: só aceita path interno (começa com `/` e não com `//`, sem `\`, sem esquema); qualquer outra coisa cai em `/notes`.
 
 **Aceite:**
-- [ ] Numa requisição SSR com cookie de token > 15 dias, a resposta HTML do web traz `Set-Cookie: septo_session=…` renovado (mesmas flags), e o cookie do visitante não é duplicado nem perdido
-- [ ] No navegador (cliente), o mutator continua sem mexer em cookies
-- [ ] `parseRedirect("/notes")` → `/notes`; `//evil.com`, `https://evil.com`, `/\evil.com`, `javascript:alert(1)`, vazio e `undefined` → `/notes`; path com query (`/notes?x=1`) preservado
+- [ ] (verificado na T15) Numa requisição SSR com cookie de token > 15 dias, a resposta HTML do web traz `Set-Cookie: septo_session=…` renovado (mesmas flags), e o cookie do visitante não é duplicado nem perdido
+- [x] No navegador (cliente), o mutator continua sem mexer em cookies
+- [x] `parseRedirect("/notes")` → `/notes`; `//evil.com`, `https://evil.com`, `/\evil.com`, `javascript:alert(1)`, vazio e `undefined` → `/notes`; path com query (`/notes?x=1`) preservado
 
 **Verificação:**
-- [ ] `npm run test -w @septo/web` (unit exaustivo do `redirect.ts`, escrito primeiro)
-- [ ] Manual: emitir token antigo com o `TokenService` (relógio no passado) e `curl -i --cookie 'septo_session=…' http://localhost:5173/notes` mostra o `Set-Cookie` no HTML; anotar o resultado no commit
+- [x] `npm run test -w @septo/web` (unit exaustivo do `redirect.ts`, escrito primeiro)
+- [ ] Manual: **adiado para a T15**. Nada no SSR chama uma rota protegida antes do guard do `_app`, então não há como observar o `Set-Cookie` renovado agora; o e2e da T15 (token de 16 dias) prova
 
 **Dependências:** T6 (o guard que renova); pode rodar em paralelo com T9–T11
 **Arquivos:** `apps/web/src/shared/api/http-client.ts`, `apps/web/src/features/identity/domain/redirect.ts`, `apps/web/src/features/identity/domain/redirect.spec.ts`
