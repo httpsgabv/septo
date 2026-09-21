@@ -53,6 +53,15 @@ export function CommandPalette({
               <PaletteItem key={item.to} item={item} onSelect={go} />
             ))}
           </CommandGroup>
+          {toolsNavigation
+            .filter((item) => item.children)
+            .map((item) => (
+              <CommandGroup key={item.to} heading={item.label}>
+                {item.children?.map((child) => (
+                  <PaletteItem key={child.to} item={child} onSelect={go} />
+                ))}
+              </CommandGroup>
+            ))}
           <CommandGroup heading="Geral">
             <PaletteItem item={settingsNavigation} onSelect={go} />
           </CommandGroup>
@@ -67,7 +76,9 @@ function PaletteItem({ item, onSelect }: { item: NavItem; onSelect: (item: NavIt
   return (
     <CommandItem
       value={item.label}
-      keywords={[item.description]}
+      // A parent's description names its children ("chaves RSA"), and cmdk does not reorder groups
+      // by score: matching it would put "Dev Tools" above "Chaves RSA". The children match instead.
+      keywords={item.children ? [] : [item.description]}
       onSelect={() => onSelect(item)}
       className="gap-3 py-2 data-selected:[&_svg]:text-brand-text"
     >

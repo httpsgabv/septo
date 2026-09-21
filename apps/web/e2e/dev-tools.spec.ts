@@ -10,15 +10,13 @@ const TOOLS = [
   ['/dev-tools/readme', 'README'],
 ] as const;
 
-test('the index lists the six tools, and each card opens one', async ({ page }) => {
+test('the index lists the six tools, and each block opens one', async ({ page }) => {
   await gotoHydrated(page, '/dev-tools');
   await expect(page.getByRole('heading', { level: 1, name: 'Dev Tools' })).toBeVisible();
-  // The strip would only repeat the cards, so the index does without it.
-  await expect(page.getByRole('navigation', { name: 'Ferramentas' })).toBeHidden();
 
   for (const [to, label] of TOOLS) {
     await gotoHydrated(page, '/dev-tools');
-    await page.getByRole('link', { name: label }).first().click();
+    await page.getByRole('main').getByRole('link', { name: new RegExp(`^${label}`) }).click();
     await expect(page).toHaveURL(new RegExp(`${to}$`));
     await expect(page.getByRole('heading', { level: 1, name: label })).toBeVisible();
   }
@@ -29,20 +27,24 @@ test('the index comes rendered from the server', async ({ request }) => {
   for (const [, label] of TOOLS) expect(html).toContain(label);
 });
 
-test('each tool opens straight from its URL, with the strip to jump between them', async ({
+test('each tool opens straight from its URL, with its sidebar entry open and active', async ({
   page,
 }) => {
+  const sidebar = page.locator('[data-sidebar="sidebar"]');
   for (const [to, label] of TOOLS) {
     await gotoHydrated(page, to);
     await expect(page.getByRole('heading', { level: 1, name: label })).toBeVisible();
-    await expect(page.getByRole('navigation', { name: 'Ferramentas' })).toBeVisible();
+    await expect(sidebar.getByRole('link', { name: label })).toHaveAttribute('data-active');
+    await expect(sidebar.getByRole('link', { name: 'Dev Tools' })).toHaveAttribute('data-active');
   }
 
-  await page
-    .getByRole('navigation', { name: 'Ferramentas' })
-    .getByRole('link', { name: 'JSON' })
-    .click();
+  await sidebar.getByRole('link', { name: 'JSON' }).click();
   await expect(page.getByRole('heading', { level: 1, name: 'JSON' })).toBeVisible();
+});
+
+test('the tools come expanded in the server HTML when a tool is open', async ({ request }) => {
+  const html = await (await request.get('/dev-tools/rsa')).text();
+  expect(html).toContain('data-sidebar="menu-sub"');
 });
 
 test('JSON: formats what is valid and points at what is not', async ({ page }) => {

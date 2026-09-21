@@ -283,17 +283,17 @@
 **Descrição:** "Dev Tools" continua link para o índice e ganha um chevron (`SidebarMenuAction`) que expande um `SidebarMenuSub` com as seis ferramentas (ícone + nome). Aberto por padrão dentro de `/dev-tools/*`, fechado fora; reabre ao entrar numa ferramenta. A paleta ganha o grupo "Dev Tools" com as seis (descrição como `keywords`). A barra "Ferramentas" de `dev-tools.tsx` sai: o layout vira só `Outlet`.
 
 **Aceite:**
-- [ ] `navigation.ts`: `NavItem` com `children?`; Dev Tools tem as seis a partir de `tools.ts`
-- [ ] Chevron com `aria-expanded` e rótulo "Mostrar ferramentas"/"Ocultar ferramentas"; subitem ativo com `data-active`; pai continua ativo em `/dev-tools/json`
-- [ ] Clicar num subitem fecha o drawer no mobile
-- [ ] Reload em `/dev-tools/rsa` renderiza o grupo aberto no HTML do servidor (sem aviso de hidratação no console)
-- [ ] ⌘K → "rsa" + Enter leva a `/dev-tools/rsa`
-- [ ] `dev-tools.tsx` sem `<nav>`
+- [x] `navigation.ts`: `NavItem` com `children?`; Dev Tools tem as seis a partir de `tools.ts`
+- [x] Chevron com `aria-expanded` e rótulo "Mostrar ferramentas"/"Ocultar ferramentas"; subitem ativo com `data-active`; pai continua ativo em `/dev-tools/json`
+- [x] Clicar num subitem fecha o drawer no mobile
+- [x] Reload em `/dev-tools/rsa` renderiza o grupo aberto no HTML do servidor (sem aviso de hidratação no console)
+- [x] ⌘K → "rsa" + Enter leva a `/dev-tools/rsa`
+- [x] `dev-tools.tsx` sem `<nav>`
 
 **Verificação:**
-- [ ] `navigation.spec.ts`: `findNavItem('/dev-tools/json')` devolve Dev Tools; as seis crianças batem com `tools`
-- [ ] `shell.spec.ts`: novo teste de expandir/recolher, subitem navega e fica ativo; paleta acha "rsa"
-- [ ] `dev-tools.spec.ts`: testes da barra "Ferramentas" trocados por navegação pela sidebar; cliques escopados por região
+- [x] `navigation.spec.ts`: `findNavItem('/dev-tools/json')` devolve Dev Tools; as seis crianças batem com `tools`
+- [x] `shell.spec.ts`: novo teste de expandir/recolher, subitem navega e fica ativo; paleta acha "rsa"
+- [x] `dev-tools.spec.ts`: testes da barra "Ferramentas" trocados por navegação pela sidebar; cliques escopados por região
 
 **Dependências:** nenhuma
 **Arquivos:** `shared/navigation.ts`, `shared/navigation.spec.ts`, `shared/layout/app-sidebar.tsx`, `shared/layout/command-palette.tsx`, `routes/_app/dev-tools.tsx`, `e2e/shell.spec.ts`, `e2e/dev-tools.spec.ts`

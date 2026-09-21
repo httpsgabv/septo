@@ -5,12 +5,18 @@ import {
   SidebarGroup,
   SidebarHeader,
   SidebarMenu,
+  SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
   SidebarRail,
   useSidebar,
 } from '@septo/ui/components/sidebar';
 import { Link, useLocation } from '@tanstack/react-router';
+import { ChevronRightIcon } from 'lucide-react';
+import { useEffect, useId, useState } from 'react';
 import { findNavItem, type NavItem, settingsNavigation, toolsNavigation } from '../navigation';
 import { ApiStatus } from './api-status';
 
@@ -57,12 +63,21 @@ export function AppSidebar() {
 function NavLink({ item }: { item: NavItem }) {
   const pathname = useLocation({ select: (location) => location.pathname });
   const { setOpenMobile } = useSidebar();
+  const inside = findNavItem(pathname)?.to === item.to;
+  // Derived from the route alone, so the server and the client agree on the first render.
+  const [expanded, setExpanded] = useState(inside);
+  const subId = useId();
   const Icon = item.icon;
+
+  // Entering a tool some other way (⌘K, a link) opens the group; leaving it keeps the user's choice.
+  useEffect(() => {
+    if (inside) setExpanded(true);
+  }, [inside]);
 
   return (
     <SidebarMenuItem>
       <SidebarMenuButton
-        isActive={findNavItem(pathname)?.to === item.to}
+        isActive={inside}
         tooltip={item.label}
         render={<Link to={item.to} onClick={() => setOpenMobile(false)} />}
         className="data-active:bg-brand-subtle data-active:[&_svg]:text-brand-text"
@@ -70,6 +85,38 @@ function NavLink({ item }: { item: NavItem }) {
         <Icon />
         <span>{item.label}</span>
       </SidebarMenuButton>
+      {item.children && (
+        <>
+          <SidebarMenuAction
+            aria-expanded={expanded}
+            aria-controls={subId}
+            aria-label={expanded ? 'Ocultar ferramentas' : 'Mostrar ferramentas'}
+            onClick={() => setExpanded((open) => !open)}
+            className="aria-expanded:[&>svg]:rotate-90 [&>svg]:transition-transform"
+          >
+            <ChevronRightIcon />
+          </SidebarMenuAction>
+          {expanded && (
+            <SidebarMenuSub id={subId}>
+              {item.children.map((child) => {
+                const ChildIcon = child.icon;
+                return (
+                  <SidebarMenuSubItem key={child.to}>
+                    <SidebarMenuSubButton
+                      isActive={pathname === child.to}
+                      render={<Link to={child.to} onClick={() => setOpenMobile(false)} />}
+                      className="data-active:bg-brand-subtle data-active:text-brand-text [&>svg]:text-muted-foreground data-active:[&>svg]:text-brand-text"
+                    >
+                      <ChildIcon />
+                      <span>{child.label}</span>
+                    </SidebarMenuSubButton>
+                  </SidebarMenuSubItem>
+                );
+              })}
+            </SidebarMenuSub>
+          )}
+        </>
+      )}
     </SidebarMenuItem>
   );
 }

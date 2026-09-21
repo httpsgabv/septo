@@ -1,10 +1,12 @@
 import { CodeXmlIcon, type LucideIcon, NotebookPenIcon, SettingsIcon } from 'lucide-react';
+import { type Tool, tools } from '../features/dev-tools/domain/tools';
 
 export type NavItem = {
-  to: '/notes' | '/dev-tools' | '/settings';
+  to: '/notes' | '/dev-tools' | '/settings' | Tool['to'];
   label: string;
   description: string;
   icon: LucideIcon;
+  children?: NavItem[];
 };
 
 /** Single source for the sidebar and the command palette. */
@@ -20,6 +22,7 @@ export const toolsNavigation: NavItem[] = [
     label: 'Dev Tools',
     description: 'JSON, chaves RSA, conversores e READMEs',
     icon: CodeXmlIcon,
+    children: tools,
   },
 ];
 
