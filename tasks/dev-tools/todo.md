@@ -340,12 +340,12 @@
 **Descrição:** `FileDrop` ganha `className`/`children` para ocupar o painel inteiro (a borda tracejada aparece só ao arrastar). Imagens: painel da esquerda = origem (solta/clica; depois mostra a miniatura e as dimensões), painel da direita = resultado com "Baixar" no cabeçalho; formato, largura máxima e qualidade na toolbar; tamanho antes → depois na status bar; aviso de EXIF removido. README: painel "Markdown" (textarea que também aceita soltar `.md`) e painel "Leitura"; rodapé removido; `fallback` do `ClientOnly` = `Workspace` vazio.
 
 **Aceite:**
-- [ ] Soltar um arquivo em qualquer ponto do painel de entrada funciona nas duas ferramentas; clicar ainda abre o seletor (Tab + Enter também)
-- [ ] Status bar da imagem mostra "400×250 · 12 KB → 200×125 · 3 KB" (formato equivalente)
-- [ ] Nenhum rodapé nos dois componentes
+- [x] Soltar um arquivo em qualquer ponto do painel de entrada funciona nas duas ferramentas; clicar ainda abre o seletor (Tab + Enter também)
+- [x] Status bar da imagem mostra "400×250 · 12 KB → 200×125 · 3 KB" (formato equivalente)
+- [x] Nenhum rodapé nos dois componentes
 
 **Verificação:**
-- [ ] Testes de Imagens e README do `dev-tools.spec.ts` verdes (ajustar só seletor de região se mudar)
+- [x] Testes de Imagens e README do `dev-tools.spec.ts` verdes (ajustar só seletor de região se mudar)
 
 **Dependências:** R2
 **Arquivos:** `components/file-drop.tsx`, `components/image-tool.tsx`, `components/readme-tool.tsx`, `routes/_app/dev-tools/image.tsx`, `routes/_app/dev-tools/readme.tsx`

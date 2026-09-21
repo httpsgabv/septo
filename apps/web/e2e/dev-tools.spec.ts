@@ -139,7 +139,7 @@ test('Chaves RSA: a 2048 pair shows up as two PEM blocks', async ({ page }) => {
 
 test('README: markdown is rendered, and a table stays as text', async ({ page }) => {
   await gotoHydrated(page, '/dev-tools/readme');
-  const reading = page.getByText('Leitura').locator('..');
+  const reading = page.locator('.ProseMirror');
 
   await page
     .getByLabel('Markdown')
@@ -148,7 +148,7 @@ test('README: markdown is rendered, and a table stays as text', async ({ page })
   await expect(reading.getByRole('heading', { level: 1, name: 'septo' })).toBeVisible();
   await expect(reading.getByRole('listitem')).toHaveCount(2);
   await expect(reading.getByText('| a | b |')).toBeVisible();
-  await expect(reading.locator('.ProseMirror')).toHaveAttribute('contenteditable', 'false');
+  await expect(reading).toHaveAttribute('contenteditable', 'false');
 });
 
 test('nothing the tools touch leaves the tab', async ({ page }) => {

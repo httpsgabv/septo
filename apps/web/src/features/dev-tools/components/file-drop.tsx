@@ -1,10 +1,11 @@
 import { cn } from '@septo/ui/lib/utils';
-import { type ReactNode, useState } from 'react';
+import { type DragEvent, type ReactNode, useState } from 'react';
 
 /**
  * Drop target that is also a real file input: clicking works, Tab + Enter works, dragging works.
  * The caller shapes it (a small header button, or a whole pane) and styles the drag state with
- * `data-over`. The size check lives here so no tool forgets it.
+ * `data-over`. With `pick={false}` it only takes drops, for wrapping a control that must keep its
+ * own clicks (a textarea). The size check lives here so no tool forgets it.
  */
 export function FileDrop({
   accept,
@@ -13,6 +14,7 @@ export function FileDrop({
   onFile,
   onReject,
   disabled = false,
+  pick = true,
   title,
   className,
   children,
@@ -23,6 +25,7 @@ export function FileDrop({
   onFile: (file: File) => void;
   onReject: (message: string) => void;
   disabled?: boolean;
+  pick?: boolean;
   title?: string;
   className?: string;
   children: ReactNode;
@@ -38,22 +41,34 @@ export function FileDrop({
     onFile(file);
   }
 
+  const dropProps = {
+    title,
+    'data-over': over || undefined,
+    onDragOver: (event: DragEvent) => {
+      if (disabled) return;
+      event.preventDefault();
+      setOver(true);
+    },
+    onDragLeave: () => setOver(false),
+    onDrop: (event: DragEvent) => {
+      if (disabled) return;
+      event.preventDefault();
+      setOver(false);
+      take(event.dataTransfer.files[0]);
+    },
+  };
+
+  if (!pick) {
+    return (
+      <div {...dropProps} className={className}>
+        {children}
+      </div>
+    );
+  }
+
   return (
     <label
-      title={title}
-      data-over={over || undefined}
-      onDragOver={(event) => {
-        if (disabled) return;
-        event.preventDefault();
-        setOver(true);
-      }}
-      onDragLeave={() => setOver(false)}
-      onDrop={(event) => {
-        if (disabled) return;
-        event.preventDefault();
-        setOver(false);
-        take(event.dataTransfer.files[0]);
-      }}
+      {...dropProps}
       className={cn(
         'cursor-pointer has-focus-visible:ring-2 has-focus-visible:ring-ring',
         disabled && 'pointer-events-none opacity-50',
