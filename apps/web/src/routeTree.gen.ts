@@ -16,6 +16,13 @@ import { Route as AppSplatRouteImport } from './routes/_app/$'
 import { Route as AppDevToolsRouteImport } from './routes/_app/dev-tools'
 import { Route as AppNotesRouteImport } from './routes/_app/notes'
 import { Route as AppSettingsRouteImport } from './routes/_app/settings'
+import { Route as AppDevToolsIndexRouteImport } from './routes/_app/dev-tools/index'
+import { Route as AppDevToolsDataRouteImport } from './routes/_app/dev-tools/data'
+import { Route as AppDevToolsEncodeRouteImport } from './routes/_app/dev-tools/encode'
+import { Route as AppDevToolsImageRouteImport } from './routes/_app/dev-tools/image'
+import { Route as AppDevToolsJsonRouteImport } from './routes/_app/dev-tools/json'
+import { Route as AppDevToolsReadmeRouteImport } from './routes/_app/dev-tools/readme'
+import { Route as AppDevToolsRsaRouteImport } from './routes/_app/dev-tools/rsa'
 import { Route as AppNotesIndexRouteImport } from './routes/_app/notes/index'
 import { Route as AppNotesNoteIdRouteImport } from './routes/_app/notes/$noteId'
 
@@ -53,6 +60,41 @@ const AppSettingsRoute = AppSettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => AppRoute,
 } as any)
+const AppDevToolsIndexRoute = AppDevToolsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppDevToolsRoute,
+} as any)
+const AppDevToolsDataRoute = AppDevToolsDataRouteImport.update({
+  id: '/data',
+  path: '/data',
+  getParentRoute: () => AppDevToolsRoute,
+} as any)
+const AppDevToolsEncodeRoute = AppDevToolsEncodeRouteImport.update({
+  id: '/encode',
+  path: '/encode',
+  getParentRoute: () => AppDevToolsRoute,
+} as any)
+const AppDevToolsImageRoute = AppDevToolsImageRouteImport.update({
+  id: '/image',
+  path: '/image',
+  getParentRoute: () => AppDevToolsRoute,
+} as any)
+const AppDevToolsJsonRoute = AppDevToolsJsonRouteImport.update({
+  id: '/json',
+  path: '/json',
+  getParentRoute: () => AppDevToolsRoute,
+} as any)
+const AppDevToolsReadmeRoute = AppDevToolsReadmeRouteImport.update({
+  id: '/readme',
+  path: '/readme',
+  getParentRoute: () => AppDevToolsRoute,
+} as any)
+const AppDevToolsRsaRoute = AppDevToolsRsaRouteImport.update({
+  id: '/rsa',
+  path: '/rsa',
+  getParentRoute: () => AppDevToolsRoute,
+} as any)
 const AppNotesIndexRoute = AppNotesIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -68,19 +110,32 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/$': typeof AppSplatRoute
-  '/dev-tools': typeof AppDevToolsRoute
+  '/dev-tools': typeof AppDevToolsRouteWithChildren
   '/notes': typeof AppNotesRouteWithChildren
   '/settings': typeof AppSettingsRoute
+  '/dev-tools/data': typeof AppDevToolsDataRoute
+  '/dev-tools/encode': typeof AppDevToolsEncodeRoute
+  '/dev-tools/image': typeof AppDevToolsImageRoute
+  '/dev-tools/json': typeof AppDevToolsJsonRoute
+  '/dev-tools/readme': typeof AppDevToolsReadmeRoute
+  '/dev-tools/rsa': typeof AppDevToolsRsaRoute
   '/notes/$noteId': typeof AppNotesNoteIdRoute
+  '/dev-tools/': typeof AppDevToolsIndexRoute
   '/notes/': typeof AppNotesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/$': typeof AppSplatRoute
-  '/dev-tools': typeof AppDevToolsRoute
   '/settings': typeof AppSettingsRoute
+  '/dev-tools/data': typeof AppDevToolsDataRoute
+  '/dev-tools/encode': typeof AppDevToolsEncodeRoute
+  '/dev-tools/image': typeof AppDevToolsImageRoute
+  '/dev-tools/json': typeof AppDevToolsJsonRoute
+  '/dev-tools/readme': typeof AppDevToolsReadmeRoute
+  '/dev-tools/rsa': typeof AppDevToolsRsaRoute
   '/notes/$noteId': typeof AppNotesNoteIdRoute
+  '/dev-tools': typeof AppDevToolsIndexRoute
   '/notes': typeof AppNotesIndexRoute
 }
 export interface FileRoutesById {
@@ -89,10 +144,17 @@ export interface FileRoutesById {
   '/_app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
   '/_app/$': typeof AppSplatRoute
-  '/_app/dev-tools': typeof AppDevToolsRoute
+  '/_app/dev-tools': typeof AppDevToolsRouteWithChildren
   '/_app/notes': typeof AppNotesRouteWithChildren
   '/_app/settings': typeof AppSettingsRoute
+  '/_app/dev-tools/data': typeof AppDevToolsDataRoute
+  '/_app/dev-tools/encode': typeof AppDevToolsEncodeRoute
+  '/_app/dev-tools/image': typeof AppDevToolsImageRoute
+  '/_app/dev-tools/json': typeof AppDevToolsJsonRoute
+  '/_app/dev-tools/readme': typeof AppDevToolsReadmeRoute
+  '/_app/dev-tools/rsa': typeof AppDevToolsRsaRoute
   '/_app/notes/$noteId': typeof AppNotesNoteIdRoute
+  '/_app/dev-tools/': typeof AppDevToolsIndexRoute
   '/_app/notes/': typeof AppNotesIndexRoute
 }
 export interface FileRouteTypes {
@@ -104,16 +166,29 @@ export interface FileRouteTypes {
     | '/dev-tools'
     | '/notes'
     | '/settings'
+    | '/dev-tools/data'
+    | '/dev-tools/encode'
+    | '/dev-tools/image'
+    | '/dev-tools/json'
+    | '/dev-tools/readme'
+    | '/dev-tools/rsa'
     | '/notes/$noteId'
+    | '/dev-tools/'
     | '/notes/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/login'
     | '/$'
-    | '/dev-tools'
     | '/settings'
+    | '/dev-tools/data'
+    | '/dev-tools/encode'
+    | '/dev-tools/image'
+    | '/dev-tools/json'
+    | '/dev-tools/readme'
+    | '/dev-tools/rsa'
     | '/notes/$noteId'
+    | '/dev-tools'
     | '/notes'
   id:
     | '__root__'
@@ -124,7 +199,14 @@ export interface FileRouteTypes {
     | '/_app/dev-tools'
     | '/_app/notes'
     | '/_app/settings'
+    | '/_app/dev-tools/data'
+    | '/_app/dev-tools/encode'
+    | '/_app/dev-tools/image'
+    | '/_app/dev-tools/json'
+    | '/_app/dev-tools/readme'
+    | '/_app/dev-tools/rsa'
     | '/_app/notes/$noteId'
+    | '/_app/dev-tools/'
     | '/_app/notes/'
   fileRoutesById: FileRoutesById
 }
@@ -185,6 +267,55 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppSettingsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/dev-tools/': {
+      id: '/_app/dev-tools/'
+      path: '/'
+      fullPath: '/dev-tools/'
+      preLoaderRoute: typeof AppDevToolsIndexRouteImport
+      parentRoute: typeof AppDevToolsRoute
+    }
+    '/_app/dev-tools/data': {
+      id: '/_app/dev-tools/data'
+      path: '/data'
+      fullPath: '/dev-tools/data'
+      preLoaderRoute: typeof AppDevToolsDataRouteImport
+      parentRoute: typeof AppDevToolsRoute
+    }
+    '/_app/dev-tools/encode': {
+      id: '/_app/dev-tools/encode'
+      path: '/encode'
+      fullPath: '/dev-tools/encode'
+      preLoaderRoute: typeof AppDevToolsEncodeRouteImport
+      parentRoute: typeof AppDevToolsRoute
+    }
+    '/_app/dev-tools/image': {
+      id: '/_app/dev-tools/image'
+      path: '/image'
+      fullPath: '/dev-tools/image'
+      preLoaderRoute: typeof AppDevToolsImageRouteImport
+      parentRoute: typeof AppDevToolsRoute
+    }
+    '/_app/dev-tools/json': {
+      id: '/_app/dev-tools/json'
+      path: '/json'
+      fullPath: '/dev-tools/json'
+      preLoaderRoute: typeof AppDevToolsJsonRouteImport
+      parentRoute: typeof AppDevToolsRoute
+    }
+    '/_app/dev-tools/readme': {
+      id: '/_app/dev-tools/readme'
+      path: '/readme'
+      fullPath: '/dev-tools/readme'
+      preLoaderRoute: typeof AppDevToolsReadmeRouteImport
+      parentRoute: typeof AppDevToolsRoute
+    }
+    '/_app/dev-tools/rsa': {
+      id: '/_app/dev-tools/rsa'
+      path: '/rsa'
+      fullPath: '/dev-tools/rsa'
+      preLoaderRoute: typeof AppDevToolsRsaRouteImport
+      parentRoute: typeof AppDevToolsRoute
+    }
     '/_app/notes/': {
       id: '/_app/notes/'
       path: '/'
@@ -202,6 +333,30 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AppDevToolsRouteChildren {
+  AppDevToolsDataRoute: typeof AppDevToolsDataRoute
+  AppDevToolsEncodeRoute: typeof AppDevToolsEncodeRoute
+  AppDevToolsImageRoute: typeof AppDevToolsImageRoute
+  AppDevToolsJsonRoute: typeof AppDevToolsJsonRoute
+  AppDevToolsReadmeRoute: typeof AppDevToolsReadmeRoute
+  AppDevToolsRsaRoute: typeof AppDevToolsRsaRoute
+  AppDevToolsIndexRoute: typeof AppDevToolsIndexRoute
+}
+
+const AppDevToolsRouteChildren: AppDevToolsRouteChildren = {
+  AppDevToolsDataRoute: AppDevToolsDataRoute,
+  AppDevToolsEncodeRoute: AppDevToolsEncodeRoute,
+  AppDevToolsImageRoute: AppDevToolsImageRoute,
+  AppDevToolsJsonRoute: AppDevToolsJsonRoute,
+  AppDevToolsReadmeRoute: AppDevToolsReadmeRoute,
+  AppDevToolsRsaRoute: AppDevToolsRsaRoute,
+  AppDevToolsIndexRoute: AppDevToolsIndexRoute,
+}
+
+const AppDevToolsRouteWithChildren = AppDevToolsRoute._addFileChildren(
+  AppDevToolsRouteChildren,
+)
+
 interface AppNotesRouteChildren {
   AppNotesNoteIdRoute: typeof AppNotesNoteIdRoute
   AppNotesIndexRoute: typeof AppNotesIndexRoute
@@ -218,14 +373,14 @@ const AppNotesRouteWithChildren = AppNotesRoute._addFileChildren(
 
 interface AppRouteChildren {
   AppSplatRoute: typeof AppSplatRoute
-  AppDevToolsRoute: typeof AppDevToolsRoute
+  AppDevToolsRoute: typeof AppDevToolsRouteWithChildren
   AppNotesRoute: typeof AppNotesRouteWithChildren
   AppSettingsRoute: typeof AppSettingsRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppSplatRoute: AppSplatRoute,
-  AppDevToolsRoute: AppDevToolsRoute,
+  AppDevToolsRoute: AppDevToolsRouteWithChildren,
   AppNotesRoute: AppNotesRouteWithChildren,
   AppSettingsRoute: AppSettingsRoute,
 }

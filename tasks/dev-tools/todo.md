@@ -38,19 +38,19 @@
 
 ### T2: Layout `/dev-tools`, índice, `tools.ts`, `ToolPage` e as seis rotas stub
 
-**Descrição:** `routes/_app/dev-tools.tsx` deixa de ser uma página e vira rota de layout, com a lista de ferramentas à esquerda (em telas estreitas, uma barra de links acima) e `Outlet`. `routes/_app/dev-tools/index.tsx` é o índice com um card por ferramenta (`card` do `@septo/ui`). `features/dev-tools/domain/tools.ts` é a fonte única (rota, nome, descrição, ícone lucide), consumida pelo layout e pelo índice — o mesmo padrão do `shared/navigation.ts`. `components/tool-page.tsx` dá a moldura comum: título, descrição e a linha "roda inteiro no seu navegador — nada é enviado nem guardado". As seis rotas nascem como stub: `ToolPage` + `EmptyState` "em construção", trocadas uma a uma nas T3–T9. O título "Dev Tools" continua na tela do índice, que é o que o `shell.spec.ts` espera.
+**Descrição:** `routes/_app/dev-tools.tsx` deixa de ser uma página e vira rota de layout, com uma barra de links entre as ferramentas no topo (escondida no índice, que já mostra os cards) e `Outlet`. `routes/_app/dev-tools/index.tsx` é o índice com um card por ferramenta (`card` do `@septo/ui`). `features/dev-tools/domain/tools.ts` é a fonte única (rota, nome, descrição, ícone lucide), consumida pelo layout e pelo índice — o mesmo padrão do `shared/navigation.ts`. `components/tool-page.tsx` dá a moldura comum: recebe só a rota (`to`), lê título e descrição do `tools.ts` via `toolFor` e imprime a linha "roda inteiro no seu navegador: nada é enviado para o servidor nem guardado ao sair". As seis rotas nascem como stub: `ToolPage` + `EmptyState` "em construção", trocadas uma a uma nas T3–T9. O título "Dev Tools" continua na tela do índice, que é o que o `shell.spec.ts` espera.
 
 **Aceite:**
-- [ ] `/dev-tools` lista as seis ferramentas e cada card navega para a sua rota
-- [ ] `/dev-tools/json`, `/data`, `/encode`, `/image`, `/rsa` e `/readme` abrem por URL direta e por reload, dentro do layout
-- [ ] `tools.ts` é a única lista de ferramentas do módulo (layout e índice leem dela); tem teste que garante rota única por ferramenta
-- [ ] O índice renderiza no SSR (sem `ClientOnly`) e o `ToolPage` é usado pelas seis rotas
-- [ ] `findNavItem` continua marcando "Dev Tools" como item ativo nas sub-rotas (já trata prefixo)
+- [x] `/dev-tools` lista as seis ferramentas e cada card navega para a sua rota
+- [x] `/dev-tools/json`, `/data`, `/encode`, `/image`, `/rsa` e `/readme` abrem por URL direta e por reload, dentro do layout
+- [x] `tools.ts` é a única lista de ferramentas do módulo (layout e índice leem dela); tem teste que garante rota única por ferramenta
+- [x] O índice renderiza no SSR (sem `ClientOnly`) e o `ToolPage` é usado pelas seis rotas
+- [x] `findNavItem` continua marcando "Dev Tools" como item ativo nas sub-rotas (já trata prefixo)
 
 **Verificação:**
-- [ ] `npm run test -w @septo/web`, `check-types`, `lint`
-- [ ] `npm run test:e2e -w @septo/web -- shell.spec.ts` verde (⌘K e sidebar levam a `/dev-tools`)
-- [ ] Navegar nas seis rotas em 375 px sem scroll horizontal
+- [x] `npm run test -w @septo/web`, `check-types`, `lint`
+- [x] `npm run test:e2e -w @septo/web -- shell.spec.ts` verde (⌘K e sidebar levam a `/dev-tools`)
+- [x] Navegar nas seis rotas em 375 px sem scroll horizontal
 
 **Dependências:** nenhuma
 **Arquivos:** `apps/web/src/routes/_app/dev-tools.tsx`, `apps/web/src/routes/_app/dev-tools/{index,json,data,encode,image,rsa,readme}.tsx` (seis stubs de ~6 linhas), `apps/web/src/features/dev-tools/domain/tools.ts` (+ spec), `apps/web/src/features/dev-tools/components/tool-page.tsx`
@@ -229,6 +229,8 @@
 
 **Aceite:**
 - [ ] Índice lista as seis e cada card navega; URL direta de uma ferramenta funciona após reload (`gotoHydrated`)
+- [ ] O HTML do SSR de `/dev-tools` já traz os seis nomes (asserções provadas no smoke da T2, que foi descartado — recuperar aqui)
+- [ ] A barra de ferramentas aparece nas seis rotas e fica escondida no índice
 - [ ] JSON: inválido mostra linha/coluna; válido formata
 - [ ] Dados: YAML colado vira JSON
 - [ ] Encodings: texto com acento e emoji vai e volta do base64

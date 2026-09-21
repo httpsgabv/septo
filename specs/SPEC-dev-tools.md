@@ -44,7 +44,7 @@ O "conversor" do CAPABILITY-MAP vira **três** rotas (dados, encodings, imagens)
 |---|---|---|
 | Sem servidor | Nenhuma rota nova na API, nenhum `fetch` para terceiros. O módulo não toca `shared/api/` | Decisão do mapa. É também o que torna seguro colar um JSON de produção ou olhar uma chave privada aqui |
 | Sem persistência | O conteúdo vive no estado do React e some no reload. Nada em `localStorage`, nada em cookie, nada no cache do Query | Uma chave privada ou um dump colado não deve sobreviver ao fechar a aba. Nem as preferências (indentação, formato destino) são guardadas — são dois cliques |
-| Rotas | `/dev-tools/<tool>`, com `dev-tools.tsx` virando rota de layout (lista lateral de ferramentas + `Outlet`), como `/notes` | Link direto para cada ferramenta, chunk separado por ferramenta e a mesma estrutura que já existe no app. O índice continua renderizando o título "Dev Tools", que o `shell.spec.ts` já espera |
+| Rotas | `/dev-tools/<tool>`, com `dev-tools.tsx` virando rota de layout (barra de links no topo + `Outlet`) | Link direto para cada ferramenta, chunk separado por ferramenta e a mesma estrutura que já existe no app. O índice continua renderizando o título "Dev Tools", que o `shell.spec.ts` já espera. **Barra no topo, não coluna lateral (2026-09-21):** as ferramentas são dois painéis lado a lado, e uma segunda coluna rouba justo a largura de que elas precisam — a sidebar do app já ocupa a esquerda |
 | Carregamento | Cada ferramenta é importada com `lazy` dentro de `ClientOnly`; o índice é leve e renderiza no SSR | Canvas, WebCrypto e Tiptap não existem no servidor, e nenhum deles pode pesar em `/notes` nem no índice |
 | Estado na URL | A rota diz qual ferramenta está aberta; opções e conteúdo **não** vão para a URL | Colar um arquivo inteiro numa query string não ajuda ninguém — e vazaria o conteúdo para o histórico |
 | Onde mora a lógica | Tudo que é puro em `features/dev-tools/domain/<tool>.ts`, testado sem DOM; os componentes só ligam `textarea` → função → `textarea` | Convenção do foundation. É também o que deixa a bateria de testes barata: nenhum teste precisa de navegador, exceto imagem |
@@ -72,7 +72,7 @@ A única superfície de rede é a que já existe no shell (sessão do `identity`
 
 ```
 apps/web/src/
-  routes/_app/dev-tools.tsx           layout: lista de ferramentas + Outlet
+  routes/_app/dev-tools.tsx           layout: barra de links entre as ferramentas + Outlet
   routes/_app/dev-tools/index.tsx     índice com os cards
   routes/_app/dev-tools/json.tsx      \
   routes/_app/dev-tools/data.tsx       |
@@ -81,7 +81,7 @@ apps/web/src/
   routes/_app/dev-tools/rsa.tsx        |
   routes/_app/dev-tools/readme.tsx    /
   features/dev-tools/
-    domain/tools.ts        lista das ferramentas (rota, nome, descrição, ícone) — índice e lista lateral
+    domain/tools.ts        lista das ferramentas (rota, nome, descrição, ícone) — índice, barra e cabeçalho de cada ferramenta
     domain/json.ts         formatar, minificar, linha/coluna do erro
     domain/data.ts         detectar formato; parse/serialize de JSON, YAML, CSV e XML
     domain/encoding.ts     base64, base64url, URL, hex — texto ↔ bytes em UTF-8

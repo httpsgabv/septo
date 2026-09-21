@@ -46,11 +46,11 @@ T1 mover o bridge markdown → shared/  ◀── única tarefa que toca o `note
 - [x] `grep` não acha mais nada importando `features/notes/domain/markdown`
 
 ### Fase 2: casca
-- [ ] T2: Layout `/dev-tools`, índice com os cards, `domain/tools.ts`, `ToolPage` e as seis rotas stub
+- [x] T2: Layout `/dev-tools`, índice com os cards, `domain/tools.ts`, `ToolPage` e as seis rotas stub
 
 ### Checkpoint B: o esqueleto navega
-- [ ] As seis rotas abrem pela URL direta e pelo card; o ⌘K e o `shell.spec.ts` seguem verdes
-- [ ] O índice renderiza no SSR e não baixa nada além do bundle do app
+- [x] As seis rotas abrem pela URL direta e pelo card; o ⌘K e o `shell.spec.ts` seguem verdes
+- [x] O índice renderiza no SSR e não baixa nada além do bundle do app
 
 ### Fase 3: as seis ferramentas
 - [ ] T3: Formatador JSON
