@@ -1,0 +1,195 @@
+import { expect, test } from '@playwright/test';
+import { gotoHydrated } from './helpers';
+
+const TOOLS = [
+  ['/dev-tools/json', 'JSON'],
+  ['/dev-tools/data', 'Dados'],
+  ['/dev-tools/encode', 'Encodings'],
+  ['/dev-tools/image', 'Imagens'],
+  ['/dev-tools/rsa', 'Chaves RSA'],
+  ['/dev-tools/readme', 'README'],
+] as const;
+
+test('the index lists the six tools, and each card opens one', async ({ page }) => {
+  await gotoHydrated(page, '/dev-tools');
+  await expect(page.getByRole('heading', { level: 1, name: 'Dev Tools' })).toBeVisible();
+  // The strip would only repeat the cards, so the index does without it.
+  await expect(page.getByRole('navigation', { name: 'Ferramentas' })).toBeHidden();
+
+  for (const [to, label] of TOOLS) {
+    await gotoHydrated(page, '/dev-tools');
+    await page.getByRole('link', { name: label }).first().click();
+    await expect(page).toHaveURL(new RegExp(`${to}$`));
+    await expect(page.getByRole('heading', { level: 1, name: label })).toBeVisible();
+  }
+});
+
+test('the index comes rendered from the server', async ({ request }) => {
+  const html = await (await request.get('/dev-tools')).text();
+  for (const [, label] of TOOLS) expect(html).toContain(label);
+});
+
+test('each tool opens straight from its URL, with the strip to jump between them', async ({
+  page,
+}) => {
+  for (const [to, label] of TOOLS) {
+    await gotoHydrated(page, to);
+    await expect(page.getByRole('heading', { level: 1, name: label })).toBeVisible();
+    await expect(page.getByRole('navigation', { name: 'Ferramentas' })).toBeVisible();
+  }
+
+  await page
+    .getByRole('navigation', { name: 'Ferramentas' })
+    .getByRole('link', { name: 'JSON' })
+    .click();
+  await expect(page.getByRole('heading', { level: 1, name: 'JSON' })).toBeVisible();
+});
+
+test('JSON: formats what is valid and points at what is not', async ({ page }) => {
+  await gotoHydrated(page, '/dev-tools/json');
+
+  await page.getByLabel('Entrada').fill('{"a":1,"b":[1,2]}');
+  await page.getByRole('button', { name: 'Formatar' }).click();
+  await expect(page.getByLabel('Saída')).toHaveValue(
+    '{\n  "a": 1,\n  "b": [\n    1,\n    2\n  ]\n}',
+  );
+
+  await page.getByRole('button', { name: 'Minificar' }).click();
+  await expect(page.getByLabel('Saída')).toHaveValue('{"a":1,"b":[1,2]}');
+
+  // The engine gives no position for this one; the tool still says line and column.
+  await page.getByLabel('Entrada').fill('{\n  "a": 1,\n  "b": tru\n}');
+  await page.getByRole('button', { name: 'Formatar' }).click();
+  await expect(page.getByText(/Linha 3, coluna 8/)).toBeVisible();
+});
+
+test('Dados: YAML becomes JSON, and CSV says what it cannot describe', async ({ page }) => {
+  await gotoHydrated(page, '/dev-tools/data');
+  const target = page.getByRole('group', { name: 'Formato de saída' });
+
+  await page.getByLabel('Entrada').fill('nome: Gabriel\ntags:\n  - a\n  - b\n');
+  await expect(page.getByRole('radio', { name: 'Detectar (YAML)' })).toBeVisible();
+  await expect(page.getByLabel('Saída')).toHaveValue(
+    '{\n  "nome": "Gabriel",\n  "tags": [\n    "a",\n    "b"\n  ]\n}',
+  );
+
+  await target.getByText('CSV', { exact: true }).click();
+  await expect(page.getByText(/O CSV precisa de uma lista/)).toBeVisible();
+
+  await page.getByLabel('Entrada').fill('nome,idade\nGabriel,33\nMaria,41');
+  await expect(page.getByLabel('Saída')).toHaveValue('nome,idade\nGabriel,33\nMaria,41');
+});
+
+test('Encodings: an accent and an emoji survive the round trip, and a file becomes base64', async ({
+  page,
+}) => {
+  await gotoHydrated(page, '/dev-tools/encode');
+
+  await page.getByLabel('Texto', { exact: true }).fill('Anotação 🎉');
+  await expect(page.getByLabel('Codificado')).toHaveValue('QW5vdGHDp8OjbyDwn46J');
+
+  await page.getByRole('button', { name: 'Inverter' }).click();
+  await expect(page.getByLabel('Texto', { exact: true })).toHaveValue('Anotação 🎉');
+
+  await page.getByLabel('Codificado').fill('não é base64 !!');
+  await expect(page.getByText(/Isto não é base64/)).toBeVisible();
+
+  await page.getByRole('button', { name: 'Inverter' }).click();
+  await page.setInputFiles('input[type=file]', {
+    name: 'nota.txt',
+    mimeType: 'text/plain',
+    buffer: Buffer.from('oi'),
+  });
+  await expect(page.getByLabel('Codificado')).toHaveValue('b2k=');
+});
+
+test('Imagens: a PNG becomes a smaller WebP and downloads', async ({ page }) => {
+  await gotoHydrated(page, '/dev-tools/image');
+
+  await page.setInputFiles('input[type=file]', 'e2e/fixtures/sample.png');
+  await expect(page.getByText('400×250', { exact: false }).first()).toBeVisible();
+
+  await page.getByLabel('Largura máxima').fill('200');
+  await expect(page.getByText('→ 200×125', { exact: false })).toBeVisible();
+
+  const download = page.waitForEvent('download');
+  await page.getByRole('link', { name: /Baixar/ }).click();
+  expect((await download).suggestedFilename()).toBe('sample.webp');
+});
+
+test('Chaves RSA: a 2048 pair shows up as two PEM blocks', async ({ page }) => {
+  await gotoHydrated(page, '/dev-tools/rsa');
+
+  const started = Date.now();
+  await page.getByRole('button', { name: /Gerar par/ }).click();
+  await expect(page.getByLabel('Chave pública (SPKI)')).toHaveValue(/BEGIN PUBLIC KEY/, {
+    timeout: 10_000,
+  });
+  expect(Date.now() - started).toBeLessThan(10_000);
+  await expect(page.getByLabel('Chave privada (PKCS#8)')).toHaveValue(/BEGIN PRIVATE KEY/);
+
+  const download = page.waitForEvent('download');
+  await page.getByRole('link', { name: 'Baixar' }).first().click();
+  expect((await download).suggestedFilename()).toBe('chave.pub.pem');
+});
+
+test('README: markdown is rendered, and a table stays as text', async ({ page }) => {
+  await gotoHydrated(page, '/dev-tools/readme');
+  const reading = page.getByText('Leitura').locator('..');
+
+  await page
+    .getByLabel('Markdown')
+    .fill('# septo\n\n- notas\n- dev tools\n\n| a | b |\n| - | - |\n| 1 | 2 |\n');
+
+  await expect(reading.getByRole('heading', { level: 1, name: 'septo' })).toBeVisible();
+  await expect(reading.getByRole('listitem')).toHaveCount(2);
+  await expect(reading.getByText('| a | b |')).toBeVisible();
+  await expect(reading.locator('.ProseMirror')).toHaveAttribute('contenteditable', 'false');
+});
+
+test('nothing the tools touch leaves the tab', async ({ page }) => {
+  const requests: string[] = [];
+  page.on('request', (request) => requests.push(request.url()));
+
+  await gotoHydrated(page, '/dev-tools');
+  const before = await page.evaluate(() => Object.keys(localStorage).sort());
+
+  await gotoHydrated(page, '/dev-tools/json');
+  await page.getByLabel('Entrada').fill('{"segredo":"de produção"}');
+  await page.getByRole('button', { name: 'Formatar' }).click();
+  await expect(page.getByLabel('Saída')).toHaveValue(/segredo/);
+
+  await gotoHydrated(page, '/dev-tools/encode');
+  await page.getByLabel('Texto', { exact: true }).fill('senha');
+  await expect(page.getByLabel('Codificado')).toHaveValue('c2VuaGE=');
+
+  await gotoHydrated(page, '/dev-tools/rsa');
+  await page.getByRole('button', { name: /Gerar par/ }).click();
+  await expect(page.getByLabel('Chave privada (PKCS#8)')).toHaveValue(/BEGIN PRIVATE KEY/, {
+    timeout: 10_000,
+  });
+
+  const origin = new URL(page.url()).origin;
+  expect(requests.filter((url) => !url.startsWith(origin))).toEqual([]);
+
+  // The shell keeps asking who is signed in and whether the API is up; the tools ask nothing.
+  const apiPaths = requests
+    .map((url) => new URL(url).pathname)
+    .filter((path) => path.startsWith('/api/'));
+  expect(apiPaths.filter((path) => !/^\/api\/(health|me|auth\/)/.test(path))).toEqual([]);
+  expect(await page.evaluate(() => Object.keys(localStorage).sort())).toEqual(before);
+});
+
+test.describe('mobile (375px)', () => {
+  test.use({ viewport: { width: 375, height: 812 } });
+
+  test('the index and the tools fit the screen', async ({ page }) => {
+    for (const url of ['/dev-tools', '/dev-tools/json', '/dev-tools/image']) {
+      await gotoHydrated(page, url);
+      const overflow = await page.evaluate(
+        () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+      );
+      expect(overflow, url).toBe(0);
+    }
+  });
+});

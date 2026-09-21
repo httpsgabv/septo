@@ -228,21 +228,21 @@
 **Descrição:** `apps/web/e2e/dev-tools.spec.ts`, autenticado com o `storageState` existente, **não** destrutivo. Um teste curto por ferramenta, mais o índice e a checagem de isolamento. Fixture: um PNG pequeno em `e2e/fixtures/`.
 
 **Aceite:**
-- [ ] Índice lista as seis e cada card navega; URL direta de uma ferramenta funciona após reload (`gotoHydrated`)
-- [ ] O HTML do SSR de `/dev-tools` já traz os seis nomes (asserções provadas no smoke da T2, que foi descartado — recuperar aqui)
-- [ ] A barra de ferramentas aparece nas seis rotas e fica escondida no índice
-- [ ] JSON: inválido mostra linha/coluna; válido formata
-- [ ] Dados: YAML colado vira JSON
-- [ ] Encodings: texto com acento e emoji vai e volta do base64
-- [ ] Imagem: PNG da fixture vira WebP e o download acontece (`waitForEvent('download')`, nome e tamanho conferidos)
-- [ ] RSA: gerar 2048 mostra os dois PEM em menos de 10 s
-- [ ] README: markdown colado renderiza `<h1>` e uma lista
-- [ ] Isolamento: durante os testes, nenhuma requisição para `/api/*` e nenhuma para outra origem; `localStorage` sem chave do módulo
-- [ ] Um teste em 375 px confere que o layout não tem scroll horizontal
+- [x] Índice lista as seis e cada card navega; URL direta de uma ferramenta funciona após reload (`gotoHydrated`)
+- [x] O HTML do SSR de `/dev-tools` já traz os seis nomes (asserções provadas no smoke da T2, que foi descartado — recuperar aqui)
+- [x] A barra de ferramentas aparece nas seis rotas e fica escondida no índice
+- [x] JSON: inválido mostra linha/coluna; válido formata
+- [x] Dados: YAML colado vira JSON
+- [x] Encodings: texto com acento e emoji vai e volta do base64
+- [x] Imagem: PNG da fixture vira WebP e o download acontece (`waitForEvent('download')`, nome e tamanho conferidos)
+- [x] RSA: gerar 2048 mostra os dois PEM em menos de 10 s
+- [x] README: markdown colado renderiza `<h1>` e uma lista
+- [x] Isolamento: durante os testes, nenhuma requisição para `/api/*` e nenhuma para outra origem; `localStorage` sem chave do módulo
+- [x] Um teste em 375 px confere que o layout não tem scroll horizontal
 
 **Verificação:**
-- [ ] `npm run test:e2e -w @septo/web -- dev-tools.spec.ts`, três execuções seguidas sem flake
-- [ ] `npm run test:e2e -w @septo/web` completo verde (nada regrediu em notas, sessão e shell)
+- [x] `npm run test:e2e -w @septo/web -- dev-tools.spec.ts`, três execuções seguidas sem flake
+- [x] `npm run test:e2e -w @septo/web` completo verde (nada regrediu em notas, sessão e shell)
 
 **Dependências:** T9
 **Arquivos:** `apps/web/e2e/dev-tools.spec.ts`, `apps/web/e2e/fixtures/sample.png`, `apps/web/e2e/helpers.ts` (se precisar de um helper)

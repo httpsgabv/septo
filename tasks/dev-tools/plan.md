@@ -62,13 +62,13 @@ T1 mover o bridge markdown → shared/  ◀── única tarefa que toca o `note
 - [x] T9: Leitor de README
 
 ### Checkpoint C: as seis funcionam no navegador
-- [ ] Cada ferramenta resolve o caso da sua história (spec, seção "Histórias")
-- [ ] Nenhuma requisição para `/api/*` ao usar qualquer ferramenta; `localStorage` vazio depois de usar as seis
-- [ ] Desktop e 375 px sem scroll horizontal, tema claro e escuro
-- [ ] Revisão visual com você
+- [x] Cada ferramenta resolve o caso da sua história (spec, seção "Histórias")
+- [x] Nenhuma requisição para `/api/*` ao usar qualquer ferramenta; `localStorage` vazio depois de usar as seis
+- [x] Desktop e 375 px sem scroll horizontal, tema claro e escuro
+- [x] Revisão visual com você
 
 ### Fase 4: fechamento
-- [ ] T10: E2E das seis ferramentas
+- [x] T10: E2E das seis ferramentas
 - [ ] T11: Cobertura, README, CLAUDE.md, CAPABILITY-MAP e status da spec
 
 ### Checkpoint final
