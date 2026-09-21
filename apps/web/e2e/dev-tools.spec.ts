@@ -202,12 +202,27 @@ test.describe('mobile (375px)', () => {
   test.use({ viewport: { width: 375, height: 812 } });
 
   test('the index and the tools fit the screen', async ({ page }) => {
-    for (const url of ['/dev-tools', '/dev-tools/json', '/dev-tools/image']) {
+    for (const url of ['/dev-tools', ...TOOLS.map(([to]) => to)]) {
       await gotoHydrated(page, url);
       const overflow = await page.evaluate(
         () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
       );
       expect(overflow, url).toBe(0);
+    }
+  });
+});
+
+test.describe('layout', () => {
+  test.use({ viewport: { width: 1440, height: 900 } });
+
+  test('each tool fills the window without scrolling the page', async ({ page }) => {
+    for (const [to, label] of TOOLS) {
+      await gotoHydrated(page, to);
+      await expect(page.getByRole('heading', { level: 1, name: label })).toBeVisible();
+      const overflow = await page.evaluate(
+        () => document.documentElement.scrollHeight - document.documentElement.clientHeight,
+      );
+      expect(overflow, to).toBe(0);
     }
   });
 });

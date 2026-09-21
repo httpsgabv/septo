@@ -26,7 +26,7 @@ Histórico ou favoritos de conversões, qualquer persistência (nem `localStorag
 
 ## Revisão 1: navegação e layout
 
-> Status: **aprovada** em 2026-09-21. Plano e tarefas: seção "Revisão 1" de [plan.md](../tasks/dev-tools/plan.md) e [todo.md](../tasks/dev-tools/todo.md). Substitui as linhas marcadas com ↻ nas Decisões, na Estrutura e nos Testes. Nada muda no domínio (`domain/*.ts`), nas dependências nem na ausência de API.
+> Status: **implementada** (aprovada em 2026-09-21). Plano e tarefas: seção "Revisão 1" de [plan.md](../tasks/dev-tools/plan.md) e [todo.md](../tasks/dev-tools/todo.md). Substitui as linhas marcadas com ↻ nas Decisões, na Estrutura e nos Testes. Nada muda no domínio (`domain/*.ts`), nas dependências nem na ausência de API.
 
 ### Objetivo
 
@@ -137,7 +137,7 @@ apps/web/src/
   routes/_app/dev-tools/index.tsx     índice com os cards
   routes/_app/dev-tools/json.tsx      \
   routes/_app/dev-tools/data.tsx       |
-  routes/_app/dev-tools/encode.tsx     |  rotas finas: ClientOnly + lazy(<tool>-tool)
+  routes/_app/dev-tools/encode.tsx     |  rotas finas: o componente da ferramenta; dados e README com ClientOnly + lazy e Workspace vazio de fallback
   routes/_app/dev-tools/image.tsx      |
   routes/_app/dev-tools/rsa.tsx        |
   routes/_app/dev-tools/readme.tsx    /
@@ -148,8 +148,9 @@ apps/web/src/
     domain/encoding.ts     base64, base64url, URL, hex — texto ↔ bytes em UTF-8
     domain/image.ts        formatos de saída suportados, nome do arquivo, cálculo do redimensionamento
     domain/rsa.ts          generateKeyPair (WebCrypto) e PEM
-    components/            tool-page, json-tool, data-tool, encode-tool, image-tool, rsa-tool,
-                           readme-tool, copy-button, file-drop, byte-size
+    components/            workspace (Workspace, Pane, PaneTextarea — ↻ substitui o tool-page), segmented,
+                           json-tool, data-tool, encode-tool, image-tool, rsa-tool, readme-tool,
+                           copy-button, file-drop
   shared/markdown.ts       bridge markdown ↔ Tiptap (movido de features/notes/domain)
 ```
 
@@ -178,7 +179,7 @@ Descartados: `marked`/`DOMPurify` (o bridge do Tiptap já renderiza markdown sem
 | Unit (web) — `rsa.ts` | Gera 2048; o PEM tem os cabeçalhos certos e linhas de 64 colunas; **a chave exportada volta pelo `crypto.subtle.importKey`** (é o teste que prova que o PEM é válido de verdade); os três tamanhos são aceitos. Roda em Node 24, que tem WebCrypto global |
 | Unit (web) — `image.ts` | Redimensionamento preserva a proporção e não amplia imagem menor que o limite; extensão e mimetype casam com o formato escolhido; nome do arquivo de saída troca a extensão preservando o nome |
 | Unit (web) — `markdown.spec.ts` | Continua passando **igual** depois da mudança de pasta (round-trip é a rede de proteção do `notes`) |
-| E2E (`dev-tools.spec.ts`) | Índice lista as seis ferramentas e cada card navega; JSON inválido mostra linha/coluna e o válido formata; YAML colado vira JSON; texto com acento vai e volta do base64; um PNG de fixture vira WebP e o download acontece (`waitForEvent('download')`); gerar RSA 2048 mostra os dois PEM em menos de 10 s; README colado renderiza um `<h1>` e uma lista. Suíte autenticada com o `storageState` existente, **não** destrutiva (não toca sessão, senha nem notas) |
+| E2E (`dev-tools.spec.ts`) ↻ | Índice lista as seis ferramentas e cada bloco navega; cada ferramenta abre pela URL com o subitem da sidebar aberto e ativo (e o grupo já vem aberto no HTML do servidor); em 1440×900 nenhuma ferramenta rola a página e em 375 px nenhuma rola para o lado; JSON inválido mostra linha/coluna e o válido formata ao digitar; YAML colado vira JSON; texto com acento vai e volta do base64; um PNG de fixture vira WebP e o download acontece (`waitForEvent('download')`); gerar RSA 2048 mostra os dois PEM em menos de 10 s; README colado renderiza um `<h1>` e uma lista. Suíte autenticada com o `storageState` existente, **não** destrutiva (não toca sessão, senha nem notas) |
 
 Sem teste de integração nem de contrato: não há API neste módulo. Meta de cobertura: ≥ 90% de linhas em `features/dev-tools/domain/`.
 

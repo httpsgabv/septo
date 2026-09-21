@@ -371,12 +371,12 @@
 **Descrição:** Apagar `tool-page.tsx` (sem consumidores). e2e de layout: para cada ferramenta, 1440×900 sem scroll vertical de página e 375 px sem scroll horizontal. Conferir os critérios 1–7 da revisão 1. Atualizar a spec (Estrutura, Testes, status "implementada"), o CLAUDE.md (armadilha: "a ferramenta monta a própria `Workspace`; rota `lazy` usa `Workspace` vazio como fallback"; "sem textos de apoio fixos") e o README se citar a barra.
 
 **Aceite:**
-- [ ] `grep -rn "ToolPage\|Roda inteiro" apps/web/src` vazio
-- [ ] `apps/api/openapi.json` sem diff
-- [ ] Build do índice sem Tiptap/parsers (o e2e existente confere)
+- [x] `grep -rn "ToolPage\|Roda inteiro" apps/web/src` vazio
+- [x] `apps/api/openapi.json` sem diff
+- [x] Build do índice sem Tiptap/parsers (o e2e existente confere)
 
 **Verificação:**
-- [ ] `npm run lint`, `npm run check-types`, `npm run test`, `npm run test:e2e -w @septo/web` verdes
+- [x] `npm run lint`, `npm run check-types`, `npm run test`, `npm run test:e2e -w @septo/web` verdes
 
 **Dependências:** R3, R4, R5
 **Arquivos:** `components/tool-page.tsx` (apagado), `e2e/dev-tools.spec.ts`, `specs/SPEC-dev-tools.md`, `CLAUDE.md`, `README.md`
