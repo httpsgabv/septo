@@ -24,13 +24,19 @@ function transform(text: string, render: (value: unknown) => string): JsonOutcom
 }
 
 function failure(error: unknown, text: string): JsonOutcome {
+  return { ok: false, ...describeJsonProblem(text, error) };
+}
+
+export type JsonProblem = { message: string; line: number | null; column: number | null };
+
+/** What went wrong and where — shared with the data converter, which parses JSON too. */
+export function describeJsonProblem(text: string, error: unknown): JsonProblem {
   const raw = error instanceof Error ? error.message : String(error);
   // The engine leaves the position out of its most common message ("Unexpected token 'x', ..."), so
   // the scan below is what usually answers "where?"; the message is the fallback.
   const index = findSyntaxErrorIndex(text) ?? indexFromMessage(raw);
   const place = index === null ? null : lineAndColumn(text, index);
   return {
-    ok: false,
     message: cleanMessage(raw),
     line: place?.line ?? null,
     column: place?.column ?? null,

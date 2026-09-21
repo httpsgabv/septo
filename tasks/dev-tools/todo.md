@@ -111,18 +111,18 @@
 **Descrição:** Instalar `js-yaml@5.4.2`, `papaparse@5.7.0`, `@types/papaparse@5.5.2` (dev) e `fast-xml-parser@5.11.1` no web, e escrever `domain/data.ts`: `detectFormat(texto)`, `parseData(texto, formato)` e `serializeData(valor, formato)`, com tudo passando por um valor JS intermediário. `js-yaml` só com `load` no schema padrão. CSV pelo papaparse, com cabeçalho na primeira linha; serializar para CSV exige lista de objetos planos e devolve erro explicativo caso contrário. XML pelo `fast-xml-parser` com `ignoreAttributes: false` (prefixo `@_`). Erro de parse vira mensagem, nunca exceção solta. **Sem UI nesta tarefa** — é aqui que qualquer briga de ESM/CJS aparece, longe da tela.
 
 **Aceite:**
-- [ ] Round-trip JSON → YAML → JSON e JSON → XML → JSON preservam o valor nos casos da tabela
-- [ ] CSV com vírgula, aspas e quebra de linha dentro do campo sobrevive ao round-trip; cabeçalho vira as chaves
-- [ ] Objeto aninhado → CSV devolve erro explicativo (não achata, não inventa coluna)
-- [ ] `detectFormat` acerta as quatro entradas de exemplo e devolve `null` no que for ambíguo (o seletor manual sobrepõe)
-- [ ] YAML e XML inválidos devolvem erro com mensagem útil
-- [ ] Nenhum uso de schema estendido do `js-yaml` (sem `!!js/*`) — conferido no código e citado no teste
-- [ ] As três libs importam e rodam no Vitest em ambiente `node`
+- [x] Round-trip JSON → YAML → JSON e JSON → XML → JSON preservam o valor nos casos da tabela
+- [x] CSV com vírgula, aspas e quebra de linha dentro do campo sobrevive ao round-trip; cabeçalho vira as chaves
+- [x] Objeto aninhado → CSV devolve erro explicativo (não achata, não inventa coluna)
+- [x] `detectFormat` acerta as quatro entradas de exemplo e devolve `null` no que for ambíguo (o seletor manual sobrepõe)
+- [x] YAML e XML inválidos devolvem erro com mensagem útil
+- [x] Nenhum uso de schema estendido do `js-yaml` (sem `!!js/*`) — conferido no código e citado no teste
+- [x] As três libs importam e rodam no Vitest em ambiente `node`
 
 **Verificação:**
-- [ ] `npm run test -w @septo/web` (`data.spec.ts` escrito antes)
-- [ ] `npm run check-types`, `lint`; `npm ls js-yaml papaparse fast-xml-parser` limpo
-- [ ] Se o `papaparse` brigar com ESM: plano A/B do plano; trocar de lib **só com sua aprovação**
+- [x] `npm run test -w @septo/web` (`data.spec.ts` escrito antes)
+- [x] `npm run check-types`, `lint`; `npm ls js-yaml papaparse fast-xml-parser` limpo
+- [x] Se o `papaparse` brigar com ESM: plano A/B do plano; trocar de lib **só com sua aprovação**
 
 **Dependências:** T2
 **Arquivos:** `apps/web/src/features/dev-tools/domain/data.ts` (+ spec), `apps/web/package.json`, `package-lock.json`
