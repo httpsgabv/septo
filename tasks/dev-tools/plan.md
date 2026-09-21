@@ -53,8 +53,8 @@ T1 mover o bridge markdown → shared/  ◀── única tarefa que toca o `note
 - [x] O índice renderiza no SSR e não baixa nada além do bundle do app
 
 ### Fase 3: as seis ferramentas
-- [ ] T3: Formatador JSON
-- [ ] T4: Encodings (base64, base64url, URL, hex) + `FileDrop`
+- [x] T3: Formatador JSON
+- [x] T4: Encodings (base64, base64url, URL, hex) + `FileDrop`
 - [ ] T5: Dependências de parser + `domain/data.ts` (JSON/YAML/CSV/XML)
 - [ ] T6: Tela do conversor de dados
 - [ ] T7: Conversor de imagens

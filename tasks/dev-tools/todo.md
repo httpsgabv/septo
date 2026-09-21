@@ -5,7 +5,7 @@
 > Regra geral: toda tarefa termina com `npm run lint`, `npm run check-types` e `npm run test` passando (infra no ar: `docker compose up -d`).
 > **Nenhuma tarefa toca `apps/api`**: sem controller, sem migration, sem `codegen`. `apps/api/openapi.json` tem que sair deste módulo idêntico.
 > Tudo roda no navegador: nada de `fetch` para a API ou para terceiros, nada em `localStorage`, nada de `eval`/`new Function`/`dangerouslySetInnerHTML`.
-> Cada ferramenta importa parser, canvas, WebCrypto ou Tiptap **só** dentro do seu componente, carregado com `lazy` dentro de `ClientOnly`.
+> Parser, canvas, WebCrypto e Tiptap ficam **só** dentro do componente da ferramenta que os usa. `lazy` + `ClientOnly` apenas onde pesa no bundle ou precisa do navegador no render (README e dados); JSON, encodings, imagens e RSA renderizam no SSR normalmente (ajuste de 2026-09-21, registrado na spec).
 > UI em PT-BR; código, commits e identificadores em inglês. Texto em acento usa `text-brand-text`.
 
 ---
@@ -65,17 +65,17 @@
 **Descrição:** `domain/json.ts` com `formatJson(texto, indent)`, `minifyJson(texto)` e a extração de posição do erro: a mensagem do motor (`... at position 42 (line 4 column 12)` ou só `at position 42`) vira `{ line, column, message }`, contando o texto quando o motor não der linha/coluna; sem posição nenhuma, devolve a mensagem crua. A tela é um `textarea` de entrada, os controles (2 espaços / 4 espaços / tab, Formatar, Minificar) e a saída com `CopyButton` — que nasce aqui, em `components/copy-button.tsx` (usa `navigator.clipboard`, mostra "Copiado" por 2 s, e é reusado pelas outras cinco). O limite de 2 MB é checado antes de processar. TDD: `json.spec.ts` primeiro.
 
 **Aceite:**
-- [ ] Formatar com as três indentações; minificar; entrada vazia devolve vazio, não erro
-- [ ] JSON inválido devolve linha e coluna corretas nos três casos do teste: erro no meio, na primeira linha e no fim do texto
-- [ ] Mensagem sem posição cai no texto cru, sem quebrar
-- [ ] Texto acima de 2 MB mostra aviso e não processa
-- [ ] O aviso sobre precisão de inteiros acima de 2^53 aparece na tela, com `// ponytail:` no código
-- [ ] `CopyButton` copia a saída e dá retorno visível; acessível por teclado
+- [x] Formatar com as três indentações; minificar; entrada vazia devolve vazio, não erro
+- [x] JSON inválido devolve linha e coluna corretas nos três casos do teste: erro no meio, na primeira linha e no fim do texto
+- [x] Mensagem sem posição cai no texto cru, sem quebrar
+- [x] Texto acima de 2 MB mostra aviso e não processa
+- [x] O aviso sobre precisão de inteiros acima de 2^53 aparece na tela, com `// ponytail:` no código
+- [x] `CopyButton` copia a saída e dá retorno visível; acessível por teclado
 
 **Verificação:**
-- [ ] `npm run test -w @septo/web` (`json.spec.ts` escrito antes)
-- [ ] Manual: colar um JSON quebrado e conferir que a linha/coluna apontam o lugar certo
-- [ ] `check-types`, `lint`
+- [x] `npm run test -w @septo/web` (`json.spec.ts` escrito antes)
+- [x] Manual: colar um JSON quebrado e conferir que a linha/coluna apontam o lugar certo
+- [x] `check-types`, `lint`
 
 **Dependências:** T2
 **Arquivos:** `apps/web/src/features/dev-tools/domain/json.ts` (+ spec), `apps/web/src/features/dev-tools/components/{json-tool,copy-button}.tsx`, `apps/web/src/routes/_app/dev-tools/json.tsx`
