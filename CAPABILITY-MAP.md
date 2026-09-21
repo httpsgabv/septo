@@ -11,7 +11,7 @@ septo é um app pessoal que centraliza ferramentas hoje espalhadas em N apps avu
 | `identity` | Login de usuário único (username + senha), sessão JWT em cookie httpOnly, guard de rotas (API e web), perfil (nome de exibição), troca de senha, sair de todos | foundation | [SPEC-identity](specs/SPEC-identity.md) · [plano](tasks/identity/plan.md) · ✅ implementado |
 | `notes` | Notas markdown: CRUD, tags, fixar, arquivar, busca. Lembrete = nota com `remindAt` | identity | [SPEC-notes](specs/SPEC-notes.md) · [plano](tasks/notes/plan.md) · ✅ implementado |
 | `reminders` | Web Push: assinaturas, scheduler na API, disparo, service worker/PWA | notes | _pendente_ |
-| `dev-tools` | Formatador JSON, gerador RSA, conversor (imagens, dados, encodings), leitor de README — 100% no navegador | foundation | [SPEC-dev-tools](specs/SPEC-dev-tools.md) · [plano](tasks/dev-tools/plan.md) · 🚧 em andamento |
+| `dev-tools` | Formatador JSON, gerador RSA, conversor (imagens, dados, encodings), leitor de README — 100% no navegador | foundation | [SPEC-dev-tools](specs/SPEC-dev-tools.md) · [plano](tasks/dev-tools/plan.md) · ✅ implementado |
 
 **Ordem de build:** `foundation` → `identity` → `notes` → `reminders`; `dev-tools` em paralelo após `foundation`.
 

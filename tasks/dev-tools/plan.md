@@ -69,12 +69,12 @@ T1 mover o bridge markdown → shared/  ◀── única tarefa que toca o `note
 
 ### Fase 4: fechamento
 - [x] T10: E2E das seis ferramentas
-- [ ] T11: Cobertura, README, CLAUDE.md, CAPABILITY-MAP e status da spec
+- [x] T11: Cobertura, README, CLAUDE.md, CAPABILITY-MAP e status da spec
 
 ### Checkpoint final
-- [ ] Os 10 Success Criteria da spec verificados
-- [ ] `lint`, `check-types`, `test`, `test:e2e` verdes
-- [ ] `git diff main -- apps/api` vazio: o módulo não tocou a API nem o `openapi.json`
+- [x] Os 10 Success Criteria da spec verificados
+- [x] `lint`, `check-types`, `test`, `test:e2e` verdes
+- [x] `git diff main -- apps/api` vazio: o módulo não tocou a API nem o `openapi.json`
 
 ## Paralelização
 
@@ -102,3 +102,18 @@ T1 mover o bridge markdown → shared/  ◀── única tarefa que toca o `note
 
 - ~~**Como medir a meta de ≥ 90% em `features/dev-tools/domain/`.**~~ **Resolvido em 2026-09-21:** você aprovou `@vitest/coverage-v8@5.0.1` (mesma versão da API) como devDependency do web, com o script `coverage`. Entra na T11, junto da medição — não antes, para não misturar dependência nova com commit de refatoração.
 - **Ícones e ordem dos cards no índice** ficam a meu critério na T2 (lucide, a mesma família do resto do app) e podem mudar na revisão visual.
+
+## Verificação dos Success Criteria (2026-09-21)
+
+| # | Critério | Como foi verificado |
+|---|---|---|
+| 1 | `/dev-tools` lista as seis; cada uma abre pela URL direta; ⌘K e `shell.spec.ts` seguem verdes | `dev-tools.spec.ts` ("the index lists the six tools", "each tool opens straight from its URL") e `shell.spec.ts` 6/6 |
+| 2 | JSON quebrado mostra linha e coluna; válido formata e minifica | `json.spec.ts` (7 casos, inclusive o erro sem posição no motor) e e2e "JSON: formats what is valid and points at what is not" — `tru` na linha 3 vira "Linha 3, coluna 8" |
+| 3 | YAML ⇄ JSON; CSV com vírgula e aspas sobrevive; objeto aninhado → CSV explica | `data.spec.ts` (round-trips e o campo com vírgula, aspas e quebra de linha) e e2e "Dados: YAML becomes JSON…" |
+| 4 | "Anotação 🎉" vai e volta do base64 e do base64url; arquivo vira base64 | `encoding.spec.ts` (quatro esquemas) e e2e "Encodings: an accent and an emoji survive…" |
+| 5 | PNG vira WebP com largura máxima; o arquivo baixa; tamanho antes/depois na tela | e2e "Imagens: a PNG becomes a smaller WebP and downloads" (fixture 400×250 → 200×125, download `sample.webp`); `image.spec.ts` para a parte pura |
+| 6 | RSA 2048 gera dois PEM; a pública é aceita pelo `openssl`; 4096 não congela a interface | `rsa.spec.ts` importa os dois de volta e assina/verifica com o par; **`openssl rsa -pubin -text -noout` leu a pública e `openssl rsa -check` aprovou a privada**; e2e mede o 2048 em menos de 10 s com o botão em "Gerando…" |
+| 7 | README renderiza títulos, listas, citação, código e link; tabela e badge viram texto | e2e "README: markdown is rendered, and a table stays as text" (o painel é `contenteditable="false"`) |
+| 8 | Nenhuma requisição sai da aba; `localStorage` intacto | e2e "nothing the tools touch leaves the tab": formata um segredo, codifica uma senha e gera uma chave privada — nenhuma requisição para outra origem, nenhuma chamada `/api/*` além da do shell (health/me), e as chaves do `localStorage` no fim são as mesmas do começo |
+| 9 | Desktop e 375 px sem scroll horizontal; o índice não carrega Tiptap, canvas nem parsers | e2e "mobile (375px)" e "the heavy tools keep their weight to themselves" (o chunk pesado só aparece ao abrir a ferramenta que o usa) |
+| 10 | `lint`, `check-types`, `test`, `test:e2e` verdes; `openapi.json` inalterado; docs atualizados | 274 testes unitários no web (56 do módulo) + 59 e2e; `git diff main -- apps/api` **vazio**; cobertura de `features/dev-tools/domain` em 96,9% de linhas; README, CLAUDE.md, CAPABILITY-MAP e spec atualizados; segunda execução de `npm run build` em FULL TURBO |

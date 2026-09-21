@@ -180,6 +180,21 @@ test('nothing the tools touch leaves the tab', async ({ page }) => {
   expect(await page.evaluate(() => Object.keys(localStorage).sort())).toEqual(before);
 });
 
+test('the heavy tools keep their weight to themselves', async ({ page }) => {
+  const urls: string[] = [];
+  page.on('response', (response) => urls.push(response.url()));
+
+  await gotoHydrated(page, '/dev-tools');
+  await gotoHydrated(page, '/dev-tools/json');
+  const heavy = /data-tool|readme-tool|js-yaml|papaparse|fast-xml|tiptap|prosemirror/i;
+  expect(urls.filter((url) => heavy.test(url))).toEqual([]);
+
+  // And they do arrive when the tool that needs them is opened.
+  await gotoHydrated(page, '/dev-tools/data');
+  await expect(page.getByLabel('Entrada')).toBeVisible();
+  expect(urls.some((url) => heavy.test(url))).toBe(true);
+});
+
 test.describe('mobile (375px)', () => {
   test.use({ viewport: { width: 375, height: 812 } });
 

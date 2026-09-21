@@ -1,6 +1,6 @@
 # septo
 
-Um lugar só para as ferramentas que hoje ficam espalhadas em vários apps: notas e lembretes, e ferramentas do dia a dia de dev (formatador JSON, gerador de chaves RSA, conversor de arquivos, leitor de README).
+Um lugar só para as ferramentas que hoje ficam espalhadas em vários apps: notas e lembretes, e ferramentas do dia a dia de dev (formatador JSON, gerador de chaves RSA, conversores de dados, encodings e imagens, leitor de README) — essas últimas rodando inteiras no navegador.
 
 Projeto pessoal, usuário único, hospedado numa VPS.
 
@@ -45,6 +45,14 @@ O septo tem um único usuário e não há cadastro pela interface: `user:set` pe
   - busca por título e corpo, sem diferenciar acento nem caixa; busca, tag e aba (`Ativas`, `Lembretes`, `Arquivadas`) ficam na URL;
   - lembrete (`remindAt`) em qualquer nota, com a aba "Lembretes" ordenada por data. O **aviso** (Web Push) é o módulo `reminders`, ainda pendente.
 
+- **Dev Tools** (`dev-tools`), em `/dev-tools` — seis ferramentas que rodam inteiras no navegador: nada é enviado para o servidor e nada fica guardado ao sair da página.
+  - **JSON**: formatar (2 espaços, 4 ou tab), minificar e apontar **linha e coluna** do erro, inclusive nos casos em que o próprio navegador não diz onde foi;
+  - **Dados**: converter entre JSON, YAML, CSV e XML, com o formato de entrada detectado (e um seletor que decide no lugar dele);
+  - **Encodings**: base64, base64url, URL e hex nos dois sentidos, com UTF-8 de verdade (acento e emoji sobrevivem), e arquivo → base64;
+  - **Imagens**: converter para PNG, JPEG ou WebP (e AVIF onde o navegador encoda), com largura máxima e qualidade — a reescrita descarta o EXIF, geolocalização incluída;
+  - **Chaves RSA**: gerar um par 2048/3072/4096 pelo WebCrypto e copiar ou baixar os dois PEM;
+  - **README**: ler markdown renderizado, com o mesmo conjunto de formatação do editor de notas.
+
 Depois de atualizar o repositório, rode `npm run db:migrate -w @septo/api` para aplicar as migrações novas (a de notas cria a tabela `notes`).
 
 ## Comandos
@@ -56,6 +64,7 @@ Depois de atualizar o repositório, rode `npm run db:migrate -w @septo/api` para
 | `npm run check-types` | Type-check de todos os pacotes |
 | `npm run test` | Testes unitários e de integração (a API usa o banco `septo_test`, precisa do Postgres no ar) |
 | `npm run coverage -w @septo/api` | Cobertura de linhas e ramos das camadas `domain` e `application` (meta ≥ 90%) |
+| `npm run coverage -w @septo/web` | Cobertura das funções puras do web (`features/*/domain`, `shared`) |
 | `npm run test:e2e` | Playwright; sobe a própria API (:3433) e o próprio web (:5273) no banco `septo_test`, com um usuário de teste, sem tocar nos servidores nem no banco de desenvolvimento (precisa do Postgres no ar e de `npx playwright install chromium` na primeira vez) |
 | `npm run user:set -w @septo/api -- <usuário>` | Cria o usuário único ou reseta a senha (derruba todas as sessões) |
 | `docker compose up -d` | Infra: Postgres + Caddy (https://localhost) |

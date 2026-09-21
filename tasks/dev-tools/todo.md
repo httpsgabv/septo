@@ -255,16 +255,16 @@
 **Descrição:** Fechar o módulo: medir a cobertura de `features/dev-tools/domain/` (com `@vitest/coverage-v8` no web, **se você aprovar** a devDependency — ver Open Questions do plano; sem ela, a meta fica como diretriz), atualizar o README com as ferramentas, acrescentar ao CLAUDE.md as armadilhas que aparecerem (o caminho novo do bridge markdown já entrou na T1), marcar a spec como implementada, atualizar a linha do `dev-tools` no CAPABILITY-MAP e conferir os 10 Success Criteria um a um.
 
 **Aceite:**
-- [ ] Tabela "Verificação dos Success Criteria" no fim do plano, com como cada um foi verificado
-- [ ] README lista as seis ferramentas e diz que rodam no navegador
-- [ ] CAPABILITY-MAP: `dev-tools` com spec, plano e ✅ implementado
-- [ ] Spec com status "implementada"
-- [ ] `git diff main -- apps/api` vazio (nem `openapi.json` nem código da API mudaram)
-- [ ] Cobertura de `features/dev-tools/domain/` ≥ 90% de linhas (ou a decisão registrada de não medir)
+- [x] Tabela "Verificação dos Success Criteria" no fim do plano, com como cada um foi verificado
+- [x] README lista as seis ferramentas e diz que rodam no navegador
+- [x] CAPABILITY-MAP: `dev-tools` com spec, plano e ✅ implementado
+- [x] Spec com status "implementada"
+- [x] `git diff main -- apps/api` vazio (nem `openapi.json` nem código da API mudaram)
+- [x] Cobertura de `features/dev-tools/domain/` ≥ 90% de linhas (ou a decisão registrada de não medir)
 
 **Verificação:**
-- [ ] `npm run lint`, `npm run check-types`, `npm run test`, `npm run test:e2e` verdes num clone limpo (`npm ci`)
-- [ ] `npm run build` com cache hit na segunda execução
+- [x] `npm run lint`, `npm run check-types`, `npm run test`, `npm run test:e2e` verdes num clone limpo (`npm ci`)
+- [x] `npm run build` com cache hit na segunda execução
 
 **Dependências:** T10
 **Arquivos:** `README.md`, `CLAUDE.md`, `CAPABILITY-MAP.md`, `specs/SPEC-dev-tools.md`, `tasks/dev-tools/plan.md`

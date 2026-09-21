@@ -1,6 +1,6 @@
 # Spec: dev-tools
 
-> Módulo `dev-tools` do [CAPABILITY-MAP](../CAPABILITY-MAP.md). Status: **aprovada** em 2026-09-21. Plano: [tasks/dev-tools/plan.md](../tasks/dev-tools/plan.md).
+> Módulo `dev-tools` do [CAPABILITY-MAP](../CAPABILITY-MAP.md). Status: **implementada** (aprovada em 2026-09-21). Plano: [tasks/dev-tools/plan.md](../tasks/dev-tools/plan.md).
 > Herda as convenções globais de [SPEC-foundation](SPEC-foundation.md): camadas, estilo, testes e limites. Depende **só** do `foundation` (roda em paralelo ao `notes`/`reminders`), mas as rotas ficam sob o shell autenticado `_app`, ou seja, atrás do guard do [SPEC-identity](SPEC-identity.md). Aqui fica só o que é específico do módulo.
 
 ## Objetivo
