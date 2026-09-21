@@ -1,6 +1,5 @@
-import { Button } from '@septo/ui/components/button';
-import { Textarea } from '@septo/ui/components/textarea';
-import { ArrowLeftRightIcon } from 'lucide-react';
+import { Button, buttonVariants } from '@septo/ui/components/button';
+import { ArrowLeftRightIcon, UploadIcon } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import {
   decodeText,
@@ -13,6 +12,8 @@ import {
 import { MAX_TEXT_CHARS, TEXT_TOO_LARGE } from '../domain/limits';
 import { CopyButton } from './copy-button';
 import { FileDrop } from './file-drop';
+import { Segmented } from './segmented';
+import { Pane, PaneTextarea, Workspace } from './workspace';
 
 const SCHEMES: { value: EncodingScheme; label: string }[] = [
   { value: 'base64', label: 'base64' },
@@ -63,99 +64,74 @@ export function EncodeTool() {
     setDecoding(false);
   }
 
+  const fileButton = (
+    <FileDrop
+      maxBytes={MAX_TEXT_CHARS}
+      tooLarge={TEXT_TOO_LARGE}
+      onFile={readFile}
+      onReject={setRejection}
+      disabled={!fileScheme}
+      title={fileScheme ? 'Codificar um arquivo' : 'URL-encode é só para texto'}
+      className={buttonVariants({
+        variant: 'ghost',
+        size: 'xs',
+        className: 'data-over:bg-brand-subtle data-over:text-brand-text',
+      })}
+    >
+      <UploadIcon aria-hidden="true" />
+      Arquivo
+    </FileDrop>
+  );
+
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex flex-wrap items-center gap-3">
-        <fieldset>
-          <legend className="sr-only">Esquema</legend>
-          <div className="inline-flex rounded-lg border bg-muted p-0.5">
-            {SCHEMES.map((option) => (
-              <label
-                key={option.value}
-                className="cursor-pointer rounded-md px-3 py-1 text-sm text-muted-foreground transition-colors hover:text-foreground has-checked:bg-background has-checked:text-foreground has-checked:shadow-sm has-focus-visible:ring-2 has-focus-visible:ring-ring"
-              >
-                <input
-                  type="radio"
-                  name="scheme"
-                  value={option.value}
-                  checked={scheme === option.value}
-                  onChange={() => setScheme(option.value)}
-                  className="sr-only"
-                />
-                {option.label}
-              </label>
-            ))}
-          </div>
-        </fieldset>
-
-        <Button variant="outline" onClick={swap}>
-          <ArrowLeftRightIcon aria-hidden="true" />
-          Inverter
-        </Button>
-        <span className="text-sm text-muted-foreground">
-          {decoding ? 'Decodificando para texto' : 'Codificando o texto'}
-        </span>
-      </div>
-
-      <p aria-live="polite" className="min-h-5 text-sm">
-        {problem && <span className="text-destructive">{problem}</span>}
-      </p>
-
-      <div className="grid gap-4 md:grid-cols-2">
-        <div className="flex flex-col gap-2">
-          <label htmlFor="encode-input" className="text-sm font-medium">
-            {source.kind === 'file' ? 'Arquivo' : decoding ? 'Codificado' : 'Texto'}
-          </label>
-          {source.kind === 'file' ? (
-            <div className="flex h-72 flex-col items-start justify-center gap-3 rounded-lg border px-4">
-              <p className="font-mono text-sm">{source.name}</p>
-              <p className="text-sm text-muted-foreground">
-                {source.bytes.length.toLocaleString('pt-BR')} bytes
-              </p>
-              <Button variant="outline" size="sm" onClick={() => takeText('')}>
-                Voltar para texto
-              </Button>
-            </div>
-          ) : (
-            <Textarea
-              id="encode-input"
-              value={source.value}
-              onChange={(event) => takeText(event.target.value)}
-              spellCheck={false}
-              aria-invalid={problem !== null}
-              className="h-72 field-sizing-fixed font-mono text-xs"
-            />
-          )}
-          <FileDrop
-            label={
-              fileScheme
-                ? 'Arraste um arquivo ou clique para escolher'
-                : 'URL-encode é só para texto'
-            }
-            maxBytes={MAX_TEXT_CHARS}
-            tooLarge={TEXT_TOO_LARGE}
-            onFile={readFile}
-            onReject={setRejection}
-            disabled={!fileScheme}
+    <Workspace
+      to="/dev-tools/encode"
+      toolbar={
+        <>
+          <Segmented
+            legend="Esquema"
+            name="scheme"
+            value={scheme}
+            options={SCHEMES}
+            onChange={setScheme}
           />
-        </div>
-
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center justify-between gap-2">
-            <label htmlFor="encode-output" className="text-sm font-medium">
-              {decoding && source.kind === 'text' ? 'Texto' : 'Codificado'}
-            </label>
-            <CopyButton value={output} />
+          <Button variant="outline" size="sm" onClick={swap}>
+            <ArrowLeftRightIcon aria-hidden="true" />
+            Inverter
+          </Button>
+        </>
+      }
+      error={problem}
+    >
+      {source.kind === 'file' ? (
+        <Pane label="Arquivo" actions={fileButton}>
+          <div className="flex h-full flex-col items-start justify-center gap-2 px-4 md:px-6">
+            <p className="font-mono text-sm">{source.name}</p>
+            <p className="text-sm text-muted-foreground">
+              {source.bytes.length.toLocaleString('pt-BR')} bytes
+            </p>
+            <Button variant="outline" size="sm" onClick={() => takeText('')}>
+              Voltar para texto
+            </Button>
           </div>
-          <Textarea
-            id="encode-output"
-            value={output}
-            readOnly
-            spellCheck={false}
-            className="h-72 field-sizing-fixed font-mono text-xs"
+        </Pane>
+      ) : (
+        <Pane label={decoding ? 'Codificado' : 'Texto'} htmlFor="encode-input" actions={fileButton}>
+          <PaneTextarea
+            id="encode-input"
+            value={source.value}
+            onChange={(event) => takeText(event.target.value)}
+            aria-invalid={problem !== null}
           />
-        </div>
-      </div>
-    </div>
+        </Pane>
+      )}
+      <Pane
+        label={decoding && source.kind === 'text' ? 'Texto' : 'Codificado'}
+        htmlFor="encode-output"
+        actions={<CopyButton value={output} />}
+      >
+        <PaneTextarea id="encode-output" value={output} readOnly />
+      </Pane>
+    </Workspace>
   );
 }

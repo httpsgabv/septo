@@ -55,13 +55,15 @@ export function ReadmeTool() {
             className="h-[28rem] field-sizing-fixed font-mono text-xs"
           />
           <FileDrop
-            label="Arraste um .md ou clique para escolher"
             accept=".md,.markdown,text/markdown,text/plain"
             maxBytes={MAX_TEXT_CHARS}
             tooLarge={TEXT_TOO_LARGE}
             onFile={readFile}
             onReject={setProblem}
-          />
+            className="flex items-center justify-center gap-2 rounded-xl border border-dashed px-4 py-6 text-sm text-muted-foreground data-over:border-brand-text data-over:bg-brand-subtle"
+          >
+            Arraste um .md ou clique para escolher
+          </FileDrop>
         </div>
 
         <div className="flex flex-col gap-2">

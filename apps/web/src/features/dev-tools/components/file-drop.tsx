@@ -1,26 +1,31 @@
-import { UploadIcon } from 'lucide-react';
-import { useState } from 'react';
+import { cn } from '@septo/ui/lib/utils';
+import { type ReactNode, useState } from 'react';
 
 /**
- * Drop area that is also a real file input: clicking works, Tab + Enter works, dragging works.
- * The size check lives here so no tool forgets it.
+ * Drop target that is also a real file input: clicking works, Tab + Enter works, dragging works.
+ * The caller shapes it (a small header button, or a whole pane) and styles the drag state with
+ * `data-over`. The size check lives here so no tool forgets it.
  */
 export function FileDrop({
-  label,
   accept,
   maxBytes,
   tooLarge,
   onFile,
   onReject,
   disabled = false,
+  title,
+  className,
+  children,
 }: {
-  label: string;
   accept?: string;
   maxBytes: number;
   tooLarge: string;
   onFile: (file: File) => void;
   onReject: (message: string) => void;
   disabled?: boolean;
+  title?: string;
+  className?: string;
+  children: ReactNode;
 }) {
   const [over, setOver] = useState(false);
 
@@ -35,6 +40,8 @@ export function FileDrop({
 
   return (
     <label
+      title={title}
+      data-over={over || undefined}
       onDragOver={(event) => {
         if (disabled) return;
         event.preventDefault();
@@ -47,9 +54,11 @@ export function FileDrop({
         setOver(false);
         take(event.dataTransfer.files[0]);
       }}
-      className={`flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed px-4 py-6 text-sm text-muted-foreground transition-colors has-focus-visible:ring-2 has-focus-visible:ring-ring ${
-        over ? 'border-brand-text bg-brand-subtle' : 'hover:border-foreground/30'
-      } ${disabled ? 'pointer-events-none opacity-50' : ''}`}
+      className={cn(
+        'cursor-pointer has-focus-visible:ring-2 has-focus-visible:ring-ring',
+        disabled && 'pointer-events-none opacity-50',
+        className,
+      )}
     >
       <input
         type="file"
@@ -61,8 +70,7 @@ export function FileDrop({
           event.target.value = ''; // so choosing the same file twice still fires
         }}
       />
-      <UploadIcon className="size-4 text-brand-text" aria-hidden="true" />
-      {label}
+      {children}
     </label>
   );
 }

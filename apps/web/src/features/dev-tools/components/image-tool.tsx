@@ -87,15 +87,15 @@ export function ImageTool() {
   return (
     <div className="flex flex-col gap-4">
       <FileDrop
-        label={
-          source ? `${source.name} — escolher outra` : 'Arraste uma imagem ou clique para escolher'
-        }
         accept="image/*"
         maxBytes={MAX_IMAGE_BYTES}
         tooLarge={IMAGE_TOO_LARGE}
         onFile={readFile}
         onReject={setProblem}
-      />
+        className="flex items-center justify-center gap-2 rounded-xl border border-dashed px-4 py-6 text-sm text-muted-foreground data-over:border-brand-text data-over:bg-brand-subtle"
+      >
+        {source ? `${source.name} — escolher outra` : 'Arraste uma imagem ou clique para escolher'}
+      </FileDrop>
 
       <div className="flex flex-wrap items-center gap-4">
         <fieldset>

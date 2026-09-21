@@ -324,12 +324,12 @@
 **Descrição:** Os dois são texto → texto: `Workspace` + dois `Pane`. Dados: seletores origem → destino na toolbar via `Segmented`; XML com `title="Conversão com perda"`; erro na status bar; rodapé CSV/XML removido. Encodings: esquema e direção ("Inverter") na toolbar; o `FileDrop` de arquivo → base64 vira ação "Arquivo" no cabeçalho do painel de texto. A rota `data.tsx` usa `<Workspace to="/dev-tools/data" />` como `fallback` do `ClientOnly`/`Suspense`.
 
 **Aceite:**
-- [ ] Nenhum `<p>` de rodapé em `data-tool.tsx` e `encode-tool.tsx`; `Picker` local apagado
-- [ ] `<h1>Dados</h1>` presente no HTML do servidor
-- [ ] Rótulos "Entrada"/"Saída"/"Texto"/"Codificado" e o botão "Inverter" preservados
+- [x] Nenhum `<p>` de rodapé em `data-tool.tsx` e `encode-tool.tsx`; `Picker` local apagado
+- [x] `<h1>Dados</h1>` presente no HTML do servidor
+- [x] Rótulos "Entrada"/"Saída"/"Texto"/"Codificado" e o botão "Inverter" preservados
 
 **Verificação:**
-- [ ] Testes de Dados e Encodings do `dev-tools.spec.ts` passam sem mudança (ou só no seletor do arquivo)
+- [x] Testes de Dados e Encodings do `dev-tools.spec.ts` passam sem mudança (ou só no seletor do arquivo)
 
 **Dependências:** R2
 **Arquivos:** `components/data-tool.tsx`, `components/encode-tool.tsx`, `routes/_app/dev-tools/data.tsx`, `routes/_app/dev-tools/encode.tsx`, `e2e/dev-tools.spec.ts`
