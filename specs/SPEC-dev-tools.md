@@ -24,6 +24,67 @@ Sucesso = quando eu precisar de qualquer uma dessas seis coisas, abro `/dev-tool
 
 Histórico ou favoritos de conversões, qualquer persistência (nem `localStorage`), buscar README por URL do GitHub (exigiria proxy no servidor — este módulo não tem backend), JSONPath/filtro/diff de JSON, árvore navegável de JSON, decodificar JWT, validar contra JSON Schema, chaves EC/ed25519, formato OpenSSH (`ssh-rsa …`), CSR/certificado, cifrar/assinar com a chave gerada, proteger a privada com senha (PKCS#8 cifrado), OCR/HEIC/RAW nas imagens, corte e rotação de imagem, conversão em lote, destaque de sintaxe no README e qualquer coisa que dependa da API.
 
+## Revisão 1: navegação e layout
+
+> Status: **aprovada** em 2026-09-21. Plano e tarefas: seção "Revisão 1" de [plan.md](../tasks/dev-tools/plan.md) e [todo.md](../tasks/dev-tools/todo.md). Substitui as linhas marcadas com ↻ nas Decisões, na Estrutura e nos Testes. Nada muda no domínio (`domain/*.ts`), nas dependências nem na ausência de API.
+
+### Objetivo
+
+Chegar a qualquer ferramenta em um clique de qualquer lugar do app, e dar a cada ferramenta a tela inteira: menos texto, mais área de trabalho.
+
+### Histórias
+
+1. No menu lateral, "Dev Tools" continua sendo um link para o índice, e ganha um chevron que expande as seis ferramentas como subitens (ícone + nome). Clico num subitem e vou direto para a ferramenta.
+2. Dentro de `/dev-tools/*` o grupo já vem expandido e o subitem da ferramenta aberta fica ativo; fora dele vem recolhido. Posso recolher/expandir à mão.
+3. Com a sidebar em modo ícone, "Dev Tools" é só o ícone (leva ao índice); no mobile (drawer) os subitens aparecem e fecham o drawer ao navegar.
+4. Cada ferramenta abre como um **workspace**: uma barra fina no topo (ícone + nome à esquerda, controles da ferramenta à direita) e, abaixo, os painéis ocupando toda a largura e a altura restante da janela.
+5. Não há mais descrição, aviso de "roda no seu navegador" nem nota de rodapé em nenhuma tela.
+
+### Layout proposto
+
+```
+┌ sidebar ────────┬─ header (h-12) ────────────────────────────────── ⌘K ┐
+│ ▸ Notas         │ {} JSON                [2 · 4 · Tab · Min]           │  ← toolbar (h-12, border-b)
+│ ▾ Dev Tools     ├──────────────────────────────┬───────────────────────┤
+│   {} JSON  ●    │ ENTRADA              limpar  │ SAÍDA          copiar │  ← cabeçalho do painel
+│   ⇄ Dados       │                              │                       │
+│   01 Encodings  │  textarea mono, sem borda,   │  somente leitura      │
+│   ▢ Imagens     │  preenche o painel           │                       │
+│   ⚿ Chaves RSA  │                              │                       │
+│   ▤ README      ├──────────────────────────────┴───────────────────────┤
+│                 │ ● Linha 4, coluna 12: esperava ','      1,2 KB → 980 B│  ← status bar (só quando há o quê)
+└─────────────────┴──────────────────────────────────────────────────────┘
+```
+
+- **Workspace de altura cheia** (`md+`): `h-[calc(100dvh-3rem)]`, dois painéis lado a lado separados por uma linha (`divide-x`), sem cartões nem bordas duplas — estilo editor (Linear/Raycast). Abaixo de `md` os painéis empilham com altura mínima e a página rola.
+- **Painel** = cabeçalho de 36 px (rótulo em caixa-alta pequena `text-xs text-muted-foreground` + ações: copiar, baixar, limpar) + área de texto sem borda própria. Um componente só (`Pane`) para as seis ferramentas.
+- **Toolbar**: os controles saem do corpo da página e vão para a direita da barra da ferramenta, como segmented controls compactos (o `Picker` que hoje está copiado em quatro arquivos vira um `Segmented` único).
+- **Status bar**: erro (vermelho, com linha/coluna no JSON) e métricas (tamanho antes/depois na imagem). Some quando não há nada a dizer.
+- **Sem botões de ação onde dá para ser ao vivo**: o JSON passa a formatar enquanto digito, como o conversor de dados já faz; "Minificar" vira a opção `Min` do seletor de indentação. O RSA mantém o botão "Gerar" (4096 leva segundos).
+- **Estados vazios**: o placeholder do textarea é a única instrução. Imagem e README: o painel de entrada inteiro é a área de soltar arquivo (clique ou arraste), sem caixa tracejada separada.
+- **Índice** (`/dev-tools`): título "Dev Tools" e uma grade de blocos compactos (ícone + nome, sem descrição), 2 colunas no mobile e 3 no desktop. A descrição de cada ferramenta fica só como `keywords` no ⌘K.
+- **⌘K**: as seis ferramentas entram na paleta (grupo "Dev Tools"), já que agora são itens de navegação.
+
+### Decisões (revisão 1)
+
+| Tema | Decisão | Por quê |
+|---|---|---|
+| Navegação | A barra "Ferramentas" no topo do layout **sai**: a sidebar (e o drawer no mobile) é o único seletor. `dev-tools.tsx` volta a ser só `Outlet` | Duas navegações para o mesmo destino. A barra ainda custava uma faixa de altura no workspace |
+| Submenu | `SidebarMenuAction` (chevron) + `SidebarMenuSub` que já existem em `@septo/ui`; o estado aberto/fechado é `useState` inicializado pela rota, sem cookie | Zero componente novo no design system. Lembrar entre reloads não vale um cookie: a rota já decide o caso comum |
+| Fonte da lista | `tools.ts` continua a fonte única; `navigation.ts` ganha `children` no item "Dev Tools" montado a partir dela | Sidebar, paleta e índice leem a mesma lista |
+| Textos de apoio | Saem: descrição do índice, descrição e aviso do `ToolPage`, e os quatro rodapés (2^53, CSV/XML, RSA, README). O que importa aparece **quando importa**: o erro de CSV já explica o limite; XML ganha `title` na opção ("conversão com perda") | Pedido explícito: texto fixo que ninguém relê é ruído |
+| Largura | Sem `max-w-*` nas ferramentas; o índice mantém o `Page` | As ferramentas são dois painéis; largura é justamente o recurso escasso |
+
+### Critérios de sucesso (revisão 1)
+
+1. Clicar em "Dev Tools" na sidebar abre o índice; o chevron expande seis subitens; clicar em "JSON" abre `/dev-tools/json` com o subitem ativo (`data-active`) e o item pai também ativo.
+2. Recarregar em `/dev-tools/rsa` renderiza o grupo expandido já no SSR (sem piscar).
+3. `grep -rn "Roda inteiro\|nada é enviado" apps/web/src` não devolve nada; nenhuma ferramenta tem parágrafo de rodapé.
+4. Em 1440×900 os painéis vão do fim da toolbar até o fim da janela sem scroll da página; em 375 px não há scroll horizontal e tudo continua alcançável.
+5. JSON formata ao digitar; `Min` minifica; um erro aparece na status bar com linha e coluna.
+6. ⌘K → "rsa" leva a `/dev-tools/rsa`.
+7. `dev-tools.spec.ts` e `shell.spec.ts` atualizados (navegação pela sidebar em vez da barra) e verdes; `lint`, `check-types`, `test` passam; `openapi.json` não muda; bundle do índice continua sem Tiptap/parsers.
+
 ## As seis ferramentas
 
 | Rota | Ferramenta | O que faz |
@@ -44,7 +105,7 @@ O "conversor" do CAPABILITY-MAP vira **três** rotas (dados, encodings, imagens)
 |---|---|---|
 | Sem servidor | Nenhuma rota nova na API, nenhum `fetch` para terceiros. O módulo não toca `shared/api/` | Decisão do mapa. É também o que torna seguro colar um JSON de produção ou olhar uma chave privada aqui |
 | Sem persistência | O conteúdo vive no estado do React e some no reload. Nada em `localStorage`, nada em cookie, nada no cache do Query | Uma chave privada ou um dump colado não deve sobreviver ao fechar a aba. Nem as preferências (indentação, formato destino) são guardadas — são dois cliques |
-| Rotas | `/dev-tools/<tool>`, com `dev-tools.tsx` virando rota de layout (barra de links no topo + `Outlet`) | Link direto para cada ferramenta, chunk separado por ferramenta e a mesma estrutura que já existe no app. O índice continua renderizando o título "Dev Tools", que o `shell.spec.ts` já espera. **Barra no topo, não coluna lateral (2026-09-21):** as ferramentas são dois painéis lado a lado, e uma segunda coluna rouba justo a largura de que elas precisam — a sidebar do app já ocupa a esquerda |
+| Rotas ↻ | `/dev-tools/<tool>`, com `dev-tools.tsx` virando rota de layout (barra de links no topo + `Outlet`) | Link direto para cada ferramenta, chunk separado por ferramenta e a mesma estrutura que já existe no app. O índice continua renderizando o título "Dev Tools", que o `shell.spec.ts` já espera. **Barra no topo, não coluna lateral (2026-09-21):** as ferramentas são dois painéis lado a lado, e uma segunda coluna rouba justo a largura de que elas precisam — a sidebar do app já ocupa a esquerda |
 | Carregamento | O índice e as ferramentas leves (JSON, encodings, imagens, RSA) renderizam no SSR como qualquer página; só o que pesa no bundle ou precisa do navegador no próprio render — README (Tiptap) e dados (parsers) — vai em `lazy` dentro de `ClientOnly` | Canvas e WebCrypto só são tocados no clique, então não atrapalham o SSR e não custam bundle (são nativos). O que não pode é Tiptap ou parser pesar no índice e nas outras rotas — ajustado em 2026-09-21, quando a primeira ferramenta mostrou que a cerimônia não se paga |
 | Estado na URL | A rota diz qual ferramenta está aberta; opções e conteúdo **não** vão para a URL | Colar um arquivo inteiro numa query string não ajuda ninguém — e vazaria o conteúdo para o histórico |
 | Onde mora a lógica | Tudo que é puro em `features/dev-tools/domain/<tool>.ts`, testado sem DOM; os componentes só ligam `textarea` → função → `textarea` | Convenção do foundation. É também o que deixa a bateria de testes barata: nenhum teste precisa de navegador, exceto imagem |
@@ -72,7 +133,7 @@ A única superfície de rede é a que já existe no shell (sessão do `identity`
 
 ```
 apps/web/src/
-  routes/_app/dev-tools.tsx           layout: barra de links entre as ferramentas + Outlet
+  routes/_app/dev-tools.tsx           layout: Outlet (↻ a barra de links saiu na revisão 1)
   routes/_app/dev-tools/index.tsx     índice com os cards
   routes/_app/dev-tools/json.tsx      \
   routes/_app/dev-tools/data.tsx       |
@@ -151,7 +212,7 @@ Sem teste de integração nem de contrato: não há API neste módulo. Meta de c
 | `toBlob` não encoda AVIF/WebP no navegador do momento | Suporte detectado em runtime; a opção some quando não existe, em vez de baixar um PNG disfarçado |
 | README com tabela ou badge fica pobre | Limite conhecido e aceito (é o conjunto de formatação do `notes`); a alternativa (`marked` + sanitizer) está descartada nas decisões e é reversível |
 | `JSON.parse` perde precisão em inteiro acima de 2^53 | Documentado na tela do formatador numa linha. `// ponytail: sem BigInt no JSON; trocar por um parser com reviver se aparecer um caso real` |
-| Seis ferramentas viram seis telas diferentes | Um `ToolPage` (título, descrição, aviso de "roda no seu navegador") e os mesmos `CopyButton`/`FileDrop` para todas |
+| Seis ferramentas viram seis telas diferentes ↻ | Um `ToolPage` (título, descrição, aviso de "roda no seu navegador") e os mesmos `CopyButton`/`FileDrop` para todas |
 
 ## Open Questions
 

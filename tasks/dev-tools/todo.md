@@ -269,3 +269,115 @@
 **Dependências:** T10
 **Arquivos:** `README.md`, `CLAUDE.md`, `CAPABILITY-MAP.md`, `specs/SPEC-dev-tools.md`, `tasks/dev-tools/plan.md`
 **Tamanho:** M
+
+---
+
+# Revisão 1: navegação e layout
+
+> Plano: [plan.md § Revisão 1](plan.md#revisão-1-navegação-e-layout) · Spec: [SPEC-dev-tools § Revisão 1](../../specs/SPEC-dev-tools.md#revisão-1-navegação-e-layout)
+> Branch: `feat/dev-tools-layout` · um commit por tarefa. Mesmas regras do módulo: nada em `apps/api`, nada de rede, nada em `localStorage`. **Nenhum `domain/*.ts` muda de comportamento.**
+> Toda tarefa termina com `npm run lint`, `npm run check-types`, `npm run test` e o e2e da tela tocada (`npm run test:e2e -w @septo/web -- <arquivo>`) verdes.
+
+### R1: Ferramentas como subitens na sidebar e no ⌘K
+
+**Descrição:** "Dev Tools" continua link para o índice e ganha um chevron (`SidebarMenuAction`) que expande um `SidebarMenuSub` com as seis ferramentas (ícone + nome). Aberto por padrão dentro de `/dev-tools/*`, fechado fora; reabre ao entrar numa ferramenta. A paleta ganha o grupo "Dev Tools" com as seis (descrição como `keywords`). A barra "Ferramentas" de `dev-tools.tsx` sai: o layout vira só `Outlet`.
+
+**Aceite:**
+- [ ] `navigation.ts`: `NavItem` com `children?`; Dev Tools tem as seis a partir de `tools.ts`
+- [ ] Chevron com `aria-expanded` e rótulo "Mostrar ferramentas"/"Ocultar ferramentas"; subitem ativo com `data-active`; pai continua ativo em `/dev-tools/json`
+- [ ] Clicar num subitem fecha o drawer no mobile
+- [ ] Reload em `/dev-tools/rsa` renderiza o grupo aberto no HTML do servidor (sem aviso de hidratação no console)
+- [ ] ⌘K → "rsa" + Enter leva a `/dev-tools/rsa`
+- [ ] `dev-tools.tsx` sem `<nav>`
+
+**Verificação:**
+- [ ] `navigation.spec.ts`: `findNavItem('/dev-tools/json')` devolve Dev Tools; as seis crianças batem com `tools`
+- [ ] `shell.spec.ts`: novo teste de expandir/recolher, subitem navega e fica ativo; paleta acha "rsa"
+- [ ] `dev-tools.spec.ts`: testes da barra "Ferramentas" trocados por navegação pela sidebar; cliques escopados por região
+
+**Dependências:** nenhuma
+**Arquivos:** `shared/navigation.ts`, `shared/navigation.spec.ts`, `shared/layout/app-sidebar.tsx`, `shared/layout/command-palette.tsx`, `routes/_app/dev-tools.tsx`, `e2e/shell.spec.ts`, `e2e/dev-tools.spec.ts`
+**Tamanho:** M
+
+### R2: Moldura `Workspace` + índice compacto + JSON ao vivo
+
+**Descrição:** Novo `components/workspace.tsx` com `Workspace` (toolbar `h-12` com ícone + `<h1>` à esquerda e `toolbar` à direita; corpo que preenche `md:h-[calc(100dvh-3rem)]`; `status` opcional no rodapé), `Pane` (cabeçalho de 36 px com `<label>` em caixa-alta + `actions`; corpo sem borda) e `StatusBar`. Novo `components/segmented.tsx` (o markup de rádio que hoje está copiado). `CopyButton` ganha tamanho compacto (ícone + rótulo `sr-only` quando `iconOnly`). Índice: grade de blocos ícone + nome, sem descrição da página. JSON migrado: formata ao digitar; seletor `2 · 4 · Tab · Min`; erro na status bar; sem os botões e sem o rodapé do 2^53.
+
+**Aceite:**
+- [ ] `routes/_app/dev-tools/json.tsx` renderiza só `<JsonTool />`
+- [ ] Digitar `{"a":1}` mostra a saída formatada sem clicar em nada; `Min` minifica
+- [ ] JSON quebrado mostra "Linha 3, coluna 8: …" na status bar, com `aria-live="polite"`
+- [ ] Índice sem `description`; cada bloco é um link com ícone + nome
+- [ ] Em 1440×900, `/dev-tools/json` não tem scroll de página
+- [ ] O texto "Roda inteiro no seu navegador" não existe mais no código
+
+**Verificação:**
+- [ ] `dev-tools.spec.ts`: teste do JSON reescrito (sem Formatar/Minificar); índice sem descrição
+- [ ] Olhar no navegador em claro/escuro e em 375 px
+
+**Dependências:** R1
+**Arquivos:** `components/workspace.tsx` (novo), `components/segmented.tsx` (novo), `components/copy-button.tsx`, `components/json-tool.tsx`, `routes/_app/dev-tools/json.tsx`, `routes/_app/dev-tools/index.tsx`, `e2e/dev-tools.spec.ts`
+**Tamanho:** M
+
+### R3: Dados e Encodings na moldura
+
+**Descrição:** Os dois são texto → texto: `Workspace` + dois `Pane`. Dados: seletores origem → destino na toolbar via `Segmented`; XML com `title="Conversão com perda"`; erro na status bar; rodapé CSV/XML removido. Encodings: esquema e direção ("Inverter") na toolbar; o `FileDrop` de arquivo → base64 vira ação "Arquivo" no cabeçalho do painel de texto. A rota `data.tsx` usa `<Workspace to="/dev-tools/data" />` como `fallback` do `ClientOnly`/`Suspense`.
+
+**Aceite:**
+- [ ] Nenhum `<p>` de rodapé em `data-tool.tsx` e `encode-tool.tsx`; `Picker` local apagado
+- [ ] `<h1>Dados</h1>` presente no HTML do servidor
+- [ ] Rótulos "Entrada"/"Saída"/"Texto"/"Codificado" e o botão "Inverter" preservados
+
+**Verificação:**
+- [ ] Testes de Dados e Encodings do `dev-tools.spec.ts` passam sem mudança (ou só no seletor do arquivo)
+
+**Dependências:** R2
+**Arquivos:** `components/data-tool.tsx`, `components/encode-tool.tsx`, `routes/_app/dev-tools/data.tsx`, `routes/_app/dev-tools/encode.tsx`, `e2e/dev-tools.spec.ts`
+**Tamanho:** M
+
+### R4: Imagens e README na moldura; `FileDrop` como painel
+
+**Descrição:** `FileDrop` ganha `className`/`children` para ocupar o painel inteiro (a borda tracejada aparece só ao arrastar). Imagens: painel da esquerda = origem (solta/clica; depois mostra a miniatura e as dimensões), painel da direita = resultado com "Baixar" no cabeçalho; formato, largura máxima e qualidade na toolbar; tamanho antes → depois na status bar; aviso de EXIF removido. README: painel "Markdown" (textarea que também aceita soltar `.md`) e painel "Leitura"; rodapé removido; `fallback` do `ClientOnly` = `Workspace` vazio.
+
+**Aceite:**
+- [ ] Soltar um arquivo em qualquer ponto do painel de entrada funciona nas duas ferramentas; clicar ainda abre o seletor (Tab + Enter também)
+- [ ] Status bar da imagem mostra "400×250 · 12 KB → 200×125 · 3 KB" (formato equivalente)
+- [ ] Nenhum rodapé nos dois componentes
+
+**Verificação:**
+- [ ] Testes de Imagens e README do `dev-tools.spec.ts` verdes (ajustar só seletor de região se mudar)
+
+**Dependências:** R2
+**Arquivos:** `components/file-drop.tsx`, `components/image-tool.tsx`, `components/readme-tool.tsx`, `routes/_app/dev-tools/image.tsx`, `routes/_app/dev-tools/readme.tsx`
+**Tamanho:** M
+
+### R5: RSA na moldura
+
+**Descrição:** Tamanho (`Segmented`) e "Gerar par de chaves" na toolbar; os dois PEM como `Pane` lado a lado com Copiar/Baixar no cabeçalho; antes de gerar, os painéis mostram só o placeholder. Rodapé removido.
+
+**Aceite:**
+- [ ] Botão continua "Gerando…" durante a geração; erro vai para a status bar
+- [ ] Rótulos "Chave pública (SPKI)" e "Chave privada (PKCS#8)" preservados
+
+**Verificação:**
+- [ ] Teste de RSA do `dev-tools.spec.ts` verde sem mudança
+
+**Dependências:** R2
+**Arquivos:** `components/rsa-tool.tsx`, `routes/_app/dev-tools/rsa.tsx`
+**Tamanho:** S
+
+### R6: Fechamento
+
+**Descrição:** Apagar `tool-page.tsx` (sem consumidores). e2e de layout: para cada ferramenta, 1440×900 sem scroll vertical de página e 375 px sem scroll horizontal. Conferir os critérios 1–7 da revisão 1. Atualizar a spec (Estrutura, Testes, status "implementada"), o CLAUDE.md (armadilha: "a ferramenta monta a própria `Workspace`; rota `lazy` usa `Workspace` vazio como fallback"; "sem textos de apoio fixos") e o README se citar a barra.
+
+**Aceite:**
+- [ ] `grep -rn "ToolPage\|Roda inteiro" apps/web/src` vazio
+- [ ] `apps/api/openapi.json` sem diff
+- [ ] Build do índice sem Tiptap/parsers (o e2e existente confere)
+
+**Verificação:**
+- [ ] `npm run lint`, `npm run check-types`, `npm run test`, `npm run test:e2e -w @septo/web` verdes
+
+**Dependências:** R3, R4, R5
+**Arquivos:** `components/tool-page.tsx` (apagado), `e2e/dev-tools.spec.ts`, `specs/SPEC-dev-tools.md`, `CLAUDE.md`, `README.md`
+**Tamanho:** S
