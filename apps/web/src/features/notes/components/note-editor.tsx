@@ -126,7 +126,7 @@ export function NoteEditor({ note, onCreated }: Props) {
     immediatelyRender: false,
     editorProps: {
       attributes: {
-        class: 'note-content min-h-64 outline-none',
+        class: 'markdown-content min-h-64 outline-none',
         // A contenteditable div is not announced as an editor unless it says so.
         role: 'textbox',
         'aria-multiline': 'true',

@@ -203,17 +203,17 @@
 **Descrição:** Tela com um `textarea` para colar markdown (e o `FileDrop` aceitando `.md`, limite 2 MB) e o resultado renderizado por um Tiptap em `editable: false`, montado com `markdownExtensions` e `parseMarkdown(texto)` do `shared/markdown.ts`. Sem HTML injetado: o ProseMirror faz o parse. A linha de limite ("tabela, checklist e imagem aparecem como texto") fica visível. Carregado com `lazy` dentro de `ClientOnly`, com skeleton — mesma receita do editor de notas.
 
 **Aceite:**
-- [ ] Markdown colado renderiza títulos, listas, citação, código, link e linha horizontal
-- [ ] Tabela GFM e badge de imagem aparecem como texto, sem quebrar a página
-- [ ] O conteúdo é somente leitura (não dá para editar) e o texto é selecionável/copiável
-- [ ] Arquivo `.md` solto preenche a entrada
-- [ ] Nenhum `dangerouslySetInnerHTML` no módulo (conferido por `grep`)
-- [ ] O chunk do Tiptap não é baixado até abrir `/dev-tools/readme`
+- [x] Markdown colado renderiza títulos, listas, citação, código, link e linha horizontal
+- [x] Tabela GFM e badge de imagem aparecem como texto, sem quebrar a página
+- [x] O conteúdo é somente leitura (não dá para editar) e o texto é selecionável/copiável
+- [x] Arquivo `.md` solto preenche a entrada
+- [x] Nenhum `dangerouslySetInnerHTML` no módulo (conferido por `grep`)
+- [x] O chunk do Tiptap não é baixado até abrir `/dev-tools/readme`
 
 **Verificação:**
-- [ ] Manual: colar o `README.md` do próprio repo e ler
-- [ ] Aba Network: o chunk do editor só aparece nesta rota
-- [ ] `check-types`, `lint`, `test`
+- [x] Manual: colar o `README.md` do próprio repo e ler
+- [x] Aba Network: o chunk do editor só aparece nesta rota
+- [x] `check-types`, `lint`, `test`
 
 **Dependências:** T1, T2
 **Arquivos:** `apps/web/src/features/dev-tools/components/readme-tool.tsx`, `apps/web/src/routes/_app/dev-tools/readme.tsx`

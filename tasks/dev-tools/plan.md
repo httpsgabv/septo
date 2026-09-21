@@ -59,7 +59,7 @@ T1 mover o bridge markdown → shared/  ◀── única tarefa que toca o `note
 - [x] T6: Tela do conversor de dados
 - [x] T7: Conversor de imagens
 - [x] T8: Gerador RSA
-- [ ] T9: Leitor de README
+- [x] T9: Leitor de README
 
 ### Checkpoint C: as seis funcionam no navegador
 - [ ] Cada ferramenta resolve o caso da sua história (spec, seção "Histórias")
