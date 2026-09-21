@@ -117,3 +117,77 @@ T1 mover o bridge markdown → shared/  ◀── única tarefa que toca o `note
 | 8 | Nenhuma requisição sai da aba; `localStorage` intacto | e2e "nothing the tools touch leaves the tab": formata um segredo, codifica uma senha e gera uma chave privada — nenhuma requisição para outra origem, nenhuma chamada `/api/*` além da do shell (health/me), e as chaves do `localStorage` no fim são as mesmas do começo |
 | 9 | Desktop e 375 px sem scroll horizontal; o índice não carrega Tiptap, canvas nem parsers | e2e "mobile (375px)" e "the heavy tools keep their weight to themselves" (o chunk pesado só aparece ao abrir a ferramenta que o usa) |
 | 10 | `lint`, `check-types`, `test`, `test:e2e` verdes; `openapi.json` inalterado; docs atualizados | 274 testes unitários no web (56 do módulo) + 59 e2e; `git diff main -- apps/api` **vazio**; cobertura de `features/dev-tools/domain` em 96,9% de linhas; README, CLAUDE.md, CAPABILITY-MAP e spec atualizados; segunda execução de `npm run build` em FULL TURBO |
+
+---
+
+# Revisão 1: navegação e layout
+
+> Spec: [SPEC-dev-tools § Revisão 1](../../specs/SPEC-dev-tools.md#revisão-1-navegação-e-layout) · Tarefas: [todo.md § Revisão 1](todo.md#revisão-1-navegação-e-layout) · Status: **aprovado em 2026-09-21** · Branch: `feat/dev-tools-layout`
+
+## Overview
+
+Só casca: navegação (sidebar + ⌘K) e a moldura das ferramentas. Nenhum `domain/*.ts` muda de comportamento, nenhuma dependência nova, nada em `apps/api`. O risco é quebrar o e2e existente, então cada tarefa atualiza os testes da tela que tocou e termina verde.
+
+## Grafo de dependências
+
+```
+R1 navegação: submenu na sidebar, ⌘K, sai a barra "Ferramentas"
+      │
+R2 moldura: Workspace + Pane + Segmented + StatusBar, índice compacto, JSON ao vivo (1º consumidor)
+      ├─▶ R3 Dados + Encodings  (só texto → texto)
+      ├─▶ R4 Imagens + README   (FileDrop vira o painel de entrada)
+      └─▶ R5 RSA
+                 └─▶ R6 fechamento: 375 px / altura cheia no e2e, docs, ToolPage removido
+```
+
+## Architecture Decisions
+
+- **A ferramenta monta a própria moldura.** Os controles moram no estado de cada ferramenta e precisam ir para a toolbar, então quem renderiza é a ferramenta: `<Workspace to="/dev-tools/json" toolbar={…} status={…}>{painéis}</Workspace>`. A rota passa a renderizar só `<JsonTool />`. Nada de portal nem contexto para "empurrar" controles para cima.
+- **SSR do título preservado nas rotas `lazy`.** Dados e README continuam em `ClientOnly` + `lazy`; o `fallback` vira `<Workspace to=… />` vazio (título + painéis em skeleton), então o `<h1>` segue vindo do servidor e não há salto de layout na hidratação.
+- **Rótulos acessíveis não mudam.** O cabeçalho do painel mostra "ENTRADA" via `uppercase`, mas o texto e o `<label htmlFor>` continuam "Entrada"/"Saída"/"Texto"/"Codificado"/"Markdown"/"Chave pública (SPKI)". O e2e das ferramentas quase não muda; muda só o que a spec mudou (botões Formatar/Minificar, barra "Ferramentas").
+- **Submenu sem componente novo.** `SidebarMenuAction` (chevron, `aria-expanded`, `aria-controls`) + `SidebarMenuSub` + `SidebarMenuSubButton render={<Link/>}`. Aberto inicial = `pathname` começa com `/dev-tools`; um `useEffect` reabre ao entrar numa ferramenta por outro caminho (⌘K). No modo ícone o `SidebarMenuSub` já some (`group-data-[collapsible=icon]:hidden`).
+- **`navigation.ts` ganha `children?: NavItem[]`** no item Dev Tools, mapeado de `tools.ts`. `NavItem['to']` passa a aceitar as rotas de `Tool['to']`. `findNavItem` continua casando só o nível de cima (o pai fica ativo em `/dev-tools/json`); o subitem ativo usa `pathname === child.to`.
+- **`Segmented` substitui os quatro `Picker`/fieldsets copiados** (JSON, dados, imagem, RSA): mesmo markup de hoje (`fieldset` + `legend.sr-only` + `radio.sr-only`), então os seletores `getByRole('radio')`/`group` do e2e seguem valendo.
+- **Altura cheia só em `md+`.** `md:h-[calc(100dvh-3rem)]` no Workspace (o header do app é `h-12`), painéis `md:grid-cols-2 md:divide-x` com `min-h-0` e `overflow` dentro do painel. Abaixo de `md`: painéis empilhados com `min-h-72` e a página rola.
+
+## Task List
+
+### Fase 1: navegação
+- R1 — submenu na sidebar, ferramentas no ⌘K, barra "Ferramentas" removida
+
+### Checkpoint A
+- Sidebar expande/recolhe; subitem ativo; drawer fecha ao navegar; ⌘K "rsa" leva à ferramenta; `shell.spec.ts` e `dev-tools.spec.ts` verdes
+
+### Fase 2: moldura
+- R2 — `Workspace`/`Pane`/`Segmented`/`StatusBar`, índice compacto, JSON migrado e ao vivo
+
+### Checkpoint B
+- `/dev-tools/json` em 1440×900 sem scroll de página; índice sem descrições; sem o aviso "Roda inteiro…" em nenhum lugar
+
+### Fase 3: migração das ferramentas (paralelizáveis entre si)
+- R3 — Dados + Encodings
+- R4 — Imagens + README
+- R5 — RSA
+
+### Checkpoint C
+- As seis na moldura nova; nenhum rodapé; `grep -rn "text-xs text-muted-foreground\">" features/dev-tools/components` sem parágrafos soltos
+
+### Fase 4: fechamento
+- R6 — e2e de layout (altura cheia, 375 px), `ToolPage` apagado, spec/CLAUDE.md/README
+
+### Checkpoint final
+- Critérios de sucesso 1–7 da revisão 1 conferidos um a um; `lint`, `check-types`, `test`, `test:e2e` verdes; `openapi.json` sem diff
+
+## Risks and Mitigations
+
+| Risco | Mitigação |
+|---|---|
+| Hidratação: submenu aberto no SSR e fechado no cliente (ou vice-versa) | Estado inicial derivado só do `pathname` do router, igual nos dois lados; critério 2 da spec checa num reload |
+| `getByRole('link', { name: 'JSON' })` passa a casar dois links (sidebar e índice) | Os testes escopam por região (`[data-sidebar="sidebar"]`, `main`) em vez de `.first()` |
+| Painel de altura fixa esconde conteúdo no mobile / com teclado virtual | Altura cheia só em `md+`; abaixo disso a página rola normalmente. e2e em 375 px confere scroll horizontal = 0 |
+| `100dvh` com o header sticky do app gera scroll de 1 px | `min-h-0` nos filhos do grid e checagem no e2e (`scrollHeight === clientHeight` em 1440×900) |
+| JSON ao vivo em 2 MB de texto a cada tecla | `useMemo` sobre (entrada, indentação) e o limite de 2 MB já existente; `// ponytail: parse síncrono por tecla; useDeferredValue se travar num caso real` |
+
+## Open Questions
+
+Nenhuma.

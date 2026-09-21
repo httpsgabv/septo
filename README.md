@@ -45,7 +45,7 @@ O septo tem um único usuário e não há cadastro pela interface: `user:set` pe
   - busca por título e corpo, sem diferenciar acento nem caixa; busca, tag e aba (`Ativas`, `Lembretes`, `Arquivadas`) ficam na URL;
   - lembrete (`remindAt`) em qualquer nota, com a aba "Lembretes" ordenada por data. O **aviso** (Web Push) é o módulo `reminders`, ainda pendente.
 
-- **Dev Tools** (`dev-tools`), em `/dev-tools` — seis ferramentas que rodam inteiras no navegador: nada é enviado para o servidor e nada fica guardado ao sair da página.
+- **Dev Tools** (`dev-tools`), em `/dev-tools` (cada ferramenta também é um subitem do menu lateral e está no ⌘K) — seis ferramentas que rodam inteiras no navegador: nada é enviado para o servidor e nada fica guardado ao sair da página.
   - **JSON**: formatar (2 espaços, 4 ou tab), minificar e apontar **linha e coluna** do erro, inclusive nos casos em que o próprio navegador não diz onde foi;
   - **Dados**: converter entre JSON, YAML, CSV e XML, com o formato de entrada detectado (e um seletor que decide no lugar dele);
   - **Encodings**: base64, base64url, URL e hex nos dois sentidos, com UTF-8 de verdade (acento e emoji sobrevivem), e arquivo → base64;

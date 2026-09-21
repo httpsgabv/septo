@@ -1,9 +1,13 @@
-import { Textarea } from '@septo/ui/components/textarea';
+import { buttonVariants } from '@septo/ui/components/button';
 import { EditorContent, useEditor } from '@tiptap/react';
+import { UploadIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { markdownExtensions, parseMarkdown } from '../../../shared/markdown';
 import { MAX_TEXT_CHARS, TEXT_TOO_LARGE } from '../domain/limits';
 import { FileDrop } from './file-drop';
+import { Pane, PaneTextarea, Workspace } from './workspace';
+
+const ACCEPT = '.md,.markdown,text/markdown,text/plain';
 
 export function ReadmeTool() {
   const [markdown, setMarkdown] = useState('');
@@ -35,47 +39,47 @@ export function ReadmeTool() {
     setMarkdown(await file.text());
   }
 
-  return (
-    <div className="flex flex-col gap-4">
-      <p aria-live="polite" className="min-h-5 text-sm">
-        {problem && <span className="text-destructive">{problem}</span>}
-      </p>
+  const drop = { accept: ACCEPT, maxBytes: MAX_TEXT_CHARS, tooLarge: TEXT_TOO_LARGE };
 
-      <div className="grid gap-4 md:grid-cols-2">
-        <div className="flex flex-col gap-2">
-          <label htmlFor="readme-input" className="text-sm font-medium">
-            Markdown
-          </label>
-          <Textarea
+  return (
+    <Workspace to="/dev-tools/readme" error={problem}>
+      <Pane
+        label="Markdown"
+        htmlFor="readme-input"
+        actions={
+          <FileDrop
+            {...drop}
+            onFile={readFile}
+            onReject={setProblem}
+            title="Abrir um .md"
+            className={buttonVariants({ variant: 'ghost', size: 'xs' })}
+          >
+            <UploadIcon aria-hidden="true" />
+            Arquivo
+          </FileDrop>
+        }
+      >
+        {/* The whole pane takes a dropped .md; clicks stay with the textarea. */}
+        <FileDrop
+          {...drop}
+          pick={false}
+          onFile={readFile}
+          onReject={setProblem}
+          className="absolute inset-0 data-over:bg-brand-subtle"
+        >
+          <PaneTextarea
             id="readme-input"
             value={markdown}
             onChange={(event) => setMarkdown(event.target.value)}
-            spellCheck={false}
-            placeholder={'# Título\n\nCole aqui o conteúdo de um README.'}
-            className="h-[28rem] field-sizing-fixed font-mono text-xs"
+            placeholder={'# Título\n\nCole ou solte um README.'}
           />
-          <FileDrop
-            label="Arraste um .md ou clique para escolher"
-            accept=".md,.markdown,text/markdown,text/plain"
-            maxBytes={MAX_TEXT_CHARS}
-            tooLarge={TEXT_TOO_LARGE}
-            onFile={readFile}
-            onReject={setProblem}
-          />
+        </FileDrop>
+      </Pane>
+      <Pane label="Leitura">
+        <div className="absolute inset-0 overflow-y-auto px-4 py-3 md:px-6">
+          <EditorContent editor={editor} />
         </div>
-
-        <div className="flex flex-col gap-2">
-          <p className="text-sm font-medium">Leitura</p>
-          <div className="h-[28rem] overflow-y-auto rounded-lg border px-4 py-3">
-            <EditorContent editor={editor} />
-          </div>
-        </div>
-      </div>
-
-      <p className="text-xs text-muted-foreground">
-        Mostra o mesmo conjunto de formatação do editor de notas: tabela, checklist e imagem
-        aparecem como texto.
-      </p>
-    </div>
+      </Pane>
+    </Workspace>
   );
 }

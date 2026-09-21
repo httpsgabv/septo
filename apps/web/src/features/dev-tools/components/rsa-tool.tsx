@@ -1,9 +1,10 @@
 import { Button, buttonVariants } from '@septo/ui/components/button';
-import { Textarea } from '@septo/ui/components/textarea';
-import { KeyRoundIcon } from 'lucide-react';
+import { DownloadIcon, KeyRoundIcon } from 'lucide-react';
 import { useState } from 'react';
 import { generateRsaKeyPair, RSA_SIZES, type RsaKeyPair, type RsaSize } from '../domain/rsa';
 import { CopyButton } from './copy-button';
+import { Segmented } from './segmented';
+import { Pane, PaneTextarea, Workspace } from './workspace';
 
 export function RsaTool() {
   const [bits, setBits] = useState<RsaSize>(2048);
@@ -24,66 +25,42 @@ export function RsaTool() {
   }
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex flex-wrap items-center gap-3">
-        <fieldset>
-          <legend className="sr-only">Tamanho da chave</legend>
-          <div className="inline-flex rounded-lg border bg-muted p-0.5">
-            {RSA_SIZES.map((size) => (
-              <label
-                key={size}
-                className="cursor-pointer rounded-md px-3 py-1 text-sm text-muted-foreground transition-colors hover:text-foreground has-checked:bg-background has-checked:text-foreground has-checked:shadow-sm has-focus-visible:ring-2 has-focus-visible:ring-ring"
-              >
-                <input
-                  type="radio"
-                  name="bits"
-                  value={size}
-                  checked={bits === size}
-                  onChange={() => setBits(size)}
-                  className="sr-only"
-                />
-                {size} bits
-              </label>
-            ))}
-          </div>
-        </fieldset>
-
-        <Button onClick={generate} disabled={generating}>
-          <KeyRoundIcon aria-hidden="true" />
-          {generating ? 'Gerando…' : 'Gerar par de chaves'}
-        </Button>
-      </div>
-
-      <p aria-live="polite" className="min-h-5 text-sm">
-        {problem && <span className="text-destructive">{problem}</span>}
-      </p>
-
-      {pair && (
-        <div className="grid gap-4 md:grid-cols-2">
-          <KeyPanel
-            id="rsa-public"
-            label="Chave pública (SPKI)"
-            file="chave.pub.pem"
-            value={pair.publicKey}
+    <Workspace
+      to="/dev-tools/rsa"
+      toolbar={
+        <>
+          <Segmented
+            legend="Tamanho da chave (bits)"
+            name="bits"
+            value={bits}
+            options={RSA_SIZES.map((size) => ({ value: size, label: `${size} bits` }))}
+            onChange={setBits}
           />
-          <KeyPanel
-            id="rsa-private"
-            label="Chave privada (PKCS#8)"
-            file="chave.pem"
-            value={pair.privateKey}
-          />
-        </div>
-      )}
-
-      <p className="text-xs text-muted-foreground">
-        O par é gerado aqui pelo WebCrypto e vive só nesta aba: recarregar a página o descarta, e
-        nada disso chega ao servidor. Guarde a chave privada antes de sair.
-      </p>
-    </div>
+          <Button size="sm" onClick={generate} disabled={generating}>
+            <KeyRoundIcon aria-hidden="true" />
+            {generating ? 'Gerando…' : 'Gerar par de chaves'}
+          </Button>
+        </>
+      }
+      error={problem}
+    >
+      <KeyPane
+        id="rsa-public"
+        label="Chave pública (SPKI)"
+        file="chave.pub.pem"
+        value={pair?.publicKey ?? ''}
+      />
+      <KeyPane
+        id="rsa-private"
+        label="Chave privada (PKCS#8)"
+        file="chave.pem"
+        value={pair?.privateKey ?? ''}
+      />
+    </Workspace>
   );
 }
 
-function KeyPanel({
+function KeyPane({
   id,
   label,
   file,
@@ -95,29 +72,26 @@ function KeyPanel({
   value: string;
 }) {
   return (
-    <div className="flex flex-col gap-2">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <label htmlFor={id} className="text-sm font-medium">
-          {label}
-        </label>
-        <div className="flex items-center gap-2">
-          <CopyButton value={value} />
-          <a
-            href={`data:application/x-pem-file;base64,${btoa(value)}`}
-            download={file}
-            className={buttonVariants({ variant: 'outline', size: 'sm' })}
-          >
-            Baixar
-          </a>
-        </div>
-      </div>
-      <Textarea
-        id={id}
-        value={value}
-        readOnly
-        spellCheck={false}
-        className="h-64 field-sizing-fixed font-mono text-[0.7rem]"
-      />
-    </div>
+    <Pane
+      label={label}
+      htmlFor={id}
+      actions={
+        value && (
+          <>
+            <CopyButton value={value} />
+            <a
+              href={`data:application/x-pem-file;base64,${btoa(value)}`}
+              download={file}
+              className={buttonVariants({ variant: 'ghost', size: 'xs' })}
+            >
+              <DownloadIcon aria-hidden="true" />
+              Baixar
+            </a>
+          </>
+        )
+      }
+    >
+      <PaneTextarea id={id} value={value} readOnly className="text-[0.7rem] md:text-[0.7rem]" />
+    </Pane>
   );
 }

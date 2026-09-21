@@ -1,26 +1,34 @@
-import { UploadIcon } from 'lucide-react';
-import { useState } from 'react';
+import { cn } from '@septo/ui/lib/utils';
+import { type DragEvent, type ReactNode, useState } from 'react';
 
 /**
- * Drop area that is also a real file input: clicking works, Tab + Enter works, dragging works.
- * The size check lives here so no tool forgets it.
+ * Drop target that is also a real file input: clicking works, Tab + Enter works, dragging works.
+ * The caller shapes it (a small header button, or a whole pane) and styles the drag state with
+ * `data-over`. With `pick={false}` it only takes drops, for wrapping a control that must keep its
+ * own clicks (a textarea). The size check lives here so no tool forgets it.
  */
 export function FileDrop({
-  label,
   accept,
   maxBytes,
   tooLarge,
   onFile,
   onReject,
   disabled = false,
+  pick = true,
+  title,
+  className,
+  children,
 }: {
-  label: string;
   accept?: string;
   maxBytes: number;
   tooLarge: string;
   onFile: (file: File) => void;
   onReject: (message: string) => void;
   disabled?: boolean;
+  pick?: boolean;
+  title?: string;
+  className?: string;
+  children: ReactNode;
 }) {
   const [over, setOver] = useState(false);
 
@@ -33,23 +41,39 @@ export function FileDrop({
     onFile(file);
   }
 
+  const dropProps = {
+    title,
+    'data-over': over || undefined,
+    onDragOver: (event: DragEvent) => {
+      if (disabled) return;
+      event.preventDefault();
+      setOver(true);
+    },
+    onDragLeave: () => setOver(false),
+    onDrop: (event: DragEvent) => {
+      if (disabled) return;
+      event.preventDefault();
+      setOver(false);
+      take(event.dataTransfer.files[0]);
+    },
+  };
+
+  if (!pick) {
+    return (
+      <div {...dropProps} className={className}>
+        {children}
+      </div>
+    );
+  }
+
   return (
     <label
-      onDragOver={(event) => {
-        if (disabled) return;
-        event.preventDefault();
-        setOver(true);
-      }}
-      onDragLeave={() => setOver(false)}
-      onDrop={(event) => {
-        if (disabled) return;
-        event.preventDefault();
-        setOver(false);
-        take(event.dataTransfer.files[0]);
-      }}
-      className={`flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed px-4 py-6 text-sm text-muted-foreground transition-colors has-focus-visible:ring-2 has-focus-visible:ring-ring ${
-        over ? 'border-brand-text bg-brand-subtle' : 'hover:border-foreground/30'
-      } ${disabled ? 'pointer-events-none opacity-50' : ''}`}
+      {...dropProps}
+      className={cn(
+        'cursor-pointer has-focus-visible:ring-2 has-focus-visible:ring-ring',
+        disabled && 'pointer-events-none opacity-50',
+        className,
+      )}
     >
       <input
         type="file"
@@ -61,8 +85,7 @@ export function FileDrop({
           event.target.value = ''; // so choosing the same file twice still fires
         }}
       />
-      <UploadIcon className="size-4 text-brand-text" aria-hidden="true" />
-      {label}
+      {children}
     </label>
   );
 }

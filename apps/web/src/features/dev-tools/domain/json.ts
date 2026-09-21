@@ -13,7 +13,7 @@ export function minifyJson(text: string): JsonOutcome {
 }
 
 // ponytail: numbers go through JSON.parse, so integers above 2^53 come back rounded; a parser with a
-// reviver (or BigInt) only if a real document needs it. The tool says so on screen.
+// reviver (or BigInt) only if a real document needs it. The spec records the limit.
 function transform(text: string, render: (value: unknown) => string): JsonOutcome {
   if (!text.trim()) return { ok: true, text: '' };
   try {

@@ -21,7 +21,7 @@ export type Tool = {
   icon: LucideIcon;
 };
 
-/** Single source for the index cards, the strip above every tool and each tool's own heading. */
+/** Single source for the index, the sidebar, the palette and each tool's heading. The description only feeds the palette search. */
 export const tools: Tool[] = [
   {
     to: '/dev-tools/json',

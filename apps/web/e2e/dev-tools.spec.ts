@@ -10,15 +10,16 @@ const TOOLS = [
   ['/dev-tools/readme', 'README'],
 ] as const;
 
-test('the index lists the six tools, and each card opens one', async ({ page }) => {
+test('the index lists the six tools, and each block opens one', async ({ page }) => {
   await gotoHydrated(page, '/dev-tools');
   await expect(page.getByRole('heading', { level: 1, name: 'Dev Tools' })).toBeVisible();
-  // The strip would only repeat the cards, so the index does without it.
-  await expect(page.getByRole('navigation', { name: 'Ferramentas' })).toBeHidden();
 
   for (const [to, label] of TOOLS) {
     await gotoHydrated(page, '/dev-tools');
-    await page.getByRole('link', { name: label }).first().click();
+    await page
+      .getByRole('main')
+      .getByRole('link', { name: new RegExp(`^${label}`) })
+      .click();
     await expect(page).toHaveURL(new RegExp(`${to}$`));
     await expect(page.getByRole('heading', { level: 1, name: label })).toBeVisible();
   }
@@ -29,37 +30,40 @@ test('the index comes rendered from the server', async ({ request }) => {
   for (const [, label] of TOOLS) expect(html).toContain(label);
 });
 
-test('each tool opens straight from its URL, with the strip to jump between them', async ({
+test('each tool opens straight from its URL, with its sidebar entry open and active', async ({
   page,
 }) => {
+  const sidebar = page.locator('[data-sidebar="sidebar"]');
   for (const [to, label] of TOOLS) {
     await gotoHydrated(page, to);
     await expect(page.getByRole('heading', { level: 1, name: label })).toBeVisible();
-    await expect(page.getByRole('navigation', { name: 'Ferramentas' })).toBeVisible();
+    await expect(sidebar.getByRole('link', { name: label })).toHaveAttribute('data-active');
+    await expect(sidebar.getByRole('link', { name: 'Dev Tools' })).toHaveAttribute('data-active');
   }
 
-  await page
-    .getByRole('navigation', { name: 'Ferramentas' })
-    .getByRole('link', { name: 'JSON' })
-    .click();
+  await sidebar.getByRole('link', { name: 'JSON' }).click();
   await expect(page.getByRole('heading', { level: 1, name: 'JSON' })).toBeVisible();
+});
+
+test('the tools come expanded in the server HTML when a tool is open', async ({ request }) => {
+  const html = await (await request.get('/dev-tools/rsa')).text();
+  expect(html).toContain('data-sidebar="menu-sub"');
 });
 
 test('JSON: formats what is valid and points at what is not', async ({ page }) => {
   await gotoHydrated(page, '/dev-tools/json');
 
+  // Formats as you type: no button to press.
   await page.getByLabel('Entrada').fill('{"a":1,"b":[1,2]}');
-  await page.getByRole('button', { name: 'Formatar' }).click();
   await expect(page.getByLabel('Saída')).toHaveValue(
     '{\n  "a": 1,\n  "b": [\n    1,\n    2\n  ]\n}',
   );
 
-  await page.getByRole('button', { name: 'Minificar' }).click();
+  await page.getByText('Min', { exact: true }).click();
   await expect(page.getByLabel('Saída')).toHaveValue('{"a":1,"b":[1,2]}');
 
   // The engine gives no position for this one; the tool still says line and column.
   await page.getByLabel('Entrada').fill('{\n  "a": 1,\n  "b": tru\n}');
-  await page.getByRole('button', { name: 'Formatar' }).click();
   await expect(page.getByText(/Linha 3, coluna 8/)).toBeVisible();
 });
 
@@ -135,7 +139,7 @@ test('Chaves RSA: a 2048 pair shows up as two PEM blocks', async ({ page }) => {
 
 test('README: markdown is rendered, and a table stays as text', async ({ page }) => {
   await gotoHydrated(page, '/dev-tools/readme');
-  const reading = page.getByText('Leitura').locator('..');
+  const reading = page.locator('.ProseMirror');
 
   await page
     .getByLabel('Markdown')
@@ -144,7 +148,7 @@ test('README: markdown is rendered, and a table stays as text', async ({ page })
   await expect(reading.getByRole('heading', { level: 1, name: 'septo' })).toBeVisible();
   await expect(reading.getByRole('listitem')).toHaveCount(2);
   await expect(reading.getByText('| a | b |')).toBeVisible();
-  await expect(reading.locator('.ProseMirror')).toHaveAttribute('contenteditable', 'false');
+  await expect(reading).toHaveAttribute('contenteditable', 'false');
 });
 
 test('nothing the tools touch leaves the tab', async ({ page }) => {
@@ -156,7 +160,6 @@ test('nothing the tools touch leaves the tab', async ({ page }) => {
 
   await gotoHydrated(page, '/dev-tools/json');
   await page.getByLabel('Entrada').fill('{"segredo":"de produção"}');
-  await page.getByRole('button', { name: 'Formatar' }).click();
   await expect(page.getByLabel('Saída')).toHaveValue(/segredo/);
 
   await gotoHydrated(page, '/dev-tools/encode');
@@ -199,12 +202,27 @@ test.describe('mobile (375px)', () => {
   test.use({ viewport: { width: 375, height: 812 } });
 
   test('the index and the tools fit the screen', async ({ page }) => {
-    for (const url of ['/dev-tools', '/dev-tools/json', '/dev-tools/image']) {
+    for (const url of ['/dev-tools', ...TOOLS.map(([to]) => to)]) {
       await gotoHydrated(page, url);
       const overflow = await page.evaluate(
         () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
       );
       expect(overflow, url).toBe(0);
+    }
+  });
+});
+
+test.describe('layout', () => {
+  test.use({ viewport: { width: 1440, height: 900 } });
+
+  test('each tool fills the window without scrolling the page', async ({ page }) => {
+    for (const [to, label] of TOOLS) {
+      await gotoHydrated(page, to);
+      await expect(page.getByRole('heading', { level: 1, name: label })).toBeVisible();
+      const overflow = await page.evaluate(
+        () => document.documentElement.scrollHeight - document.documentElement.clientHeight,
+      );
+      expect(overflow, to).toBe(0);
     }
   });
 });
