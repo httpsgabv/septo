@@ -135,16 +135,16 @@
 **Descrição:** Dois painéis (entrada e saída), seletor de formato de origem com "detectar automaticamente" como padrão, seletor de destino, `CopyButton` e a linha que avisa que XML é conversão com perda e CSV precisa de lista de objetos simples. Limite de 2 MB. Os parsers são importados só neste componente (chunk da ferramenta).
 
 **Aceite:**
-- [ ] Colar YAML com origem em "detectar" e destino JSON converte; o inverso volta ao YAML equivalente
-- [ ] CSV → JSON e JSON → CSV funcionam com o exemplo da tabela do teste
-- [ ] Erro de parse e erro de "CSV precisa de lista de objetos simples" aparecem na tela, sem quebrar o painel
-- [ ] Trocar o destino reconverte a mesma entrada sem precisar colar de novo
-- [ ] O bundle dos parsers não entra no chunk do índice (conferido no build)
+- [x] Colar YAML com origem em "detectar" e destino JSON converte; o inverso volta ao YAML equivalente
+- [x] CSV → JSON e JSON → CSV funcionam com o exemplo da tabela do teste
+- [x] Erro de parse e erro de "CSV precisa de lista de objetos simples" aparecem na tela, sem quebrar o painel
+- [x] Trocar o destino reconverte a mesma entrada sem precisar colar de novo
+- [x] O bundle dos parsers não entra no chunk do índice (conferido no build)
 
 **Verificação:**
-- [ ] Manual: os quatro formatos, nos dois sentidos, com um exemplo real
-- [ ] `npm run build -w @septo/web` e conferir em que chunk caíram `js-yaml`/`papaparse`/`fast-xml-parser`
-- [ ] `check-types`, `lint`, `test`
+- [x] Manual: os quatro formatos, nos dois sentidos, com um exemplo real
+- [x] `npm run build -w @septo/web` e conferir em que chunk caíram `js-yaml`/`papaparse`/`fast-xml-parser`
+- [x] `check-types`, `lint`, `test`
 
 **Dependências:** T5
 **Arquivos:** `apps/web/src/features/dev-tools/components/data-tool.tsx`, `apps/web/src/routes/_app/dev-tools/data.tsx`
