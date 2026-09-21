@@ -356,11 +356,11 @@
 **Descrição:** Tamanho (`Segmented`) e "Gerar par de chaves" na toolbar; os dois PEM como `Pane` lado a lado com Copiar/Baixar no cabeçalho; antes de gerar, os painéis mostram só o placeholder. Rodapé removido.
 
 **Aceite:**
-- [ ] Botão continua "Gerando…" durante a geração; erro vai para a status bar
-- [ ] Rótulos "Chave pública (SPKI)" e "Chave privada (PKCS#8)" preservados
+- [x] Botão continua "Gerando…" durante a geração; erro vai para a status bar
+- [x] Rótulos "Chave pública (SPKI)" e "Chave privada (PKCS#8)" preservados
 
 **Verificação:**
-- [ ] Teste de RSA do `dev-tools.spec.ts` verde sem mudança
+- [x] Teste de RSA do `dev-tools.spec.ts` verde sem mudança
 
 **Dependências:** R2
 **Arquivos:** `components/rsa-tool.tsx`, `routes/_app/dev-tools/rsa.tsx`
