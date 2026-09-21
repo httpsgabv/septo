@@ -51,7 +51,8 @@ test('Dev Tools expands into its six tools, and a tool is one click away', async
 test('command palette reaches a dev tool directly', async ({ page }) => {
   await gotoHydrated(page, '/notes');
 
-  await page.keyboard.press('ControlOrMeta+k');
+  // The shortcut has its own test below; the button keeps this one about the search.
+  await page.getByRole('button', { name: 'Buscar' }).click();
   const palette = page.getByRole('dialog', { name: 'Buscar no septo' });
   await expect(palette).toBeVisible();
   await page.keyboard.type('rsa');

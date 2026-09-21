@@ -304,16 +304,16 @@
 **Descrição:** Novo `components/workspace.tsx` com `Workspace` (toolbar `h-12` com ícone + `<h1>` à esquerda e `toolbar` à direita; corpo que preenche `md:h-[calc(100dvh-3rem)]`; `status` opcional no rodapé), `Pane` (cabeçalho de 36 px com `<label>` em caixa-alta + `actions`; corpo sem borda) e `StatusBar`. Novo `components/segmented.tsx` (o markup de rádio que hoje está copiado). `CopyButton` ganha tamanho compacto (ícone + rótulo `sr-only` quando `iconOnly`). Índice: grade de blocos ícone + nome, sem descrição da página. JSON migrado: formata ao digitar; seletor `2 · 4 · Tab · Min`; erro na status bar; sem os botões e sem o rodapé do 2^53.
 
 **Aceite:**
-- [ ] `routes/_app/dev-tools/json.tsx` renderiza só `<JsonTool />`
-- [ ] Digitar `{"a":1}` mostra a saída formatada sem clicar em nada; `Min` minifica
-- [ ] JSON quebrado mostra "Linha 3, coluna 8: …" na status bar, com `aria-live="polite"`
-- [ ] Índice sem `description`; cada bloco é um link com ícone + nome
-- [ ] Em 1440×900, `/dev-tools/json` não tem scroll de página
-- [ ] O texto "Roda inteiro no seu navegador" não existe mais no código
+- [x] `routes/_app/dev-tools/json.tsx` renderiza só `<JsonTool />`
+- [x] Digitar `{"a":1}` mostra a saída formatada sem clicar em nada; `Min` minifica
+- [x] JSON quebrado mostra "Linha 3, coluna 8: …" na status bar, com `aria-live="polite"`
+- [x] Índice sem `description`; cada bloco é um link com ícone + nome
+- [x] Em 1440×900, `/dev-tools/json` não tem scroll de página
+- [x] O texto "Roda inteiro no seu navegador" não existe mais no código
 
 **Verificação:**
-- [ ] `dev-tools.spec.ts`: teste do JSON reescrito (sem Formatar/Minificar); índice sem descrição
-- [ ] Olhar no navegador em claro/escuro e em 375 px
+- [x] `dev-tools.spec.ts`: teste do JSON reescrito (sem Formatar/Minificar); índice sem descrição
+- [x] Olhar no navegador em claro/escuro e em 375 px
 
 **Dependências:** R1
 **Arquivos:** `components/workspace.tsx` (novo), `components/segmented.tsx` (novo), `components/copy-button.tsx`, `components/json-tool.tsx`, `routes/_app/dev-tools/json.tsx`, `routes/_app/dev-tools/index.tsx`, `e2e/dev-tools.spec.ts`

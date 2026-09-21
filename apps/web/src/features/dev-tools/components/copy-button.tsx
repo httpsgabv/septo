@@ -23,7 +23,7 @@ export function CopyButton({ value, label = 'Copiar' }: { value: string; label?:
   }
 
   return (
-    <Button variant="outline" size="sm" onClick={copy} disabled={!value}>
+    <Button variant="ghost" size="xs" onClick={copy} disabled={!value}>
       {state === 'copied' ? <CheckIcon aria-hidden="true" /> : <CopyIcon aria-hidden="true" />}
       {state === 'copied' ? 'Copiado' : state === 'failed' ? 'Não deu para copiar' : label}
     </Button>

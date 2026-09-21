@@ -16,7 +16,10 @@ test('the index lists the six tools, and each block opens one', async ({ page })
 
   for (const [to, label] of TOOLS) {
     await gotoHydrated(page, '/dev-tools');
-    await page.getByRole('main').getByRole('link', { name: new RegExp(`^${label}`) }).click();
+    await page
+      .getByRole('main')
+      .getByRole('link', { name: new RegExp(`^${label}`) })
+      .click();
     await expect(page).toHaveURL(new RegExp(`${to}$`));
     await expect(page.getByRole('heading', { level: 1, name: label })).toBeVisible();
   }
@@ -50,18 +53,17 @@ test('the tools come expanded in the server HTML when a tool is open', async ({ 
 test('JSON: formats what is valid and points at what is not', async ({ page }) => {
   await gotoHydrated(page, '/dev-tools/json');
 
+  // Formats as you type: no button to press.
   await page.getByLabel('Entrada').fill('{"a":1,"b":[1,2]}');
-  await page.getByRole('button', { name: 'Formatar' }).click();
   await expect(page.getByLabel('Saída')).toHaveValue(
     '{\n  "a": 1,\n  "b": [\n    1,\n    2\n  ]\n}',
   );
 
-  await page.getByRole('button', { name: 'Minificar' }).click();
+  await page.getByText('Min', { exact: true }).click();
   await expect(page.getByLabel('Saída')).toHaveValue('{"a":1,"b":[1,2]}');
 
   // The engine gives no position for this one; the tool still says line and column.
   await page.getByLabel('Entrada').fill('{\n  "a": 1,\n  "b": tru\n}');
-  await page.getByRole('button', { name: 'Formatar' }).click();
   await expect(page.getByText(/Linha 3, coluna 8/)).toBeVisible();
 });
 
@@ -158,7 +160,6 @@ test('nothing the tools touch leaves the tab', async ({ page }) => {
 
   await gotoHydrated(page, '/dev-tools/json');
   await page.getByLabel('Entrada').fill('{"segredo":"de produção"}');
-  await page.getByRole('button', { name: 'Formatar' }).click();
   await expect(page.getByLabel('Saída')).toHaveValue(/segredo/);
 
   await gotoHydrated(page, '/dev-tools/encode');
