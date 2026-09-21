@@ -88,17 +88,17 @@
 **Descrição:** `domain/encoding.ts` com `encode`/`decode` para os quatro esquemas, sempre passando por bytes: `TextEncoder`/`TextDecoder` → `Uint8Array` → base64 (via string binária em blocos, nunca `btoa(texto)` direto). base64url sem padding e com `-`/`_`. Hex em minúsculas, tolerante a espaços na entrada. Erros de decodificação viram mensagem (`Result`-like, não exceção solta). A tela tem dois painéis (entrada/saída), o seletor de esquema e um botão de inverter o sentido. `components/file-drop.tsx` nasce aqui — área que aceita arrastar e clicar, com limite de tamanho por parâmetro — e serve para "arquivo → base64" e depois para a imagem. TDD.
 
 **Aceite:**
-- [ ] "Anotação 🎉" sobrevive à ida e volta nos quatro esquemas
-- [ ] base64url não contém `+`, `/` nem `=`; decodifica base64 com e sem padding
-- [ ] Hex de tamanho ímpar e base64 com caractere inválido devolvem erro com mensagem clara
-- [ ] URL-encode preserva espaço e `+` de forma inequívoca (ida e volta estável)
-- [ ] Arquivo solto vira base64; acima do limite (2 MB aqui) mostra aviso e não processa
-- [ ] `FileDrop` funciona por clique e por teclado, não só arrastando
+- [x] "Anotação 🎉" sobrevive à ida e volta nos quatro esquemas
+- [x] base64url não contém `+`, `/` nem `=`; decodifica base64 com e sem padding
+- [x] Hex de tamanho ímpar e base64 com caractere inválido devolvem erro com mensagem clara
+- [x] URL-encode preserva espaço e `+` de forma inequívoca (ida e volta estável)
+- [x] Arquivo solto vira base64; acima do limite (2 MB aqui) mostra aviso e não processa
+- [x] `FileDrop` funciona por clique e por teclado, não só arrastando
 
 **Verificação:**
-- [ ] `npm run test -w @septo/web` (`encoding.spec.ts` escrito antes, com acento, emoji e bytes não-UTF-8)
-- [ ] Manual: colar acento e emoji, inverter o sentido e conferir
-- [ ] `check-types`, `lint`
+- [x] `npm run test -w @septo/web` (`encoding.spec.ts` escrito antes, com acento, emoji e bytes não-UTF-8)
+- [x] Manual: colar acento e emoji, inverter o sentido e conferir
+- [x] `check-types`, `lint`
 
 **Dependências:** T2
 **Arquivos:** `apps/web/src/features/dev-tools/domain/encoding.ts` (+ spec), `apps/web/src/features/dev-tools/components/{encode-tool,file-drop}.tsx`, `apps/web/src/routes/_app/dev-tools/encode.tsx`
