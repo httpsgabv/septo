@@ -57,8 +57,8 @@ T1 mover o bridge markdown → shared/  ◀── única tarefa que toca o `note
 - [x] T4: Encodings (base64, base64url, URL, hex) + `FileDrop`
 - [x] T5: Dependências de parser + `domain/data.ts` (JSON/YAML/CSV/XML)
 - [x] T6: Tela do conversor de dados
-- [ ] T7: Conversor de imagens
-- [ ] T8: Gerador RSA
+- [x] T7: Conversor de imagens
+- [x] T8: Gerador RSA
 - [ ] T9: Leitor de README
 
 ### Checkpoint C: as seis funcionam no navegador

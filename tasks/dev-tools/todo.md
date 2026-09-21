@@ -157,17 +157,17 @@
 **Descrição:** `domain/image.ts` puro: formatos de saída candidatos, `resizeTo(largura, altura, larguraMáxima)` (preserva proporção, nunca amplia), `outputFileName(nome, formato)` e o mimetype/extensão de cada formato. A tela usa o `FileDrop` (limite 25 MB), `createImageBitmap(file, { imageOrientation: 'from-image' })`, canvas e `toBlob(mimetype, qualidade)`; o suporte a WebP/AVIF é detectado encodando 1×1 e conferindo o mimetype do blob — formato sem suporte não aparece na lista. Mostra tamanho antes/depois e dimensões, baixa com `URL.createObjectURL` + `revokeObjectURL`. A linha sobre EXIF descartado (inclusive geolocalização) fica visível.
 
 **Aceite:**
-- [ ] Redimensionamento preserva proporção, arredonda para inteiro e não amplia imagem menor que o limite
-- [ ] Extensão e mimetype casam com o formato; o nome de saída preserva o nome original e troca a extensão
-- [ ] PNG → WebP e PNG → JPEG baixam um arquivo que abre; o tamanho antes/depois aparece
-- [ ] Formato não suportado pelo navegador não é oferecido (detecção em runtime, não lista fixa)
-- [ ] Arquivo acima de 25 MB ou que não seja imagem mostra aviso e não processa
-- [ ] Object URL revogado depois do download
+- [x] Redimensionamento preserva proporção, arredonda para inteiro e não amplia imagem menor que o limite
+- [x] Extensão e mimetype casam com o formato; o nome de saída preserva o nome original e troca a extensão
+- [x] PNG → WebP e PNG → JPEG baixam um arquivo que abre; o tamanho antes/depois aparece
+- [x] Formato não suportado pelo navegador não é oferecido (detecção em runtime, não lista fixa)
+- [x] Arquivo acima de 25 MB ou que não seja imagem mostra aviso e não processa
+- [x] Object URL revogado depois do download
 
 **Verificação:**
-- [ ] `npm run test -w @septo/web` (`image.spec.ts`, só a parte pura)
-- [ ] Manual no Chromium: PNG grande → WebP com largura máxima; conferir arquivo baixado
-- [ ] `check-types`, `lint`
+- [x] `npm run test -w @septo/web` (`image.spec.ts`, só a parte pura)
+- [x] Manual no Chromium: PNG grande → WebP com largura máxima; conferir arquivo baixado
+- [x] `check-types`, `lint`
 
 **Dependências:** T2 (e o `FileDrop`, da T4)
 **Arquivos:** `apps/web/src/features/dev-tools/domain/image.ts` (+ spec), `apps/web/src/features/dev-tools/components/image-tool.tsx`, `apps/web/src/routes/_app/dev-tools/image.tsx`
