@@ -180,17 +180,17 @@
 **Descrição:** `domain/rsa.ts` com `generateRsaKeyPair(bits)` (WebCrypto: `RSASSA-PKCS1-v1_5`, SHA-256, expoente 65537, `extractable: true`) e `toPem(tipo, bytes)` → base64 em linhas de 64 colunas com os cabeçalhos `PUBLIC KEY`/`PRIVATE KEY`. A tela tem o seletor 2048/3072/4096, botão com estado "Gerando…", os dois PEM em painéis separados com `CopyButton` e botão de baixar (`.pub.pem` e `.pem`), e o aviso de que a chave foi gerada aqui, não sai da aba e some ao sair. A privada nunca vai para log, URL ou clipboard automático.
 
 **Aceite:**
-- [ ] `generateRsaKeyPair(2048)` devolve os dois PEM com cabeçalho e rodapé corretos e linhas de 64 colunas
-- [ ] O PEM exportado **volta** por `crypto.subtle.importKey` (spki e pkcs8) — é o teste que prova que o PEM é válido
-- [ ] Os três tamanhos são aceitos; um tamanho fora da lista é rejeitado
-- [ ] Durante a geração o botão fica desabilitado em "Gerando…" e a interface responde
-- [ ] Baixar gera dois arquivos com nomes distintos e revoga o Object URL
-- [ ] Nenhum `console.log` nem query string com material de chave (conferido no diff)
+- [x] `generateRsaKeyPair(2048)` devolve os dois PEM com cabeçalho e rodapé corretos e linhas de 64 colunas
+- [x] O PEM exportado **volta** por `crypto.subtle.importKey` (spki e pkcs8) — é o teste que prova que o PEM é válido
+- [x] Os três tamanhos são aceitos; um tamanho fora da lista é rejeitado
+- [x] Durante a geração o botão fica desabilitado em "Gerando…" e a interface responde
+- [x] Baixar gera dois arquivos com nomes distintos e revoga o Object URL
+- [x] Nenhum `console.log` nem query string com material de chave (conferido no diff)
 
 **Verificação:**
-- [ ] `npm run test -w @septo/web` (`rsa.spec.ts` escrito antes; usa `globalThis.crypto` do Node 24)
-- [ ] Manual: gerar 4096 e conferir o tempo e a interface; `openssl rsa -pubin -in chave.pub.pem -text -noout` aceita a pública
-- [ ] `check-types`, `lint`
+- [x] `npm run test -w @septo/web` (`rsa.spec.ts` escrito antes; usa `globalThis.crypto` do Node 24)
+- [x] Manual: gerar 4096 e conferir o tempo e a interface; `openssl rsa -pubin -in chave.pub.pem -text -noout` aceita a pública
+- [x] `check-types`, `lint`
 
 **Dependências:** T2
 **Arquivos:** `apps/web/src/features/dev-tools/domain/rsa.ts` (+ spec), `apps/web/src/features/dev-tools/components/rsa-tool.tsx`, `apps/web/src/routes/_app/dev-tools/rsa.tsx`
