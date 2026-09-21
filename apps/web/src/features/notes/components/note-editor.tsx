@@ -13,8 +13,8 @@ import {
 } from '../../../shared/api/generated/endpoints/notes/notes';
 import { getTagsListQueryKey } from '../../../shared/api/generated/endpoints/tags/tags';
 import type { Note, UpdateNoteRequest } from '../../../shared/api/generated/models';
+import { markdownExtensions, parseMarkdown, serializeMarkdown } from '../../../shared/markdown';
 import { Autosave, type AutosaveStatus } from '../domain/autosave';
-import { noteExtensions, parseMarkdown, serializeMarkdown } from '../domain/markdown';
 import { EditorToolbar } from './editor-toolbar';
 import { NoteActions } from './note-actions';
 import { ReminderField } from './reminder-field';
@@ -120,13 +120,13 @@ export function NoteEditor({ note, onCreated }: Props) {
   }
 
   const editor = useEditor({
-    extensions: noteExtensions,
+    extensions: markdownExtensions,
     content: initialContent,
     // Tiptap has no server rendering: the editor mounts on the client, the route shows a skeleton.
     immediatelyRender: false,
     editorProps: {
       attributes: {
-        class: 'note-content min-h-64 outline-none',
+        class: 'markdown-content min-h-64 outline-none',
         // A contenteditable div is not announced as an editor unless it says so.
         role: 'textbox',
         'aria-multiline': 'true',

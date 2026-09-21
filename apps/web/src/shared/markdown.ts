@@ -8,11 +8,12 @@ import {
 } from 'prosemirror-markdown';
 
 /**
- * The approved formatting set, and the single source for both the editor and the markdown bridge:
+ * The approved formatting set, shared by the notes editor and the dev-tools README reader, and the
+ * single source for both the editor and the markdown bridge:
  * h1–h3, bold, italic, strike, code, code block, lists, blockquote, link, horizontal rule, hard break.
  * Widening it (tables, checklists, images, syntax highlight) needs the spec to change first.
  */
-export const noteExtensions = [
+export const markdownExtensions = [
   StarterKit.configure({
     heading: { levels: [1, 2, 3] },
     underline: false,
@@ -20,7 +21,7 @@ export const noteExtensions = [
   }),
 ];
 
-export const noteSchema = getSchema(noteExtensions);
+export const markdownSchema = getSchema(markdownExtensions);
 
 // Reuses the tokenizer of prosemirror-markdown's default parser (CommonMark, html off) instead of a
 // direct `markdown-it` import, which is not a declared dependency. `~~strike~~` is the only rule
@@ -30,7 +31,7 @@ const tokenizer = defaultMarkdownParser.tokenizer.enable('strikethrough').disabl
 
 // Token names come from markdown-it; node and mark names from the Tiptap schema (camelCase), which
 // is why the prosemirror-markdown defaults (snake_case) cannot be used as they are.
-const markdownParser = new MarkdownParser(noteSchema, tokenizer, {
+const markdownParser = new MarkdownParser(markdownSchema, tokenizer, {
   paragraph: { block: 'paragraph' },
   blockquote: { block: 'blockquote' },
   // The Tiptap heading only renders levels 1–3, so deeper ones are clamped instead of shown as h1.
@@ -119,5 +120,5 @@ export function parseMarkdown(markdown: string): JSONContent {
 }
 
 export function serializeMarkdown(doc: JSONContent): string {
-  return markdownSerializer.serialize(noteSchema.nodeFromJSON(doc));
+  return markdownSerializer.serialize(markdownSchema.nodeFromJSON(doc));
 }

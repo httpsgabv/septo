@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { markdownSerializer, noteSchema, parseMarkdown, serializeMarkdown } from './markdown';
+import { markdownSchema, markdownSerializer, parseMarkdown, serializeMarkdown } from './markdown';
 
 /** Markdown in its canonical form: parsing and serializing it must give the same bytes back. */
 const canonical: [name: string, markdown: string][] = [
@@ -154,7 +154,7 @@ describe('markdown bridge', () => {
 
   describe('schema', () => {
     it('holds exactly the approved formatting set (widening it needs the spec to change first)', () => {
-      expect(Object.keys(noteSchema.nodes).sort()).toEqual([
+      expect(Object.keys(markdownSchema.nodes).sort()).toEqual([
         'blockquote',
         'bulletList',
         'codeBlock',
@@ -167,7 +167,7 @@ describe('markdown bridge', () => {
         'paragraph',
         'text',
       ]);
-      expect(Object.keys(noteSchema.marks).sort()).toEqual([
+      expect(Object.keys(markdownSchema.marks).sort()).toEqual([
         'bold',
         'code',
         'italic',
@@ -177,10 +177,10 @@ describe('markdown bridge', () => {
     });
 
     it('has a serializer rule for every node and mark (doc is the root, serialized through its children)', () => {
-      const nodesWithoutRule = Object.keys(noteSchema.nodes).filter(
+      const nodesWithoutRule = Object.keys(markdownSchema.nodes).filter(
         (name) => name !== 'doc' && !(name in markdownSerializer.nodes),
       );
-      const marksWithoutRule = Object.keys(noteSchema.marks).filter(
+      const marksWithoutRule = Object.keys(markdownSchema.marks).filter(
         (name) => !(name in markdownSerializer.marks),
       );
       expect(nodesWithoutRule).toEqual([]);
