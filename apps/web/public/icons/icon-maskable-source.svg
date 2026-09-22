@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <title>Ícone maskable do septo</title>
+  <rect width="1024" height="1024" fill="#5808a3"/>
+  <path fill="#fff" d="M368 286h224l106 106v324a46 46 0 0 1-46 46H368a46 46 0 0 1-46-46V332a46 46 0 0 1 46-46Z"/>
+  <path fill="#d9b7ff" d="M592 286v81a25 25 0 0 0 25 25h81Z"/>
+  <rect width="216" height="34" x="404" y="474" rx="17" fill="#5808a3"/>
+  <rect width="216" height="34" x="404" y="558" rx="17" fill="#5808a3"/>
+  <rect width="144" height="34" x="404" y="642" rx="17" fill="#5808a3"/>
+</svg>

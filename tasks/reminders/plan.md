@@ -93,7 +93,7 @@ T8 + T10 + T12 + T14 ─▶ T15 integração/e2e/smoke ─▶ T16 cobertura e do
 
 ### Fase 4: PWA e fechamento
 
-- [ ] T13: Manifest e conjunto de ícones PWA
+- [x] T13: Manifest e conjunto de ícones PWA
 - [ ] T14: Service worker, registro client-only e click para a nota
 - [ ] T15: Integração, e2e e checklist de smoke Web Push real
 - [ ] T16: Cobertura e documentação operacional

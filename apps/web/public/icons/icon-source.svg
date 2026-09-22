@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <title>Ícone do septo</title>
+  <rect width="1024" height="1024" rx="224" fill="#5808a3"/>
+  <path fill="#fff" d="M322 206h288l136 136v416a60 60 0 0 1-60 60H322a60 60 0 0 1-60-60V266a60 60 0 0 1 60-60Z"/>
+  <path fill="#d9b7ff" d="M610 206v104a32 32 0 0 0 32 32h104Z"/>
+  <rect width="276" height="42" x="374" y="450" rx="21" fill="#5808a3"/>
+  <rect width="276" height="42" x="374" y="558" rx="21" fill="#5808a3"/>
+  <rect width="184" height="42" x="374" y="666" rx="21" fill="#5808a3"/>
+</svg>

@@ -404,15 +404,15 @@
 
 **Acceptance criteria:**
 
-- [ ] Manifest contém `id: "/"`, `start_url: "/notes"`, `scope: "/"`, `display: "standalone"`, `lang: "pt-BR"`, nome/short name e cores coerentes.
-- [ ] Ícones PNG têm exatamente 192×192, 512×512, 512×512 maskable com safe zone e 180×180; manifest referencia os três aplicáveis.
-- [ ] Assets respondem com MIME correto no dev server e o manifest passa na inspeção do Chromium sem erro.
+- [x] Manifest contém `id: "/"`, `start_url: "/notes"`, `scope: "/"`, `display: "standalone"`, `lang: "pt-BR"`, nome/short name e cores coerentes.
+- [x] Ícones PNG têm exatamente 192×192, 512×512, 512×512 maskable com safe zone e 180×180; manifest referencia os três aplicáveis.
+- [x] Assets respondem com MIME correto no dev server e o manifest passa na inspeção do Chromium sem erro.
 
 **Verification:**
 
-- [ ] `file apps/web/public/icons/*.png` confirma formato/dimensões.
-- [ ] `npm run build -w @septo/web` inclui manifest e assets na saída.
-- [ ] Definition of Done global.
+- [x] `file apps/web/public/icons/*.png` confirma formato/dimensões.
+- [x] `npm run build -w @septo/web` inclui manifest e assets na saída.
+- [x] Definition of Done global.
 
 **Dependencies:** nenhuma
 
