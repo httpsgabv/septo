@@ -172,15 +172,15 @@
 
 **Acceptance criteria:**
 
-- [ ] Entidade controla transições e tentativas; retry define `nextAttemptAt`, sucesso define `sentAt`, estados terminais não voltam a pending.
-- [ ] `materialize` tolera corrida pelo unique, cria somente pares ausentes e `listReady(now, limit)` retorna `pending/retry` vencidos na ordem correta.
-- [ ] Adapter persiste todas as transições e o teste real prova unique, índice lógico, cascade e limite de batch.
+- [x] Entidade controla transições e tentativas; retry define `nextAttemptAt`, sucesso define `sentAt`, estados terminais não voltam a pending.
+- [x] `materialize` tolera corrida pelo unique, cria somente pares ausentes e `listReady(now, limit)` retorna `pending/retry` vencidos na ordem correta.
+- [x] Adapter persiste todas as transições e o teste real prova unique, índice lógico, cascade e limite de batch.
 
 **Verification:**
 
-- [ ] `npm run test -w @septo/api -- reminder-delivery`
-- [ ] `npm run coverage -w @septo/api` inclui domínio da entrega acima da meta do módulo.
-- [ ] Definition of Done global.
+- [x] `npm run test -w @septo/api -- reminder-delivery`
+- [x] `npm run coverage -w @septo/api` inclui domínio da entrega acima da meta do módulo.
+- [x] Definition of Done global.
 
 **Dependencies:** T4
 
