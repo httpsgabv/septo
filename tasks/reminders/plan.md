@@ -48,17 +48,17 @@ T8 + T10 + T12 + T14 ─▶ T15 integração/e2e/smoke ─▶ T16 cobertura e do
 
 ### Fase 1: riscos e fronteiras
 
-- [ ] T1: Dependência `web-push` e configuração VAPID validada
-- [ ] T2: Porta `PushSender` e adapter `web-push` com classificação de resultados
-- [ ] T3: `ReminderSource` fornecido por `notes`
+- [x] T1: Dependência `web-push` e configuração VAPID validada
+- [x] T2: Porta `PushSender` e adapter `web-push` com classificação de resultados
+- [x] T3: `ReminderSource` fornecido por `notes`
 
 ### Checkpoint A: integrações externas provadas
 
-- [ ] API ESM/SWC importa e testa `web-push@3.6.7` sem workaround global
-- [ ] Produção falha sem VAPID; dev/test/codegen sobem com o par dev-only
-- [ ] `ReminderSource` encontra somente candidatos elegíveis e continua privado ao módulo `notes`
-- [ ] `lint`, `check-types` e `test` passam
-- [ ] Revisão humana antes de criar o ledger e o scheduler
+- [x] API ESM/SWC importa e testa `web-push@3.6.7` sem workaround global
+- [x] Produção falha sem VAPID; dev/test/codegen sobem com o par dev-only
+- [x] `ReminderSource` encontra somente candidatos elegíveis e continua privado ao módulo `notes`
+- [x] `lint`, `check-types` e `test` passam
+- [x] Revisão humana antes de criar o ledger e o scheduler
 
 ### Fase 2: persistência e despacho
 

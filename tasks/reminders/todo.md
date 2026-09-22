@@ -74,15 +74,15 @@
 
 **Acceptance criteria:**
 
-- [ ] `listDue({ after, through, limit })` traz somente não arquivadas com `remindAt` na janela e `updatedAt < remindAt`, em ordem ascendente e com `take` no banco.
-- [ ] `findCurrent(id, scheduledFor)` devolve `null` para id inválido/inexistente, arquivada, horário diferente ou atualização no/pós-vencimento; comparação usa instante.
-- [ ] `NotesModule` exporta `ReminderSource`; o adapter concreto e `NoteRepository` permanecem privados.
+- [x] `listDue({ after, through, limit })` traz somente não arquivadas com `remindAt` na janela e `updatedAt < remindAt`, em ordem ascendente e com `take` no banco.
+- [x] `findCurrent(id, scheduledFor)` devolve `null` para id inválido/inexistente, arquivada, horário diferente ou atualização no/pós-vencimento; comparação usa instante.
+- [x] `NotesModule` exporta `ReminderSource`; o adapter concreto e `NoteRepository` permanecem privados.
 
 **Verification:**
 
-- [ ] `npm run test -w @septo/api -- prisma-reminder-source.spec.ts`
-- [ ] `rg "generated/prisma" apps/api/src/modules/notes/domain/reminder-source.ts` não encontra import.
-- [ ] Definition of Done global.
+- [x] `npm run test -w @septo/api -- prisma-reminder-source.spec.ts`
+- [x] `rg "generated/prisma" apps/api/src/modules/notes/domain/reminder-source.ts` não encontra import.
+- [x] Definition of Done global.
 
 **Dependencies:** nenhuma
 
@@ -99,11 +99,11 @@
 
 ## Checkpoint A: integrações externas provadas
 
-- [ ] API ESM/SWC importa `web-push@3.6.7` e o adapter classifica todos os resultados sem rede real.
-- [ ] Produção falha sem VAPID próprio; dev/test/codegen continuam funcionando sem `.env` extra.
-- [ ] `ReminderSource` cumpre a janela temporal e a direção `reminders → notes` sem vazamento de Prisma.
-- [ ] `npm run lint`, `npm run check-types`, `npm run test` e build da API verdes.
-- [ ] Revisão humana antes da Fase 2.
+- [x] API ESM/SWC importa `web-push@3.6.7` e o adapter classifica todos os resultados sem rede real.
+- [x] Produção falha sem VAPID próprio; dev/test/codegen continuam funcionando sem `.env` extra.
+- [x] `ReminderSource` cumpre a janela temporal e a direção `reminders → notes` sem vazamento de Prisma.
+- [x] `npm run lint`, `npm run check-types`, `npm run test` e build da API verdes.
+- [x] Revisão humana antes da Fase 2 (plano aprovado para implementação de ponta a ponta).
 
 ---
 
