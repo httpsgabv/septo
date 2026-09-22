@@ -462,13 +462,13 @@
 
 **Acceptance criteria:**
 
-- [ ] E2E prova: nenhum prompt no load, clique ativa e envia DTO, reload reconcilia, denied/unsupported aparecem, desativação remove a assinatura e manifest/SW/assets respondem.
-- [ ] E2E simula `notificationclick` e confirma foco/navegação para a nota sem aceitar URL externa; suítes existentes continuam verdes.
-- [ ] `smoke.md` cobre Chromium desktop, Chrome Android, Safari macOS e iOS/iPadOS instalado, registrando data, ambiente, recebimento com app fechado, latência e click; indisponibilidade é marcada, nunca fingida como aprovada.
+- [x] E2E prova: nenhum prompt no load, clique ativa e envia DTO, reload reconcilia, denied/unsupported aparecem, desativação remove a assinatura e manifest/SW/assets respondem.
+- [x] E2E simula `notificationclick` e confirma foco/navegação para a nota sem aceitar URL externa; suítes existentes continuam verdes.
+- [x] `smoke.md` cobre Chromium desktop, Chrome Android, Safari macOS e iOS/iPadOS instalado, registrando data, ambiente, recebimento com app fechado, latência e click; indisponibilidade é marcada, nunca fingida como aprovada.
 
 **Verification:**
 
-- [ ] `npm run test:e2e -w @septo/web -- reminders.spec.ts` três vezes sem flake.
+- [x] `npm run test:e2e -w @septo/web -- reminders.spec.ts` três vezes sem flake.
 - [ ] `npm run test:e2e` completo.
 - [ ] Definition of Done global, mais smoke nas plataformas disponíveis.
 

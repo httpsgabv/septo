@@ -34,10 +34,12 @@ test('editar o nome de exibição atualiza o menu e persiste', async ({ page }) 
   await expect(page.getByRole('button', { name: 'Menu do usuário' })).toContainText('Gabriel E2E');
 
   await page.reload();
+  await expect(page.locator('body')).toHaveAttribute('data-hydrated', 'true');
   await expect(page.getByRole('button', { name: 'Menu do usuário' })).toContainText('Gabriel E2E');
 
   await field.fill(E2E_USERNAME);
   await page.getByRole('button', { name: 'Salvar' }).click();
+  await expect(page.getByRole('status').filter({ hasText: 'Salvo.' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Menu do usuário' })).toContainText(E2E_USERNAME);
 });
 

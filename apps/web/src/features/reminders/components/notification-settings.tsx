@@ -13,27 +13,29 @@ type Feedback = { kind: 'error' | 'success'; text: string };
 
 export function NotificationSettings() {
   const client = useRef<PushClient | null>(null);
-  const mounted = useRef(true);
   const [state, setState] = useState<PushClientState | null>(null);
   const [busy, setBusy] = useState(false);
   const [feedback, setFeedback] = useState<Feedback>();
 
   useEffect(() => {
-    mounted.current = true;
+    let cancelled = false;
     const current = createBrowserPushClient();
     client.current = current;
-    void current
-      .reconcile()
-      .then((next) => {
-        if (mounted.current) setState(next);
-      })
-      .catch(() => {
-        if (mounted.current) {
-          setFeedback({ kind: 'error', text: 'Não foi possível verificar. Tente de novo.' });
-        }
-      });
+    queueMicrotask(() => {
+      if (cancelled) return;
+      void current
+        .reconcile()
+        .then((next) => {
+          if (!cancelled) setState(next);
+        })
+        .catch(() => {
+          if (!cancelled) {
+            setFeedback({ kind: 'error', text: 'Não foi possível verificar. Tente de novo.' });
+          }
+        });
+    });
     return () => {
-      mounted.current = false;
+      cancelled = true;
     };
   }, []);
 
