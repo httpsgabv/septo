@@ -273,15 +273,15 @@
 
 **Acceptance criteria:**
 
-- [ ] Config nunca expõe subject ou chave privada; retorno é `{ publicKey }`.
-- [ ] Upsert retorna `{ id }`, mantém id estável para o endpoint e converte `expirationTime` epoch/null corretamente.
-- [ ] Delete de id existente ou ausente conclui sem erro; validação vira `INVALID_PUSH_SUBSCRIPTION`, nunca erro Prisma.
+- [x] Config nunca expõe subject ou chave privada; retorno é `{ publicKey }`.
+- [x] Upsert retorna `{ id }`, mantém id estável para o endpoint e converte `expirationTime` epoch/null corretamente.
+- [x] Delete de id existente ou ausente conclui sem erro; validação vira `INVALID_PUSH_SUBSCRIPTION`, nunca erro Prisma.
 
 **Verification:**
 
-- [ ] `npm run test -w @septo/api -- push-subscription.use-cases.spec.ts`
-- [ ] Coverage de `application/` continua ≥ 90%.
-- [ ] Definition of Done global.
+- [x] `npm run test -w @septo/api -- push-subscription.use-cases.spec.ts`
+- [x] Coverage de `application/` continua ≥ 90%.
+- [x] Definition of Done global.
 
 **Dependencies:** T5
 
