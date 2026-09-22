@@ -202,15 +202,15 @@
 
 **Acceptance criteria:**
 
-- [ ] Tick repetido não duplica; fan-out inclui todas as assinaturas elegíveis e exclui as criadas depois de `scheduledFor`; batch é 100.
-- [ ] Candidato obsoleto vira `canceled`; sucesso vira `sent`; `gone` remove assinatura; transitório usa imediata/+1 min/+5 min até 3 tentativas; permanente vira `failed`.
-- [ ] Payload contém apenas `Lembrete`, título da nota/fallback, URL interna e tag; fake prova que `send` acontece depois das operações de materialização/leitura, sem transação aberta.
+- [x] Tick repetido não duplica; fan-out inclui todas as assinaturas elegíveis e exclui as criadas depois de `scheduledFor`; batch é 100.
+- [x] Candidato obsoleto vira `canceled`; sucesso vira `sent`; `gone` remove assinatura; transitório usa imediata/+1 min/+5 min até 3 tentativas; permanente vira `failed`.
+- [x] Payload contém apenas `Lembrete`, título da nota/fallback, URL interna e tag; fake prova que `send` acontece depois das operações de materialização/leitura, sem transação aberta.
 
 **Verification:**
 
-- [ ] `npm run test -w @septo/api -- dispatch-due-reminders.use-case.spec.ts`
-- [ ] `npm run coverage -w @septo/api` mostra ≥ 90% em `modules/reminders/{domain,application}`.
-- [ ] Definition of Done global.
+- [x] `npm run test -w @septo/api -- dispatch-due-reminders.use-case.spec.ts`
+- [x] `npm run coverage -w @septo/api` mostra ≥ 90% em `modules/reminders/{domain,application}`.
+- [x] Definition of Done global.
 
 **Dependencies:** T2, T3, T5, T6
 

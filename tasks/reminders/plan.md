@@ -65,7 +65,7 @@ T8 + T10 + T12 + T14 ─▶ T15 integração/e2e/smoke ─▶ T16 cobertura e do
 - [x] T4: Models Prisma e migration de assinaturas/entregas
 - [x] T5: Fatia de persistência de `PushSubscription`
 - [x] T6: Fatia de persistência de `ReminderDelivery`
-- [ ] T7: Caso de uso de despacho, fan-out, idempotência e retries
+- [x] T7: Caso de uso de despacho, fan-out, idempotência e retries
 - [ ] T8: Scheduler de 60 s e wiring do módulo
 
 ### Checkpoint B: scheduler completo sem HTTP
