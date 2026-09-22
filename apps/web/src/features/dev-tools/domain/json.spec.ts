@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { findSyntaxErrorIndex, formatJson, minifyJson } from './json';
+import { findSyntaxErrorIndex, formatJson, jsonDiagnostic, minifyJson } from './json';
 
 const MESSY = '{"a":1,"b":[1,2],"c":{"d":null}}';
 
@@ -69,6 +69,32 @@ describe('a broken document says where it broke', () => {
     const outcome = formatJson('{"a": 1', 2);
     if (outcome.ok) throw new Error('expected a failure');
     expect(outcome.message).toBe("Expected ',' or '}' after property value");
+  });
+});
+
+describe('jsonDiagnostic', () => {
+  it('underlines one character where the status bar says the document broke', () => {
+    const text = '{\n  "a": 1,\n  "b": tru\n}';
+    const outcome = formatJson(text, 2);
+    const diagnostic = jsonDiagnostic(text);
+    // Line 3, column 8 — the same place `formatJson` reports.
+    expect(outcome).toMatchObject({ ok: false, line: 3, column: 8 });
+    expect(diagnostic).toMatchObject({ from: 19, to: 20 });
+    if (!outcome.ok) expect(diagnostic?.message).toBe(outcome.message);
+  });
+
+  it('underlines the first character', () => {
+    expect(jsonDiagnostic('x{}')).toMatchObject({ from: 0, to: 1 });
+  });
+
+  it('marks the very end when the document stops halfway', () => {
+    expect(jsonDiagnostic('{"a": 1')).toMatchObject({ from: 7, to: 7 });
+  });
+
+  it('has nothing to underline in a valid or empty document', () => {
+    expect(jsonDiagnostic('{"a": [1, 2]}')).toBeNull();
+    expect(jsonDiagnostic('')).toBeNull();
+    expect(jsonDiagnostic('  \n ')).toBeNull();
   });
 });
 

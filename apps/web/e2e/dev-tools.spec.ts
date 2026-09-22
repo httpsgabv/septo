@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { gotoHydrated } from './helpers';
+import { editorText, gotoHydrated } from './helpers';
 
 const TOOLS = [
   ['/dev-tools/json', 'JSON'],
@@ -52,19 +52,39 @@ test('the tools come expanded in the server HTML when a tool is open', async ({ 
 
 test('JSON: formats what is valid and points at what is not', async ({ page }) => {
   await gotoHydrated(page, '/dev-tools/json');
+  const output = page.getByLabel('Saída');
 
   // Formats as you type: no button to press.
   await page.getByLabel('Entrada').fill('{"a":1,"b":[1,2]}');
-  await expect(page.getByLabel('Saída')).toHaveValue(
-    '{\n  "a": 1,\n  "b": [\n    1,\n    2\n  ]\n}',
-  );
+  await expect.poll(() => editorText(output)).toBe('{\n  "a": 1,\n  "b": [\n    1,\n    2\n  ]\n}');
 
   await page.getByText('Min', { exact: true }).click();
-  await expect(page.getByLabel('Saída')).toHaveValue('{"a":1,"b":[1,2]}');
+  await expect.poll(() => editorText(output)).toBe('{"a":1,"b":[1,2]}');
 
-  // The engine gives no position for this one; the tool still says line and column.
+  // The engine gives no position for this one; the tool still says line and column, and the
+  // editor underlines the same place.
   await page.getByLabel('Entrada').fill('{\n  "a": 1,\n  "b": tru\n}');
   await expect(page.getByText(/Linha 3, coluna 8/)).toBeVisible();
+  await expect(page.locator('.cm-lintRange-error')).toBeVisible();
+});
+
+test('JSON: Tab indents inside the editor, and Esc then Tab leaves it', async ({ page }) => {
+  await gotoHydrated(page, '/dev-tools/json');
+  const input = page.getByLabel('Entrada');
+
+  await input.click();
+  await page.keyboard.type('{');
+  await page.keyboard.press('Enter');
+  await page.keyboard.press('Tab');
+  await page.keyboard.type('"a": 1');
+
+  // The brace closed itself, the line is indented, and focus never left the editor.
+  await expect.poll(() => editorText(input)).toMatch(/^\{\n {2,}"a": 1\n\}$/);
+  await expect(input).toBeFocused();
+
+  await page.keyboard.press('Escape');
+  await page.keyboard.press('Tab');
+  await expect(input).not.toBeFocused();
 });
 
 test('Dados: YAML becomes JSON, and CSV says what it cannot describe', async ({ page }) => {
@@ -160,7 +180,7 @@ test('nothing the tools touch leaves the tab', async ({ page }) => {
 
   await gotoHydrated(page, '/dev-tools/json');
   await page.getByLabel('Entrada').fill('{"segredo":"de produção"}');
-  await expect(page.getByLabel('Saída')).toHaveValue(/segredo/);
+  await expect(page.getByLabel('Saída')).toContainText('segredo');
 
   await gotoHydrated(page, '/dev-tools/encode');
   await page.getByLabel('Texto', { exact: true }).fill('senha');
@@ -186,13 +206,21 @@ test('nothing the tools touch leaves the tab', async ({ page }) => {
 test('the heavy tools keep their weight to themselves', async ({ page }) => {
   const urls: string[] = [];
   page.on('response', (response) => urls.push(response.url()));
-
-  await gotoHydrated(page, '/dev-tools');
-  await gotoHydrated(page, '/dev-tools/json');
   const heavy = /data-tool|readme-tool|js-yaml|papaparse|fast-xml|tiptap|prosemirror/i;
+  const editor = /codemirror|lezer/i;
+
+  // The index and the image tool edit no text: neither the editor nor a parser.
+  await gotoHydrated(page, '/dev-tools');
+  await gotoHydrated(page, '/dev-tools/image');
+  expect(urls.filter((url) => heavy.test(url) || editor.test(url))).toEqual([]);
+
+  // The JSON tool brings the editor, and still none of the parsers.
+  await gotoHydrated(page, '/dev-tools/json');
+  await expect(page.getByLabel('Entrada')).toBeVisible();
+  expect(urls.some((url) => editor.test(url))).toBe(true);
   expect(urls.filter((url) => heavy.test(url))).toEqual([]);
 
-  // And they do arrive when the tool that needs them is opened.
+  // And the parsers arrive when the tool that needs them is opened.
   await gotoHydrated(page, '/dev-tools/data');
   await expect(page.getByLabel('Entrada')).toBeVisible();
   expect(urls.some((url) => heavy.test(url))).toBe(true);

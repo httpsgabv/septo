@@ -395,18 +395,18 @@
 **Descrição:** Instalar as dependências do CodeMirror (versões fixas da tabela da spec). Criar `code-editor.tsx` (view, compartments, tema com variáveis CSS, extensões, `indentWithTab`, `aria-labelledby`, drop de arquivo recusado, linguagens por `import()`) e `lazy-code-editor.tsx` (`ClientOnly` + `lazy` + `<pre>` de fallback). `Pane` ganha `labelId`. `domain/json.ts` ganha `jsonDiagnostic`. JSON: entrada e saída no editor, com linter na entrada.
 
 **Aceite:**
-- [ ] `{` + `Enter` + `Tab` + `"a": 1` no JSON dá o texto indentado, com `}` fechado e o foco no editor
-- [ ] `Esc` + `Tab` tira o foco do editor
-- [ ] JSON quebrado: `.cm-lintRange-error` na posição, com a mesma linha/coluna da status bar
-- [ ] `getByLabel('Entrada')` e `getByLabel('Saída')` acham os editores
-- [ ] A saída é só leitura (digitar não muda nada) e o Copiar funciona
-- [ ] Núcleo do CM medido no build: ≤ 120 KB gz (número anotado no commit; se passar, **paro e reporto**)
-- [ ] `/dev-tools/json` continua com `<h1>` e toolbar no HTML do servidor
+- [x] `{` + `Enter` + `Tab` + `"a": 1` no JSON dá o texto indentado, com `}` fechado e o foco no editor
+- [x] `Esc` + `Tab` tira o foco do editor
+- [x] JSON quebrado: `.cm-lintRange-error` na posição, com a mesma linha/coluna da status bar
+- [x] `getByLabel('Entrada')` e `getByLabel('Saída')` acham os editores
+- [x] A saída é só leitura (digitar não muda nada) e o Copiar funciona
+- [x] Núcleo do CM medido no build: ≤ 120 KB gz (número anotado no commit; se passar, **paro e reporto**)
+- [x] `/dev-tools/json` continua com `<h1>` e toolbar no HTML do servidor
 
 **Verificação:**
-- [ ] Unit: `jsonDiagnostic` (erro no meio, na primeira linha, no fim; válido e vazio devolvem `null`)
-- [ ] e2e: teste do JSON reescrito com `editorText`; teste novo de `Tab`/`Esc`
-- [ ] Screenshots claro/escuro do JSON
+- [x] Unit: `jsonDiagnostic` (erro no meio, na primeira linha, no fim; válido e vazio devolvem `null`)
+- [x] e2e: teste do JSON reescrito com `editorText`; teste novo de `Tab`/`Esc`
+- [x] Screenshots claro/escuro do JSON
 
 **Dependências:** nenhuma
 **Arquivos:** `apps/web/package.json` (+ lockfile), `components/code-editor.tsx` (novo), `components/lazy-code-editor.tsx` (novo), `components/workspace.tsx`, `components/json-tool.tsx`, `domain/json.ts` (+ spec), `e2e/dev-tools.spec.ts`, `e2e/helpers.ts`

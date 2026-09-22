@@ -1,4 +1,10 @@
-import { type APIRequestContext, type BrowserContext, expect, type Page } from '@playwright/test';
+import {
+  type APIRequestContext,
+  type BrowserContext,
+  expect,
+  type Locator,
+  type Page,
+} from '@playwright/test';
 import { E2E_PASSWORD, E2E_USERNAME } from './constants';
 
 /** Navigates and waits until React has hydrated, so clicks and shortcuts reach live handlers. */
@@ -33,4 +39,12 @@ export async function createNote(
   const res = await request.post('/api/notes', { data });
   expect(res.status()).toBe(201);
   return (await res.json()) as { id: string; title: string; body: string };
+}
+
+/**
+ * The text of a code editor (CodeMirror's `.cm-content`, which `getByLabel` finds). `toHaveText`
+ * collapses whitespace, so exact comparisons go through `expect.poll(() => editorText(...))`.
+ */
+export async function editorText(editor: Locator): Promise<string> {
+  return editor.evaluate((element) => (element as HTMLElement).innerText.replace(/\n$/, ''));
 }

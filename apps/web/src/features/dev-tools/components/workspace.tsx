@@ -64,12 +64,15 @@ export function Workspace({
 export function Pane({
   label,
   htmlFor,
+  labelId,
   actions,
   children,
 }: {
   label: string;
   /** The control the label names; without it the label is plain text. */
   htmlFor?: string;
+  /** Id for the label, for a control that points at it with `aria-labelledby` (the code editor). */
+  labelId?: string;
   actions?: ReactNode;
   children: ReactNode;
 }) {
@@ -82,7 +85,9 @@ export function Pane({
             {label}
           </label>
         ) : (
-          <span className={labelClass}>{label}</span>
+          <span id={labelId} className={labelClass}>
+            {label}
+          </span>
         )}
         {actions && <div className="flex items-center gap-1">{actions}</div>}
       </div>
