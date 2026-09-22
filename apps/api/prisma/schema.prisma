@@ -37,3 +37,43 @@ model Note {
 
   @@map("notes")
 }
+
+enum ReminderDeliveryStatus {
+  pending
+  retry
+  sent
+  failed
+  canceled
+}
+
+model PushSubscription {
+  id             String             @id @default(uuid()) @db.Uuid
+  endpoint       String             @unique
+  p256dh         String
+  auth           String
+  expirationTime DateTime?
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  deliveries     ReminderDelivery[]
+
+  @@map("push_subscriptions")
+}
+
+model ReminderDelivery {
+  id             String                 @id @default(uuid()) @db.Uuid
+  noteId         String                 @db.Uuid
+  scheduledFor   DateTime
+  subscriptionId String                 @db.Uuid
+  subscription   PushSubscription       @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  status         ReminderDeliveryStatus @default(pending)
+  attempts       Int                    @default(0)
+  nextAttemptAt  DateTime
+  lastStatusCode Int?
+  sentAt         DateTime?
+  createdAt      DateTime               @default(now())
+  updatedAt      DateTime               @updatedAt
+
+  @@unique([noteId, scheduledFor, subscriptionId])
+  @@index([status, nextAttemptAt])
+  @@map("reminder_deliveries")
+}

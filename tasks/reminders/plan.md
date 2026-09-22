@@ -62,7 +62,7 @@ T8 + T10 + T12 + T14 ─▶ T15 integração/e2e/smoke ─▶ T16 cobertura e do
 
 ### Fase 2: persistência e despacho
 
-- [ ] T4: Models Prisma e migration de assinaturas/entregas
+- [x] T4: Models Prisma e migration de assinaturas/entregas
 - [ ] T5: Fatia de persistência de `PushSubscription`
 - [ ] T6: Fatia de persistência de `ReminderDelivery`
 - [ ] T7: Caso de uso de despacho, fan-out, idempotência e retries

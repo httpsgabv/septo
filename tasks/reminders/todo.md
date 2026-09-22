@@ -115,15 +115,15 @@
 
 **Acceptance criteria:**
 
-- [ ] Schema contém os dois models, enum, nomes de tabela, UUIDs, unique `(noteId, scheduledFor, subscriptionId)` e índice `(status, nextAttemptAt)`.
-- [ ] `noteId` não tem relation/FK para `Note`; deletar assinatura remove suas entregas por cascade.
-- [ ] Migration aplica do zero em `septo_test` e o Prisma Client gerado expõe models/enum tipados.
+- [x] Schema contém os dois models, enum, nomes de tabela, UUIDs, unique `(noteId, scheduledFor, subscriptionId)` e índice `(status, nextAttemptAt)`.
+- [x] `noteId` não tem relation/FK para `Note`; deletar assinatura remove suas entregas por cascade.
+- [x] Migration aplica do zero em `septo_test` e o Prisma Client gerado expõe models/enum tipados.
 
 **Verification:**
 
-- [ ] `npm run db:migrate -w @septo/api` e `npm run db:generate -w @septo/api`.
-- [ ] `npm run test -w @septo/api` com o `globalSetup` aplicando todas as migrations do zero.
-- [ ] Definition of Done global.
+- [x] `npm run db:migrate -w @septo/api` e `npm run db:generate -w @septo/api`.
+- [x] `npm run test -w @septo/api` com o `globalSetup` aplicando todas as migrations do zero.
+- [x] Definition of Done global.
 
 **Dependencies:** nenhuma
 
