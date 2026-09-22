@@ -16,15 +16,15 @@
 
 **Acceptance criteria:**
 
-- [ ] `parseEnv` aceita ausência das três variáveis fora de produção e devolve o trio dev-only; produção sem qualquer uma delas falha com mensagem por campo.
-- [ ] Produção rejeita o par dev-only, chave malformada e subject fora de `mailto:`/`https:`; valores válidos chegam tipados pelo token `ENV`.
-- [ ] `web-push` e seus tipos ficam nas seções corretas do `apps/api/package.json`, com lockfile consistente e instrução segura em `.env.example`.
+- [x] `parseEnv` aceita ausência das três variáveis fora de produção e devolve o trio dev-only; produção sem qualquer uma delas falha com mensagem por campo.
+- [x] Produção rejeita o par dev-only, chave malformada e subject fora de `mailto:`/`https:`; valores válidos chegam tipados pelo token `ENV`.
+- [x] `web-push` e seus tipos ficam nas seções corretas do `apps/api/package.json`, com lockfile consistente e instrução segura em `.env.example`.
 
 **Verification:**
 
-- [ ] `npm run test -w @septo/api -- src/shared/env.spec.ts`
-- [ ] `npm exec --workspace @septo/api -- web-push generate-vapid-keys --json` imprime JSON com duas chaves.
-- [ ] Definition of Done global (`lint`, `check-types`, `test`).
+- [x] `npm run test -w @septo/api -- env.spec.ts`
+- [x] `npm exec --workspace @septo/api -- web-push generate-vapid-keys --json` imprime JSON com duas chaves.
+- [x] Definition of Done global (`lint`, `check-types`, `test`).
 
 **Dependencies:** nenhuma
 
