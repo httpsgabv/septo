@@ -489,13 +489,13 @@
 
 **Acceptance criteria:**
 
-- [ ] Coverage de `reminders/{domain,application}` ≥ 90%; lacunas são cobertas por comportamento, sem testes que só perseguem linha.
-- [ ] README documenta geração/configuração VAPID, ativação, PWA e limites best-effort.
-- [ ] CLAUDE.md registra scheduler, segredos, fronteira `ReminderSource`, SW sem cache, armadilhas de teste e smoke real.
+- [x] Coverage de `reminders/{domain,application}` ≥ 90%; lacunas são cobertas por comportamento, sem testes que só perseguem linha.
+- [x] README documenta geração/configuração VAPID, ativação, PWA e limites best-effort.
+- [x] CLAUDE.md registra scheduler, segredos, fronteira `ReminderSource`, SW sem cache, armadilhas de teste e smoke real.
 
 **Verification:**
 
-- [ ] `npm run coverage -w @septo/api` e `npm run coverage -w @septo/web`.
+- [x] `npm run coverage -w @septo/api` e `npm run coverage -w @septo/web`.
 - [ ] `npm run lint && npm run check-types && npm run build && npm run test && npm run test:e2e`.
 - [ ] `git diff --check` e segunda geração do OpenAPI sem diff.
 

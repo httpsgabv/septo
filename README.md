@@ -43,7 +43,8 @@ O septo tem um único usuário e não há cadastro pela interface: `user:set` pe
   - **autosave**, sem botão Salvar (indicador "Salvando… / Salvo"); "Nova nota" abre um rascunho que só vira nota no primeiro salvamento com conteúdo;
   - tags, fixar, arquivar (e desarquivar) e excluir com confirmação;
   - busca por título e corpo, sem diferenciar acento nem caixa; busca, tag e aba (`Ativas`, `Lembretes`, `Arquivadas`) ficam na URL;
-  - lembrete (`remindAt`) em qualquer nota, com a aba "Lembretes" ordenada por data. O **aviso** (Web Push) é o módulo `reminders`, ainda pendente.
+  - lembrete (`remindAt`) em qualquer nota, com a aba "Lembretes" ordenada por data.
+- **Lembretes Web Push** (`reminders`): ativação independente por navegador em `/settings`, scheduler na API, retries, remoção de assinaturas expiradas e PWA instalável. A notificação abre a nota correta sem expor o corpo markdown.
 
 - **Dev Tools** (`dev-tools`), em `/dev-tools` (cada ferramenta também é um subitem do menu lateral e está no ⌘K) — seis ferramentas que rodam inteiras no navegador: nada é enviado para o servidor e nada fica guardado ao sair da página.
   - **JSON**: formatar (2 espaços, 4 ou tab), minificar e apontar **linha e coluna** do erro, inclusive nos casos em que o próprio navegador não diz onde foi;
@@ -53,7 +54,31 @@ O septo tem um único usuário e não há cadastro pela interface: `user:set` pe
   - **Chaves RSA**: gerar um par 2048/3072/4096 pelo WebCrypto e copiar ou baixar os dois PEM;
   - **README**: ler markdown renderizado, com o mesmo conjunto de formatação do editor de notas.
 
-Depois de atualizar o repositório, rode `npm run db:migrate -w @septo/api` para aplicar as migrações novas (a de notas cria a tabela `notes`).
+Depois de atualizar o repositório, rode `npm run db:migrate -w @septo/api` para aplicar as migrações novas (notas, assinaturas Web Push e ledger de entregas).
+
+## Web Push e PWA
+
+Em desenvolvimento, a API usa um par VAPID fixo e explicitamente dev-only. Para cada ambiente de produção, gere um par uma única vez:
+
+```bash
+npm exec --workspace @septo/api -- web-push generate-vapid-keys --json
+```
+
+Guarde os valores no gerenciador de segredos e configure as três variáveis no processo da API:
+
+```dotenv
+VAPID_PUBLIC_KEY=<publicKey>
+VAPID_PRIVATE_KEY=<privateKey>
+VAPID_SUBJECT=mailto:ops@seu.dominio
+```
+
+As três são obrigatórias em `NODE_ENV=production`; a API recusa as chaves fixas de desenvolvimento. A chave privada nunca vai para o web, respostas ou logs. Trocar o par invalida as assinaturas existentes e exige reativação nos navegadores.
+
+O usuário ativa cada navegador em **Configurações → Notificações**. A permissão só é pedida pelo clique. No iPhone/iPad, primeiro instale pelo Safari com **Compartilhar → Adicionar à Tela de Início** e abra pelo ícone. O manifest e o service worker tornam o app instalável, mas o septo não implementa cache/offline.
+
+O scheduler roda um tick no boot e depois a cada 60 s. Ele recupera lembretes vencidos nas últimas 24 h, envia no máximo lotes de 100 e tenta até três vezes (imediata, +1 min, +5 min). A entrega é **pelo menos uma vez**, com deduplicação de melhor esforço: serviço de push, sistema operacional e economia de bateria podem atrasar a notificação, e um crash no instante entre envio e persistência ainda pode duplicá-la.
+
+Antes de publicar, execute a checklist de entrega real em [`tasks/reminders/smoke.md`](tasks/reminders/smoke.md) com o app fechado nas plataformas disponíveis.
 
 ## Comandos
 
@@ -95,10 +120,21 @@ docker build -f apps/web/Dockerfile -t septo-web .
 ```
 
 ```bash
-docker run -d --name septo-api --network septo --restart unless-stopped -e DATABASE_URL=postgresql://septo:<senha>@postgres:5432/septo -e JWT_SECRET=<segredo> -e API_DOCS_ENABLED=false septo-api
+docker run -d --name septo-api --network septo --restart unless-stopped --env-file .env.api septo-api
 ```
 
-`JWT_SECRET` assina as sessões e é obrigatório em produção (a API não sobe sem ele), com pelo menos 32 caracteres. Gere um com `openssl rand -base64 48`. Trocá-lo derruba todas as sessões. `API_DOCS_ENABLED=false` tira o Scalar e o `openapi.json` do ar; deixe `true` só se quiser os docs públicos.
+O `.env.api`, fora do repositório, contém:
+
+```dotenv
+DATABASE_URL=postgresql://septo:<senha>@postgres:5432/septo
+JWT_SECRET=<segredo de pelo menos 32 caracteres>
+API_DOCS_ENABLED=false
+VAPID_PUBLIC_KEY=<publicKey>
+VAPID_PRIVATE_KEY=<privateKey>
+VAPID_SUBJECT=mailto:ops@seu.dominio
+```
+
+`JWT_SECRET` assina as sessões; gere um com `openssl rand -base64 48`. Trocá-lo derruba todas as sessões. O `--env-file` evita colocar esses segredos na linha de comando. `API_DOCS_ENABLED=false` tira o Scalar e o `openapi.json` do ar; deixe `true` só se quiser os docs públicos.
 
 Crie o usuário (uma vez) e, quando precisar, resete a senha com o mesmo comando:
 
