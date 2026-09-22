@@ -1,7 +1,7 @@
 import { Skeleton } from '@septo/ui/components/skeleton';
 import { Textarea } from '@septo/ui/components/textarea';
 import { cn } from '@septo/ui/lib/utils';
-import type { ComponentProps, ReactNode } from 'react';
+import type { ComponentProps, KeyboardEvent, ReactNode } from 'react';
 import { type Tool, toolFor } from '../domain/tools';
 
 /**
@@ -66,6 +66,8 @@ export function Pane({
   htmlFor,
   labelId,
   actions,
+  expanded = false,
+  onCollapse,
   children,
 }: {
   label: string;
@@ -74,11 +76,41 @@ export function Pane({
   /** Id for the label, for a control that points at it with `aria-labelledby` (the code editor). */
   labelId?: string;
   actions?: ReactNode;
+  /** Covers the whole window (not the browser's fullscreen) as a modal; Esc calls `onCollapse`. */
+  expanded?: boolean;
+  onCollapse?: () => void;
   children: ReactNode;
 }) {
   const labelClass = 'text-xs font-medium tracking-wide text-muted-foreground uppercase';
+
+  // Esc leaves; Tab cycles inside, since what is behind is covered and must not take focus.
+  function onKeyDown(event: KeyboardEvent<HTMLElement>): void {
+    if (event.key === 'Escape') {
+      event.stopPropagation();
+      onCollapse?.();
+      return;
+    }
+    if (event.key !== 'Tab') return;
+    const focusable = [
+      ...event.currentTarget.querySelectorAll<HTMLElement>('a[href], button:not([disabled])'),
+    ];
+    const first = focusable[0];
+    const last = focusable.at(-1);
+    if (!first || !last) return;
+    if (event.shiftKey ? document.activeElement === first : document.activeElement === last) {
+      event.preventDefault();
+      (event.shiftKey ? last : first).focus();
+    }
+  }
+
   return (
-    <section className="flex min-h-72 min-w-0 flex-col md:min-h-0">
+    <section
+      {...(expanded && { role: 'dialog', 'aria-modal': true, 'aria-label': label, onKeyDown })}
+      className={cn(
+        'flex min-h-72 min-w-0 flex-col md:min-h-0',
+        expanded && 'fixed inset-0 z-50 min-h-0 bg-background',
+      )}
+    >
       <div className="flex h-9 shrink-0 items-center justify-between gap-2 border-b px-4 md:px-6">
         {htmlFor ? (
           <label htmlFor={htmlFor} className={labelClass}>

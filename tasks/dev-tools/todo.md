@@ -449,13 +449,13 @@
 **Descrição:** Botão "Expandir" no cabeçalho do painel "Leitura". Expandido, o mesmo nó cobre a janela (`fixed inset-0 z-50`) com o texto em `max-w-3xl` centralizado e um botão "Fechar"; `Esc` também fecha e o foco volta ao "Expandir". O `Pane` ganha `expanded`/`onCollapse`, ou a própria ferramenta aplica as classes, o que der menos código.
 
 **Aceite:**
-- [ ] Expandido: a caixa da leitura mede a viewport inteira; sidebar e header ficam cobertos
-- [ ] `role="dialog"`, `aria-modal="true"` e nome "Leitura" enquanto expandido
-- [ ] `Esc` e "Fechar" voltam, com o foco no "Expandir" e o mesmo conteúdo
-- [ ] Em 375 px também cobre a tela e rola por dentro
+- [x] Expandido: a caixa da leitura mede a viewport inteira; sidebar e header ficam cobertos
+- [x] `role="dialog"`, `aria-modal="true"` e nome "Leitura" enquanto expandido
+- [x] `Esc` e "Fechar" voltam, com o foco no "Expandir" e o mesmo conteúdo
+- [x] Em 375 px também cobre a tela e rola por dentro
 
 **Verificação:**
-- [ ] e2e novo: expandir, conferir `boundingBox` = viewport, `Esc`, conferir o foco
+- [x] e2e novo: expandir, conferir `boundingBox` = viewport, `Esc`, conferir o foco
 
 **Dependências:** E3 (mesmo arquivo)
 **Arquivos:** `components/readme-tool.tsx`, `components/workspace.tsx` (se o `Pane` ganhar o modo), `e2e/dev-tools.spec.ts`

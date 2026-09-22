@@ -1,6 +1,6 @@
-import { buttonVariants } from '@septo/ui/components/button';
+import { Button, buttonVariants } from '@septo/ui/components/button';
 import { EditorContent, useEditor } from '@tiptap/react';
-import { UploadIcon } from 'lucide-react';
+import { Maximize2Icon, Minimize2Icon, UploadIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { markdownExtensions, parseMarkdown } from '../../../shared/markdown';
 import { MAX_TEXT_CHARS, TEXT_TOO_LARGE } from '../domain/limits';
@@ -13,6 +13,7 @@ const ACCEPT = '.md,.markdown,text/markdown,text/plain';
 export function ReadmeTool() {
   const [markdown, setMarkdown] = useState('');
   const [problem, setProblem] = useState<string | null>(null);
+  const [expanded, setExpanded] = useState(false);
 
   // Read-only Tiptap: the ProseMirror parser builds the document, so no HTML is ever injected.
   const editor = useEditor({
@@ -78,9 +79,22 @@ export function ReadmeTool() {
           />
         </FileDrop>
       </Pane>
-      <Pane label="Leitura">
+      <Pane
+        label="Leitura"
+        expanded={expanded}
+        onCollapse={() => setExpanded(false)}
+        actions={
+          // One button that changes its label: focus stays on it when the pane opens and closes.
+          <Button variant="ghost" size="xs" onClick={() => setExpanded(!expanded)}>
+            {expanded ? <Minimize2Icon aria-hidden="true" /> : <Maximize2Icon aria-hidden="true" />}
+            {expanded ? 'Fechar' : 'Expandir'}
+          </Button>
+        }
+      >
         <div className="absolute inset-0 overflow-y-auto px-4 py-3 md:px-6">
-          <EditorContent editor={editor} />
+          <div className={expanded ? 'mx-auto max-w-3xl py-6' : undefined}>
+            <EditorContent editor={editor} />
+          </div>
         </div>
       </Pane>
     </Workspace>

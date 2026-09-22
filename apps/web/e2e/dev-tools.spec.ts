@@ -200,6 +200,39 @@ test('README: a .md dropped on the editor replaces the text', async ({ page }) =
   ).toBeVisible();
 });
 
+test('README: the reading expands over the whole window, and Esc brings it back', async ({
+  page,
+}) => {
+  await gotoHydrated(page, '/dev-tools/readme');
+  await page.getByLabel('Markdown').fill('# septo\n\nUm app pessoal.');
+
+  await page.getByRole('button', { name: 'Expandir' }).click();
+  const reading = page.getByRole('dialog', { name: 'Leitura' });
+  await expect(reading.getByRole('heading', { level: 1, name: 'septo' })).toBeVisible();
+
+  // The window, not the browser's fullscreen: the box is exactly the viewport, over sidebar and header.
+  const viewport = page.viewportSize();
+  expect(await reading.boundingBox()).toEqual({
+    x: 0,
+    y: 0,
+    width: viewport?.width,
+    height: viewport?.height,
+  });
+
+  await page.keyboard.press('Escape');
+  await expect(reading).toBeHidden();
+  const expand = page.getByRole('button', { name: 'Expandir' });
+  await expect(expand).toBeFocused();
+  await expect
+    .poll(() => editorText(page.getByLabel('Markdown')))
+    .toBe('# septo\n\nUm app pessoal.');
+
+  // The same button closes it too.
+  await expand.click();
+  await page.getByRole('button', { name: 'Fechar' }).click();
+  await expect(reading).toBeHidden();
+});
+
 test('nothing the tools touch leaves the tab', async ({ page }) => {
   const requests: string[] = [];
   page.on('request', (request) => requests.push(request.url()));

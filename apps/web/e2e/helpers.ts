@@ -46,5 +46,8 @@ export async function createNote(
  * collapses whitespace, so exact comparisons go through `expect.poll(() => editorText(...))`.
  */
 export async function editorText(editor: Locator): Promise<string> {
-  return editor.evaluate((element) => (element as HTMLElement).innerText.replace(/\n$/, ''));
+  // One `.cm-line` per line; `innerText` would count an empty line (a `<br>`) twice.
+  return editor.evaluate((element) =>
+    [...element.querySelectorAll('.cm-line')].map((line) => line.textContent).join('\n'),
+  );
 }
