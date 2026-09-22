@@ -12,8 +12,9 @@ import {
 import { MAX_TEXT_CHARS, TEXT_TOO_LARGE } from '../domain/limits';
 import { CopyButton } from './copy-button';
 import { FileDrop } from './file-drop';
+import { LazyCodeEditor } from './lazy-code-editor';
 import { Segmented } from './segmented';
-import { Pane, PaneTextarea, Workspace } from './workspace';
+import { Pane, Workspace } from './workspace';
 
 const SCHEMES: { value: EncodingScheme; label: string }[] = [
   { value: 'base64', label: 'base64' },
@@ -116,21 +117,25 @@ export function EncodeTool() {
           </div>
         </Pane>
       ) : (
-        <Pane label={decoding ? 'Codificado' : 'Texto'} htmlFor="encode-input" actions={fileButton}>
-          <PaneTextarea
-            id="encode-input"
+        <Pane
+          label={decoding ? 'Codificado' : 'Texto'}
+          labelId="encode-input-label"
+          actions={fileButton}
+        >
+          <LazyCodeEditor
+            labelledBy="encode-input-label"
             value={source.value}
-            onChange={(event) => takeText(event.target.value)}
-            aria-invalid={problem !== null}
+            onChange={takeText}
+            wrap
           />
         </Pane>
       )}
       <Pane
         label={decoding && source.kind === 'text' ? 'Texto' : 'Codificado'}
-        htmlFor="encode-output"
+        labelId="encode-output-label"
         actions={<CopyButton value={output} />}
       >
-        <PaneTextarea id="encode-output" value={output} readOnly />
+        <LazyCodeEditor labelledBy="encode-output-label" value={output} readOnly wrap />
       </Pane>
     </Workspace>
   );

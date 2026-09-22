@@ -1,7 +1,6 @@
 import { Skeleton } from '@septo/ui/components/skeleton';
-import { Textarea } from '@septo/ui/components/textarea';
 import { cn } from '@septo/ui/lib/utils';
-import type { ComponentProps, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { type Tool, toolFor } from '../domain/tools';
 
 /**
@@ -64,43 +63,37 @@ export function Workspace({
 export function Pane({
   label,
   htmlFor,
+  labelId,
   actions,
+  className,
   children,
 }: {
   label: string;
   /** The control the label names; without it the label is plain text. */
   htmlFor?: string;
+  /** Id for the label, for a control that points at it with `aria-labelledby` (the code editor). */
+  labelId?: string;
   actions?: ReactNode;
+  /** Layout overrides, e.g. spanning both columns or leaving the grid. */
+  className?: string;
   children: ReactNode;
 }) {
   const labelClass = 'text-xs font-medium tracking-wide text-muted-foreground uppercase';
   return (
-    <section className="flex min-h-72 min-w-0 flex-col md:min-h-0">
+    <section className={cn('flex min-h-72 min-w-0 flex-col md:min-h-0', className)}>
       <div className="flex h-9 shrink-0 items-center justify-between gap-2 border-b px-4 md:px-6">
         {htmlFor ? (
           <label htmlFor={htmlFor} className={labelClass}>
             {label}
           </label>
         ) : (
-          <span className={labelClass}>{label}</span>
+          <span id={labelId} className={labelClass}>
+            {label}
+          </span>
         )}
         {actions && <div className="flex items-center gap-1">{actions}</div>}
       </div>
       <div className="relative min-h-0 flex-1">{children}</div>
     </section>
-  );
-}
-
-/** A textarea that fills its pane, with the pane itself as the border. */
-export function PaneTextarea({ className, ...props }: ComponentProps<'textarea'>) {
-  return (
-    <Textarea
-      spellCheck={false}
-      className={cn(
-        'absolute inset-0 size-full resize-none rounded-none border-0 bg-transparent px-4 py-3 font-mono text-xs shadow-none field-sizing-fixed focus-visible:ring-1 focus-visible:ring-ring/40 focus-visible:ring-inset aria-invalid:ring-0 md:px-6 md:text-xs dark:bg-transparent',
-        className,
-      )}
-      {...props}
-    />
   );
 }

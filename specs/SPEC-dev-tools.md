@@ -85,6 +85,86 @@ Chegar a qualquer ferramenta em um clique de qualquer lugar do app, e dar a cada
 6. ⌘K → "rsa" leva a `/dev-tools/rsa`.
 7. `dev-tools.spec.ts` e `shell.spec.ts` atualizados (navegação pela sidebar em vez da barra) e verdes; `lint`, `check-types`, `test` passam; `openapi.json` não muda; bundle do índice continua sem Tiptap/parsers.
 
+## Revisão 2: editor de código e leitura expandida
+
+> Status: **implementada** (aprovada em 2026-09-21, com o editor estendido a Encodings, README e RSA). A revisão 1 já está na `main` (PR #6). Branch: `feat/dev-tools-editor`, criada a partir da `main`.
+
+### Objetivo
+
+1. Escrever à mão em qualquer painel de texto das ferramentas (**JSON**, **Dados**, **Encodings**, **README** e **RSA**) como num editor de IDE. Hoje o `Tab` tira o foco do campo em vez de indentar, e não há números de linha, cores nem fechamento de chaves.
+2. Ler um README com a área de trabalho inteira: a leitura cobre o painel de markdown, e sidebar, header e toolbar continuam no lugar. Volta com um clique ou `Esc`. **Não** é a Fullscreen API do navegador (ajustado em 2026-09-21: antes cobria a janela toda).
+
+### Histórias
+
+1. Nos painéis de **entrada** do JSON, do Dados, do Encodings e do README digito num editor com:
+   - números de linha e destaque de sintaxe (JSON, YAML, XML e markdown; CSV, texto do Encodings e base64/hex ficam sem cores);
+   - fechamento automático de `{ [ " '`, destaque do par e dobra de blocos;
+   - `Tab`/`Shift+Tab` indentando e desindentando, e `Enter` mantendo a indentação;
+   - desfazer/refazer e busca com `⌘F`.
+2. No JSON, o erro de sintaxe ganha um sublinhado vermelho na posição exata (a mesma linha/coluna que a status bar já mostra), sem precisar olhar para baixo.
+3. Os painéis de **saída** (JSON, Dados, Encodings e as duas chaves do RSA) usam o mesmo editor em modo somente leitura: mesmas cores, números de linha e dobra. Copiar e Baixar continuam no cabeçalho. O painel "Leitura" do README continua sendo o Tiptap renderizado.
+4. No Dados, as cores seguem o formato: o detectado (ou o escolhido) na entrada e o de destino na saída.
+5. Continuo conseguindo sair do editor pelo teclado: `Esc` e depois `Tab` passa o foco adiante, que é o padrão do CodeMirror para não prender o foco.
+6. No README, o cabeçalho do painel "Leitura" tem um botão **Expandir**. A leitura passa a ocupar os dois painéis (cobre o de markdown; sidebar, header e toolbar ficam), com o texto numa coluna centralizada (`max-w-3xl`), e o mesmo botão vira **Fechar**. `Esc` também fecha e devolve o foco ao botão Expandir. O markdown continua o mesmo ao voltar.
+
+### Decisões (revisão 2)
+
+| Tema | Decisão | Por quê |
+|---|---|---|
+| Editor | **CodeMirror 6** (`@codemirror/*`), não Monaco | O Monaco é o editor do VS Code: ~2 MB, com web workers e loader próprio, muito para duas ferramentas de bolso. O CM6 é modular (só entra o que usamos), acessível, funciona com teclado virtual no mobile e tem pacotes oficiais para JSON, YAML e XML |
+| Integração com React | Um componente próprio `CodeEditor` (~60 linhas: cria o `EditorView` num `ref`, sincroniza `value` e `onChange`, e troca linguagem e `readOnly` por `Compartment`), **sem** `@uiw/react-codemirror` | Uma dependência a menos para o que é um `useEffect`. O wrapper também puxaria o `basicSetup` inteiro e temas próprios |
+| Extensões | `lineNumbers`, `foldGutter`, `history`, `drawSelection`, `indentOnInput`, `bracketMatching`, `closeBrackets`, `highlightActiveLine`, `highlightSelectionMatches`, busca e o keymap padrão + `indentWithTab`. Sem autocomplete | É o "editor de IDE" útil para colar e ajustar dados. Autocomplete sem schema só atrapalha |
+| Tab | `indentWithTab`; `Esc` seguido de `Tab` sai do editor (comportamento nativo do CM6) | Resolve o problema relatado sem criar uma armadilha de foco (WCAG 2.1.2) |
+| Tema | Um tema do CM escrito com as **variáveis CSS do app** (`--background`, `--foreground`, `--muted-foreground`, `--brand-text`, `--border`) e cores de sintaxe via `HighlightStyle` também em variáveis | Segue claro/escuro e a cor de destaque sem duplicar paleta. Nada de `@uiw/codemirror-themes` |
+| Erro inline no JSON | `@codemirror/lint` com um linter que chama o **nosso** `describeJsonProblem`/`findSyntaxErrorIndex` e marca 1 caractere na posição | A fonte da posição continua uma só (a status bar e o sublinhado nunca discordam) |
+| Carregamento | `CodeEditor` fica num chunk `lazy` próprio, com um `<pre>` monoespaçado do mesmo valor como fallback, dentro de `ClientOnly`. JSON, Encodings e RSA continuam renderizando no SSR (moldura, toolbar e painéis); só o editor chega depois. **Cada linguagem é um `import()` à parte**, carregado quando o painel precisa dela e aplicado por `Compartment` | O CM precisa do DOM. Índice e Imagens não baixam o CM; Encodings e RSA baixam só o núcleo (texto puro); o parser de YAML ou de markdown só chega onde é usado. O e2e de bundle confere isso |
+| Acessibilidade | O `contenteditable` do CM recebe `aria-labelledby` apontando para o rótulo do painel ("Entrada"/"Saída") | O `<label htmlFor>` não funciona com `contenteditable`. Assim o `getByLabel('Entrada')` e os leitores de tela continuam iguais |
+| Onde usar | Todos os painéis de texto: JSON e Dados (entrada e saída), Encodings (entrada e saída, texto puro), README (entrada, markdown) e RSA (as duas chaves, só leitura, texto puro). `PaneTextarea` sai do código | Pedido do usuário em 2026-09-21: o mesmo comportamento de teclado e o mesmo visual em todas as ferramentas |
+| Soltar arquivo no editor | O `CodeEditor` recusa o drop de **arquivo** do próprio CM (`domEventHandlers.drop` devolve `true` quando há `files`), e o `FileDrop` em volta (README) recebe o arquivo como hoje, com a checagem de tamanho | O CM lê um arquivo solto e o insere na posição do drop, sem limite de tamanho, disputando com a substituição que o painel faz. Medido em 2026-09-21: nos testes a substituição do painel sempre vence (o texto final é o do arquivo), então a guarda é defesa, não correção de um bug observado |
+| Leitura expandida | É o **mesmo nó** do painel "Leitura" que passa a ocupar as duas colunas do workspace (`md:col-span-2`), enquanto o painel de markdown sai do layout (`hidden`, o editor continua montado com o texto). Não é modal: sidebar, header e toolbar seguem usáveis. `Esc` dentro do painel fecha, e o foco fica no botão. Ajustado em 2026-09-21: a versão que cobria a janela toda (`fixed inset-0`, `role="dialog"`) escondia o resto do layout | O Tiptap não monta o mesmo editor em dois lugares; trocar a classe mantém scroll, conteúdo e instância. Esconder o markdown em vez de desmontar preserva o histórico de desfazer |
+| Saída do JSON com erro | A saída mostra o **último resultado válido** enquanto a entrada está quebrada; o erro fica na status bar e sublinhado na entrada. Apagar a entrada inteira limpa a saída (vazio é válido) | Pedido em 2026-09-21: ao escrever à mão, a entrada passa por estados inválidos a cada tecla, e a saída piscando para vazio atrapalha a leitura |
+| Estado | Nada persiste (sem `localStorage`); expandido/recolhido é `useState` e volta a recolhido ao sair da rota | Regra do módulo |
+
+### Dependências novas (pedem aprovação)
+
+Tudo em `apps/web` como `dependencies`, com versões fixas (últimas estáveis em 2026-09-21):
+
+| Pacote | Versão | Motivo |
+|---|---|---|
+| `@codemirror/state` | 6.7.5 | Núcleo: documento, transações, `Compartment` |
+| `@codemirror/view` | 6.43.12 | Núcleo: `EditorView`, teclado, `aria` |
+| `@codemirror/commands` | 6.11.1 | `defaultKeymap`, `history`, `indentWithTab` |
+| `@codemirror/language` | 6.12.4 | Destaque, dobra, `bracketMatching`, `HighlightStyle` |
+| `@codemirror/autocomplete` | 6.20.3 | Só o `closeBrackets` (o pacote é onde ele mora) |
+| `@codemirror/search` | 6.7.2 | `⌘F` e destaque de ocorrências |
+| `@codemirror/lint` | 6.9.7 | Sublinhado do erro de JSON |
+| `@codemirror/lang-json` | 6.0.2 | Sintaxe JSON |
+| `@codemirror/lang-yaml` | 6.1.3 | Sintaxe YAML |
+| `@codemirror/lang-xml` | 6.1.0 | Sintaxe XML |
+| `@codemirror/lang-markdown` | 6.5.2 | Sintaxe markdown (entrada do README) |
+| `@lezer/highlight` | 1.2.3 | Os `tags` do `HighlightStyle`. Já vinha como dependência do `@codemirror/language`; foi declarado porque o tema importa dele direto (acrescentado na implementação) |
+
+Descartados: `codemirror` (o meta-pacote `basicSetup` traz autocomplete e extras que não usamos), `@uiw/react-codemirror` e `@monaco-editor/react`.
+
+### Testes (revisão 2)
+
+| Nível | Cobre |
+|---|---|
+| Unit | `jsonLintDiagnostic(text)` (o adaptador do linter): o erro vira um intervalo de 1 caractere na posição de `findSyntaxErrorIndex`, o JSON válido não gera nada e a entrada vazia não gera nada |
+| E2E `dev-tools.spec.ts` | `Tab` no editor do JSON insere indentação e o foco **continua** no editor; `Esc`+`Tab` sai; o erro aparece sublinhado (`.cm-lintRange-error`); as asserções de saída passam de `toHaveValue` para o texto do editor em JSON, Dados, Encodings e RSA; o Dados continua convertendo YAML → JSON; o README solto como arquivo entra uma vez só; o índice e Imagens **não** baixam o chunk do CodeMirror, e o parser de YAML só é baixado no Dados; README: Expandir faz a leitura ocupar os dois painéis com sidebar e `<h1>` visíveis e o markdown escondido; `Esc` fecha e o foco fica no botão; JSON: com a entrada quebrada a saída mantém o último resultado válido |
+
+### Critérios de sucesso (revisão 2)
+
+1. No JSON, digitar `{` + `Enter` + `Tab` + `"a": 1` produz o texto indentado, com a chave fechada automaticamente e o foco no editor.
+2. JSON quebrado: sublinhado vermelho na posição e status bar com a mesma linha/coluna.
+3. No Dados, colar YAML mostra cores de YAML na entrada e de JSON na saída; trocar o destino para XML troca as cores da saída.
+4. `Esc` e depois `Tab` tira o foco do editor (sem armadilha de teclado).
+5. O README expande sobre o painel de markdown (os dois painéis), com sidebar, header e toolbar visíveis; `Esc` e "Fechar" voltam ao layout de dois painéis com o mesmo conteúdo.
+6. O índice e Imagens não baixam o CodeMirror. O núcleo do editor (sem linguagens) fica abaixo de **120 KB gzip**; se passar, paro e trago o número antes de seguir.
+7. Claro e escuro legíveis (screenshots), 375 px sem scroll horizontal, e `lint`, `check-types`, `test` e `test:e2e` verdes. `openapi.json` sem diff.
+8. `Tab` indenta em todos os editores de entrada (JSON, Dados, Encodings, README), e as chaves do RSA aparecem no editor só leitura com Copiar e Baixar funcionando.
+9. No JSON, quebrar uma entrada que estava válida mantém a saída anterior na tela; corrigir atualiza; apagar tudo limpa.
+
 ## As seis ferramentas
 
 | Rota | Ferramenta | O que faz |
@@ -148,7 +228,8 @@ apps/web/src/
     domain/encoding.ts     base64, base64url, URL, hex — texto ↔ bytes em UTF-8
     domain/image.ts        formatos de saída suportados, nome do arquivo, cálculo do redimensionamento
     domain/rsa.ts          generateKeyPair (WebCrypto) e PEM
-    components/            workspace (Workspace, Pane, PaneTextarea — ↻ substitui o tool-page), segmented,
+    components/            workspace (Workspace, Pane — ↻ substitui o tool-page), segmented,
+                           code-editor (+ .css; CodeMirror, só via lazy-code-editor), lazy-code-editor,
                            json-tool, data-tool, encode-tool, image-tool, rsa-tool, readme-tool,
                            copy-button, file-drop
   shared/markdown.ts       bridge markdown ↔ Tiptap (movido de features/notes/domain)

@@ -1,0 +1,16 @@
+/* Syntax colors for the code editor, next to the app's own tokens: light first, then dark. */
+:root {
+  --code-property: oklch(0.47 0.16 285);
+  --code-string: oklch(0.5 0.12 150);
+  --code-number: oklch(0.55 0.15 55);
+  --code-keyword: oklch(0.52 0.17 15);
+  --code-tag: oklch(0.5 0.14 240);
+}
+
+.dark {
+  --code-property: oklch(0.78 0.12 285);
+  --code-string: oklch(0.8 0.12 150);
+  --code-number: oklch(0.82 0.12 70);
+  --code-keyword: oklch(0.75 0.15 15);
+  --code-tag: oklch(0.78 0.11 240);
+}

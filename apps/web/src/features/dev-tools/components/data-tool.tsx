@@ -8,11 +8,20 @@ import {
   FORMAT_LABELS,
 } from '../domain/data';
 import { MAX_TEXT_CHARS, TEXT_TOO_LARGE } from '../domain/limits';
+import type { CodeLanguage } from './code-editor';
 import { CopyButton } from './copy-button';
+import { LazyCodeEditor } from './lazy-code-editor';
 import { Segmented } from './segmented';
-import { Pane, PaneTextarea, Workspace } from './workspace';
+import { Pane, Workspace } from './workspace';
 
 const FORMATS: DataFormat[] = ['json', 'yaml', 'csv', 'xml'];
+// CSV has no grammar worth coloring: plain text, and no parser to download.
+const LANGUAGE: Record<DataFormat, CodeLanguage | null> = {
+  json: 'json',
+  yaml: 'yaml',
+  csv: null,
+  xml: 'xml',
+};
 const AUTO = 'auto';
 
 export function DataTool() {
@@ -70,17 +79,22 @@ export function DataTool() {
       }
       error={outcome.ok ? null : outcome.message}
     >
-      <Pane label="Entrada" htmlFor="data-input">
-        <PaneTextarea
-          id="data-input"
+      <Pane label="Entrada" labelId="data-input-label">
+        <LazyCodeEditor
+          labelledBy="data-input-label"
           value={input}
-          onChange={(event) => setInput(event.target.value)}
-          aria-invalid={!outcome.ok}
+          onChange={setInput}
+          language={source ? LANGUAGE[source] : null}
           placeholder={'nome: Gabriel\ntags:\n  - a'}
         />
       </Pane>
-      <Pane label="Saída" htmlFor="data-output" actions={<CopyButton value={output} />}>
-        <PaneTextarea id="data-output" value={output} readOnly />
+      <Pane label="Saída" labelId="data-output-label" actions={<CopyButton value={output} />}>
+        <LazyCodeEditor
+          labelledBy="data-output-label"
+          value={output}
+          language={LANGUAGE[to]}
+          readOnly
+        />
       </Pane>
     </Workspace>
   );

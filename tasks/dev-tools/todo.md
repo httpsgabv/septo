@@ -381,3 +381,97 @@
 **Dependências:** R3, R4, R5
 **Arquivos:** `components/tool-page.tsx` (apagado), `e2e/dev-tools.spec.ts`, `specs/SPEC-dev-tools.md`, `CLAUDE.md`, `README.md`
 **Tamanho:** S
+
+---
+
+# Revisão 2: editor de código e leitura expandida
+
+> Plano: [plan.md § Revisão 2](plan.md#revisão-2-editor-de-código-e-leitura-expandida) · Spec: [SPEC-dev-tools § Revisão 2](../../specs/SPEC-dev-tools.md#revisão-2-editor-de-código-e-leitura-expandida)
+> Branch: `feat/dev-tools-editor` (a partir da `main`) · um commit por tarefa. Mesmas regras do módulo: nada em `apps/api`, nada de rede, nada em `localStorage`.
+> Toda tarefa termina com `npm run lint`, `npm run check-types`, `npm run test` e `npm run test:e2e -w @septo/web -- dev-tools.spec.ts` verdes (Node ≥ 24.7).
+
+### E1: `CodeEditor` + JSON
+
+**Descrição:** Instalar as dependências do CodeMirror (versões fixas da tabela da spec). Criar `code-editor.tsx` (view, compartments, tema com variáveis CSS, extensões, `indentWithTab`, `aria-labelledby`, drop de arquivo recusado, linguagens por `import()`) e `lazy-code-editor.tsx` (`ClientOnly` + `lazy` + `<pre>` de fallback). `Pane` ganha `labelId`. `domain/json.ts` ganha `jsonDiagnostic`. JSON: entrada e saída no editor, com linter na entrada.
+
+**Aceite:**
+- [x] `{` + `Enter` + `Tab` + `"a": 1` no JSON dá o texto indentado, com `}` fechado e o foco no editor
+- [x] `Esc` + `Tab` tira o foco do editor
+- [x] JSON quebrado: `.cm-lintRange-error` na posição, com a mesma linha/coluna da status bar
+- [x] `getByLabel('Entrada')` e `getByLabel('Saída')` acham os editores
+- [x] A saída é só leitura (digitar não muda nada) e o Copiar funciona
+- [x] Núcleo do CM medido no build: ≤ 120 KB gz (número anotado no commit; se passar, **paro e reporto**)
+- [x] `/dev-tools/json` continua com `<h1>` e toolbar no HTML do servidor
+
+**Verificação:**
+- [x] Unit: `jsonDiagnostic` (erro no meio, na primeira linha, no fim; válido e vazio devolvem `null`)
+- [x] e2e: teste do JSON reescrito com `editorText`; teste novo de `Tab`/`Esc`
+- [x] Screenshots claro/escuro do JSON
+
+**Dependências:** nenhuma
+**Arquivos:** `apps/web/package.json` (+ lockfile), `components/code-editor.tsx` (novo), `components/lazy-code-editor.tsx` (novo), `components/workspace.tsx`, `components/json-tool.tsx`, `domain/json.ts` (+ spec), `e2e/dev-tools.spec.ts`, `e2e/helpers.ts`
+**Tamanho:** L (é a fatia que prova o padrão; as próximas são M/S)
+
+### E2: Dados + Encodings
+
+**Descrição:** Dados: entrada com a linguagem do formato detectado ou escolhido (CSV = `null`) e saída com a do destino. Encodings: entrada e saída em texto puro; o painel "Arquivo" (arquivo carregado) não muda.
+
+**Aceite:**
+- [x] YAML colado ganha cores de YAML e a saída JSON cores de JSON; trocar o destino para XML troca as cores
+- [x] O parser de YAML só é baixado quando o formato é YAML
+- [x] Encodings: `Tab` indenta, "Inverter" continua trocando entrada e saída, e o arquivo continua virando base64
+
+**Verificação:**
+- [x] e2e de Dados e Encodings passando com `editorText`
+
+**Dependências:** E1
+**Arquivos:** `components/data-tool.tsx`, `components/encode-tool.tsx`, `e2e/dev-tools.spec.ts`
+**Tamanho:** M
+
+### E3: RSA + entrada do README
+
+**Descrição:** RSA: as duas chaves no editor só leitura, em texto puro, com Copiar e Baixar no cabeçalho. README: entrada no editor com markdown; soltar um `.md` no painel substitui o conteúdo uma vez só (o CM recusa o drop e o `FileDrop` trata).
+
+**Aceite:**
+- [x] O PEM público e o privado aparecem nos editores, e o download continua com o nome `chave.pub.pem`
+- [x] Soltar um `.md` no editor do README substitui o conteúdo (a guarda contra o drop do CM não é distinguível por e2e: sem ela o resultado final também é o do arquivo)
+- [x] A leitura continua renderizando `<h1>`, lista e tabela como texto
+
+**Verificação:**
+- [x] e2e do RSA e do README com `editorText`, mais um teste novo de drop de `.md` (`dispatchEvent('drop')` com `DataTransfer`)
+
+**Dependências:** E1
+**Arquivos:** `components/rsa-tool.tsx`, `components/readme-tool.tsx`, `e2e/dev-tools.spec.ts`
+**Tamanho:** M
+
+### E4: README — leitura expandida
+
+**Descrição:** Botão "Expandir" no cabeçalho do painel "Leitura". Expandido, o mesmo nó cobre a janela (`fixed inset-0 z-50`) com o texto em `max-w-3xl` centralizado e um botão "Fechar"; `Esc` também fecha e o foco volta ao "Expandir". O `Pane` ganha `expanded`/`onCollapse`, ou a própria ferramenta aplica as classes, o que der menos código.
+
+**Aceite:**
+- [x] Expandido: a caixa da leitura mede a viewport inteira; sidebar e header ficam cobertos
+- [x] `role="dialog"`, `aria-modal="true"` e nome "Leitura" enquanto expandido
+- [x] `Esc` e "Fechar" voltam, com o foco no "Expandir" e o mesmo conteúdo
+- [x] Em 375 px também cobre a tela e rola por dentro
+
+**Verificação:**
+- [x] e2e novo: expandir, conferir `boundingBox` = viewport, `Esc`, conferir o foco
+
+**Dependências:** E3 (mesmo arquivo)
+**Arquivos:** `components/readme-tool.tsx`, `components/workspace.tsx` (se o `Pane` ganhar o modo), `e2e/dev-tools.spec.ts`
+**Tamanho:** S
+
+### E5: Fechamento
+
+**Descrição:** Apagar `PaneTextarea` (sem consumidores). e2e de bundle: o índice e Imagens não baixam chunk do CM, e o `lang-yaml` só aparece no Dados. Screenshots das cinco ferramentas com editor, em claro/escuro e em 375 px. Atualizar a spec (Estrutura, Testes, dependências, status "implementada") e o CLAUDE.md (armadilhas: `CodeEditor` via `lazy-code-editor`; rótulo por `aria-labelledby`; e2e lê o editor com `editorText`, não `toHaveValue`; o CM recusa drop de arquivo; linguagens por `import()`).
+
+**Aceite:**
+- [x] `grep -rn "PaneTextarea\|<textarea\|Textarea" apps/web/src/features/dev-tools` vazio
+- [x] `openapi.json` sem diff
+
+**Verificação:**
+- [x] `npm run lint`, `npm run check-types`, `npm run test`, `npm run test:e2e -w @septo/web` verdes
+
+**Dependências:** E2, E3, E4
+**Arquivos:** `components/workspace.tsx`, `e2e/dev-tools.spec.ts`, `specs/SPEC-dev-tools.md`, `CLAUDE.md`
+**Tamanho:** S

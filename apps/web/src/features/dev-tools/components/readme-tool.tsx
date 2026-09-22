@@ -1,17 +1,19 @@
-import { buttonVariants } from '@septo/ui/components/button';
+import { Button, buttonVariants } from '@septo/ui/components/button';
 import { EditorContent, useEditor } from '@tiptap/react';
-import { UploadIcon } from 'lucide-react';
+import { Maximize2Icon, Minimize2Icon, UploadIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { markdownExtensions, parseMarkdown } from '../../../shared/markdown';
 import { MAX_TEXT_CHARS, TEXT_TOO_LARGE } from '../domain/limits';
 import { FileDrop } from './file-drop';
-import { Pane, PaneTextarea, Workspace } from './workspace';
+import { LazyCodeEditor } from './lazy-code-editor';
+import { Pane, Workspace } from './workspace';
 
 const ACCEPT = '.md,.markdown,text/markdown,text/plain';
 
 export function ReadmeTool() {
   const [markdown, setMarkdown] = useState('');
   const [problem, setProblem] = useState<string | null>(null);
+  const [expanded, setExpanded] = useState(false);
 
   // Read-only Tiptap: the ProseMirror parser builds the document, so no HTML is ever injected.
   const editor = useEditor({
@@ -35,6 +37,16 @@ export function ReadmeTool() {
     }
   }, [editor, markdown]);
 
+  // Esc closes the expanded reading from anywhere on the page (the markdown editor is hidden then).
+  useEffect(() => {
+    if (!expanded) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setExpanded(false);
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [expanded]);
+
   async function readFile(file: File): Promise<void> {
     setMarkdown(await file.text());
   }
@@ -45,7 +57,9 @@ export function ReadmeTool() {
     <Workspace to="/dev-tools/readme" error={problem}>
       <Pane
         label="Markdown"
-        htmlFor="readme-input"
+        labelId="readme-input-label"
+        // Covered, not unmounted: the text and its undo history are there when the reading closes.
+        className={expanded ? 'hidden' : undefined}
         actions={
           <FileDrop
             {...drop}
@@ -59,7 +73,7 @@ export function ReadmeTool() {
           </FileDrop>
         }
       >
-        {/* The whole pane takes a dropped .md; clicks stay with the textarea. */}
+        {/* The whole pane takes a dropped .md (the editor declines file drops); clicks stay with it. */}
         <FileDrop
           {...drop}
           pick={false}
@@ -67,17 +81,32 @@ export function ReadmeTool() {
           onReject={setProblem}
           className="absolute inset-0 data-over:bg-brand-subtle"
         >
-          <PaneTextarea
-            id="readme-input"
+          <LazyCodeEditor
+            labelledBy="readme-input-label"
             value={markdown}
-            onChange={(event) => setMarkdown(event.target.value)}
+            onChange={setMarkdown}
+            language="markdown"
             placeholder={'# Título\n\nCole ou solte um README.'}
+            wrap
           />
         </FileDrop>
       </Pane>
-      <Pane label="Leitura">
+      <Pane
+        label="Leitura"
+        // Expanded, the reading takes the writing pane's place too; sidebar, header and toolbar stay.
+        className={expanded ? 'md:col-span-2' : undefined}
+        actions={
+          // One button that changes its label: focus stays on it when the pane opens and closes.
+          <Button variant="ghost" size="xs" onClick={() => setExpanded(!expanded)}>
+            {expanded ? <Minimize2Icon aria-hidden="true" /> : <Maximize2Icon aria-hidden="true" />}
+            {expanded ? 'Fechar' : 'Expandir'}
+          </Button>
+        }
+      >
         <div className="absolute inset-0 overflow-y-auto px-4 py-3 md:px-6">
-          <EditorContent editor={editor} />
+          <div className={expanded ? 'mx-auto max-w-3xl py-6' : undefined}>
+            <EditorContent editor={editor} />
+          </div>
         </div>
       </Pane>
     </Workspace>

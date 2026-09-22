@@ -1,9 +1,16 @@
 import { useMemo, useState } from 'react';
-import { formatJson, type JsonIndent, type JsonOutcome, minifyJson } from '../domain/json';
+import {
+  formatJson,
+  type JsonIndent,
+  type JsonOutcome,
+  jsonDiagnostic,
+  minifyJson,
+} from '../domain/json';
 import { MAX_TEXT_CHARS, TEXT_TOO_LARGE } from '../domain/limits';
 import { CopyButton } from './copy-button';
+import { LazyCodeEditor } from './lazy-code-editor';
 import { Segmented } from './segmented';
-import { Pane, PaneTextarea, Workspace } from './workspace';
+import { Pane, Workspace } from './workspace';
 
 type Layout = JsonIndent | 'min';
 
@@ -26,7 +33,11 @@ export function JsonTool() {
     return layout === 'min' ? minifyJson(input) : formatJson(input, layout);
   }, [input, layout]);
 
-  const output = outcome.ok ? outcome.text : '';
+  // While the input is broken (every keystroke of hand-written JSON passes through that), the
+  // output keeps the last valid result instead of blinking to empty. Adjusted during render, not
+  // in an effect, so there is never a frame with the stale value. Empty input is valid: it clears.
+  const [output, setOutput] = useState('');
+  if (outcome.ok && outcome.text !== output) setOutput(outcome.text);
   const problem = outcome.ok
     ? null
     : outcome.line === null
@@ -47,17 +58,18 @@ export function JsonTool() {
       }
       error={problem}
     >
-      <Pane label="Entrada" htmlFor="json-input">
-        <PaneTextarea
-          id="json-input"
+      <Pane label="Entrada" labelId="json-input-label">
+        <LazyCodeEditor
+          labelledBy="json-input-label"
           value={input}
-          onChange={(event) => setInput(event.target.value)}
-          aria-invalid={problem !== null}
+          onChange={setInput}
+          language="json"
+          diagnose={jsonDiagnostic}
           placeholder={'{ "cole": "o seu JSON aqui" }'}
         />
       </Pane>
-      <Pane label="Saída" htmlFor="json-output" actions={<CopyButton value={output} />}>
-        <PaneTextarea id="json-output" value={output} readOnly />
+      <Pane label="Saída" labelId="json-output-label" actions={<CopyButton value={output} />}>
+        <LazyCodeEditor labelledBy="json-output-label" value={output} language="json" readOnly />
       </Pane>
     </Workspace>
   );

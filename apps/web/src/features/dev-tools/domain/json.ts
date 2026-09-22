@@ -32,15 +32,40 @@ export type JsonProblem = { message: string; line: number | null; column: number
 /** What went wrong and where — shared with the data converter, which parses JSON too. */
 export function describeJsonProblem(text: string, error: unknown): JsonProblem {
   const raw = error instanceof Error ? error.message : String(error);
-  // The engine leaves the position out of its most common message ("Unexpected token 'x', ..."), so
-  // the scan below is what usually answers "where?"; the message is the fallback.
-  const index = findSyntaxErrorIndex(text) ?? indexFromMessage(raw);
+  const index = problemIndex(text, raw);
   const place = index === null ? null : lineAndColumn(text, index);
   return {
     message: cleanMessage(raw),
     line: place?.line ?? null,
     column: place?.column ?? null,
   };
+}
+
+export type JsonDiagnostic = { from: number; to: number; message: string };
+
+/**
+ * What the editor underlines in a broken document: one character at the same position the status
+ * bar names (both come from `problemIndex`, so they never disagree). `null` when there is nothing
+ * to underline — valid, empty, or broken somewhere nobody can place.
+ */
+export function jsonDiagnostic(text: string): JsonDiagnostic | null {
+  if (!text.trim()) return null;
+  try {
+    JSON.parse(text);
+    return null;
+  } catch (error) {
+    const raw = error instanceof Error ? error.message : String(error);
+    const index = problemIndex(text, raw);
+    if (index === null) return null;
+    const from = Math.min(index, text.length);
+    return { from, to: Math.min(from + 1, text.length), message: cleanMessage(raw) };
+  }
+}
+
+// The engine leaves the position out of its most common message ("Unexpected token 'x', ..."), so
+// the scan is what usually answers "where?"; the message is the fallback.
+function problemIndex(text: string, raw: string): number | null {
+  return findSyntaxErrorIndex(text) ?? indexFromMessage(raw);
 }
 
 /**
