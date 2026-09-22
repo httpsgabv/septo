@@ -332,15 +332,15 @@
 
 **Acceptance criteria:**
 
-- [ ] Estado puro distingue `unsupported`, `default`, `denied` e `enabled`; feature detection usa APIs, não user-agent.
-- [ ] Ativação registra/obtém SW, pede permissão somente dentro da ação, assina com a public key e faz upsert; reconciliação com permissão concedida nunca chama `requestPermission`.
-- [ ] Desativação remove na API antes de `unsubscribe`; falha da API mantém a assinatura e devolve erro exibível, sem afetar outros browsers.
+- [x] Estado puro distingue `unsupported`, `default`, `denied` e `enabled`; feature detection usa APIs, não user-agent.
+- [x] Ativação registra/obtém SW, pede permissão somente dentro da ação, assina com a public key e faz upsert; reconciliação com permissão concedida nunca chama `requestPermission`.
+- [x] Desativação remove na API antes de `unsubscribe`; falha da API mantém a assinatura e devolve erro exibível, sem afetar outros browsers.
 
 **Verification:**
 
-- [ ] `npm run test -w @septo/web -- src/features/reminders`
-- [ ] `npm run build -w @septo/web` prova que SSR não avalia browser globals.
-- [ ] Definition of Done global.
+- [x] `npm run test -w @septo/web -- src/features/reminders`
+- [x] `npm run build -w @septo/web` prova que SSR não avalia browser globals.
+- [x] Definition of Done global.
 
 **Dependencies:** T10
 
