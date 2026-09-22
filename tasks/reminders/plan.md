@@ -81,15 +81,15 @@ T8 + T10 + T12 + T14 ─▶ T15 integração/e2e/smoke ─▶ T16 cobertura e do
 - [x] T9: Casos de uso de config, upsert e remoção da assinatura
 - [x] T10: Controller, schemas, integração HTTP, OpenAPI e Orval
 - [x] T11: Domínio/client web para suporte, ativação, reconciliação e desativação
-- [ ] T12: Configurações → Notificações e ajuda de instalação
+- [x] T12: Configurações → Notificações e ajuda de instalação
 
 ### Checkpoint C: assinatura ponta a ponta
 
-- [ ] O prompt só nasce de clique; reload reconcilia sem pedir permissão de novo
-- [ ] Upsert devolve id estável e nenhum segredo aparece em resposta/log
-- [ ] Desativar remove somente a assinatura atual e preserva o browser se a API falhar
-- [ ] Estados incompatível, disponível, bloqueado e ativo aparecem em PT-BR
-- [ ] `openapi.json` está commitado e igual ao gerado; `lint`, `check-types` e `test` passam
+- [x] O prompt só nasce de clique; reload reconcilia sem pedir permissão de novo
+- [x] Upsert devolve id estável e nenhum segredo aparece em resposta/log
+- [x] Desativar remove somente a assinatura atual e preserva o browser se a API falhar
+- [x] Estados incompatível, disponível, bloqueado e ativo aparecem em PT-BR
+- [x] `openapi.json` está commitado e igual ao gerado; `lint`, `check-types` e `test` passam
 
 ### Fase 4: PWA e fechamento
 

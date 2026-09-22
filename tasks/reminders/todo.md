@@ -362,15 +362,15 @@
 
 **Acceptance criteria:**
 
-- [ ] Estado disponível mostra "Ativar notificações"; ativo mostra "Desativar"; denied explica como liberar nas configurações do navegador/SO; unsupported não oferece ação impossível.
-- [ ] Loading, sucesso e erro têm feedback em PT-BR, botões não duplicam mutação e a permissão só é pedida por clique.
-- [ ] A seção usa `SettingRow`, funciona por teclado, não gera mismatch SSR e mantém Conta/Aparência existentes intactas.
+- [x] Estado disponível mostra "Ativar notificações"; ativo mostra "Desativar"; denied explica como liberar nas configurações do navegador/SO; unsupported não oferece ação impossível.
+- [x] Loading, sucesso e erro têm feedback em PT-BR, botões não duplicam mutação e a permissão só é pedida por clique.
+- [x] A seção usa `SettingRow`, funciona por teclado, não gera mismatch SSR e mantém Conta/Aparência existentes intactas.
 
 **Verification:**
 
-- [ ] `npm run test -w @septo/web -- notification-settings.spec.tsx`
-- [ ] Manual em `/settings` com estados mockados e em 375 px, claro/escuro.
-- [ ] Definition of Done global.
+- [x] `npm run test -w @septo/web -- notification-settings.spec.tsx`
+- [x] Manual em `/settings` com estados mockados e em 375 px, claro/escuro.
+- [x] Definition of Done global.
 
 **Dependencies:** T11
 
@@ -387,12 +387,12 @@
 
 ## Checkpoint C: assinatura ponta a ponta
 
-- [ ] Prompt nasce só de clique; reload reconcilia sem novo prompt.
-- [ ] Upsert é idempotente e nenhuma resposta/log expõe segredo.
-- [ ] Desativação remove só o browser atual e preserva a assinatura se a API falhar.
-- [ ] Quatro estados aparecem corretamente na UI, inclusive orientação iOS.
-- [ ] `openapi.json`, codegen, `lint`, `check-types`, `test` e builds verdes.
-- [ ] Revisão humana antes da PWA/fechamento.
+- [x] Prompt nasce só de clique; reload reconcilia sem novo prompt.
+- [x] Upsert é idempotente e nenhuma resposta/log expõe segredo.
+- [x] Desativação remove só o browser atual e preserva a assinatura se a API falhar.
+- [x] Quatro estados aparecem corretamente na UI, inclusive orientação iOS.
+- [x] `openapi.json`, codegen, `lint`, `check-types`, `test` e builds verdes.
+- [x] Revisão humana antes da PWA/fechamento.
 
 ---
 

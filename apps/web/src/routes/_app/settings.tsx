@@ -1,6 +1,7 @@
 import { Button } from '@septo/ui/components/button';
 import { createFileRoute } from '@tanstack/react-router';
 import { AccountSettings } from '../../features/identity/components/account-settings';
+import { NotificationSettings } from '../../features/reminders/components/notification-settings';
 import { AccentPicker } from '../../features/settings/components/accent-picker';
 import { ThemePicker } from '../../features/settings/components/theme-picker';
 import { DEFAULT_PREFERENCES } from '../../features/settings/domain/preferences';
@@ -20,6 +21,9 @@ function SettingsPage() {
     <Page title="Configurações" description="Sua conta e a aparência do septo.">
       <h2 className="mb-3 text-sm font-medium text-muted-foreground">Conta</h2>
       <AccountSettings />
+
+      <h2 className="mt-10 mb-3 text-sm font-medium text-muted-foreground">Notificações</h2>
+      <NotificationSettings />
 
       <h2 className="mt-10 mb-3 text-sm font-medium text-muted-foreground">Aparência</h2>
       <div className="divide-y rounded-xl border">
