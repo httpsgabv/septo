@@ -1,7 +1,6 @@
 import { Skeleton } from '@septo/ui/components/skeleton';
-import { Textarea } from '@septo/ui/components/textarea';
 import { cn } from '@septo/ui/lib/utils';
-import type { ComponentProps, KeyboardEvent, ReactNode } from 'react';
+import type { KeyboardEvent, ReactNode } from 'react';
 import { type Tool, toolFor } from '../domain/tools';
 
 /**
@@ -125,19 +124,5 @@ export function Pane({
       </div>
       <div className="relative min-h-0 flex-1">{children}</div>
     </section>
-  );
-}
-
-/** A textarea that fills its pane, with the pane itself as the border. */
-export function PaneTextarea({ className, ...props }: ComponentProps<'textarea'>) {
-  return (
-    <Textarea
-      spellCheck={false}
-      className={cn(
-        'absolute inset-0 size-full resize-none rounded-none border-0 bg-transparent px-4 py-3 font-mono text-xs shadow-none field-sizing-fixed focus-visible:ring-1 focus-visible:ring-ring/40 focus-visible:ring-inset aria-invalid:ring-0 md:px-6 md:text-xs dark:bg-transparent',
-        className,
-      )}
-      {...props}
-    />
   );
 }

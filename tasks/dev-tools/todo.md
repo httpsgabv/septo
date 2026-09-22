@@ -466,11 +466,11 @@
 **Descrição:** Apagar `PaneTextarea` (sem consumidores). e2e de bundle: o índice e Imagens não baixam chunk do CM, e o `lang-yaml` só aparece no Dados. Screenshots das cinco ferramentas com editor, em claro/escuro e em 375 px. Atualizar a spec (Estrutura, Testes, dependências, status "implementada") e o CLAUDE.md (armadilhas: `CodeEditor` via `lazy-code-editor`; rótulo por `aria-labelledby`; e2e lê o editor com `editorText`, não `toHaveValue`; o CM recusa drop de arquivo; linguagens por `import()`).
 
 **Aceite:**
-- [ ] `grep -rn "PaneTextarea\|<textarea\|Textarea" apps/web/src/features/dev-tools` vazio
-- [ ] `openapi.json` sem diff
+- [x] `grep -rn "PaneTextarea\|<textarea\|Textarea" apps/web/src/features/dev-tools` vazio
+- [x] `openapi.json` sem diff
 
 **Verificação:**
-- [ ] `npm run lint`, `npm run check-types`, `npm run test`, `npm run test:e2e -w @septo/web` verdes
+- [x] `npm run lint`, `npm run check-types`, `npm run test`, `npm run test:e2e -w @septo/web` verdes
 
 **Dependências:** E2, E3, E4
 **Arquivos:** `components/workspace.tsx`, `e2e/dev-tools.spec.ts`, `specs/SPEC-dev-tools.md`, `CLAUDE.md`

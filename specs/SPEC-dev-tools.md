@@ -87,7 +87,7 @@ Chegar a qualquer ferramenta em um clique de qualquer lugar do app, e dar a cada
 
 ## Revisão 2: editor de código e leitura expandida
 
-> Status: **aprovada** em 2026-09-21, com o editor estendido a Encodings, README e RSA. A revisão 1 já está na `main` (PR #6). Branch: `feat/dev-tools-editor`, criada a partir da `main`.
+> Status: **implementada** (aprovada em 2026-09-21, com o editor estendido a Encodings, README e RSA). A revisão 1 já está na `main` (PR #6). Branch: `feat/dev-tools-editor`, criada a partir da `main`.
 
 ### Objetivo
 
@@ -141,6 +141,7 @@ Tudo em `apps/web` como `dependencies`, com versões fixas (últimas estáveis e
 | `@codemirror/lang-yaml` | 6.1.3 | Sintaxe YAML |
 | `@codemirror/lang-xml` | 6.1.0 | Sintaxe XML |
 | `@codemirror/lang-markdown` | 6.5.2 | Sintaxe markdown (entrada do README) |
+| `@lezer/highlight` | 1.2.3 | Os `tags` do `HighlightStyle`. Já vinha como dependência do `@codemirror/language`; foi declarado porque o tema importa dele direto (acrescentado na implementação) |
 
 Descartados: `codemirror` (o meta-pacote `basicSetup` traz autocomplete e extras que não usamos), `@uiw/react-codemirror` e `@monaco-editor/react`.
 
@@ -225,7 +226,8 @@ apps/web/src/
     domain/encoding.ts     base64, base64url, URL, hex — texto ↔ bytes em UTF-8
     domain/image.ts        formatos de saída suportados, nome do arquivo, cálculo do redimensionamento
     domain/rsa.ts          generateKeyPair (WebCrypto) e PEM
-    components/            workspace (Workspace, Pane, PaneTextarea — ↻ substitui o tool-page), segmented,
+    components/            workspace (Workspace, Pane — ↻ substitui o tool-page), segmented,
+                           code-editor (+ .css; CodeMirror, só via lazy-code-editor), lazy-code-editor,
                            json-tool, data-tool, encode-tool, image-tool, rsa-tool, readme-tool,
                            copy-button, file-drop
   shared/markdown.ts       bridge markdown ↔ Tiptap (movido de features/notes/domain)
