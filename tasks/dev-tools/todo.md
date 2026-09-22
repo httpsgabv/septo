@@ -417,12 +417,12 @@
 **Descrição:** Dados: entrada com a linguagem do formato detectado ou escolhido (CSV = `null`) e saída com a do destino. Encodings: entrada e saída em texto puro; o painel "Arquivo" (arquivo carregado) não muda.
 
 **Aceite:**
-- [ ] YAML colado ganha cores de YAML e a saída JSON cores de JSON; trocar o destino para XML troca as cores
-- [ ] O parser de YAML só é baixado quando o formato é YAML
-- [ ] Encodings: `Tab` indenta, "Inverter" continua trocando entrada e saída, e o arquivo continua virando base64
+- [x] YAML colado ganha cores de YAML e a saída JSON cores de JSON; trocar o destino para XML troca as cores
+- [x] O parser de YAML só é baixado quando o formato é YAML
+- [x] Encodings: `Tab` indenta, "Inverter" continua trocando entrada e saída, e o arquivo continua virando base64
 
 **Verificação:**
-- [ ] e2e de Dados e Encodings passando com `editorText`
+- [x] e2e de Dados e Encodings passando com `editorText`
 
 **Dependências:** E1
 **Arquivos:** `components/data-tool.tsx`, `components/encode-tool.tsx`, `e2e/dev-tools.spec.ts`

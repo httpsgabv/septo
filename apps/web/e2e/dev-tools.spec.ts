@@ -88,20 +88,28 @@ test('JSON: Tab indents inside the editor, and Esc then Tab leaves it', async ({
 });
 
 test('Dados: YAML becomes JSON, and CSV says what it cannot describe', async ({ page }) => {
+  const urls: string[] = [];
+  page.on('response', (response) => urls.push(response.url()));
   await gotoHydrated(page, '/dev-tools/data');
   const target = page.getByRole('group', { name: 'Formato de saída' });
+  await expect(page.getByLabel('Entrada')).toBeVisible();
+  // Each grammar is downloaded when a pane needs it: nothing here is YAML yet.
+  expect(urls.filter((url) => /lang-yaml/.test(url))).toEqual([]);
 
   await page.getByLabel('Entrada').fill('nome: Gabriel\ntags:\n  - a\n  - b\n');
   await expect(page.getByRole('radio', { name: 'Detectar (YAML)' })).toBeVisible();
-  await expect(page.getByLabel('Saída')).toHaveValue(
-    '{\n  "nome": "Gabriel",\n  "tags": [\n    "a",\n    "b"\n  ]\n}',
-  );
+  await expect.poll(() => urls.some((url) => /lang-yaml/.test(url))).toBe(true);
+  await expect
+    .poll(() => editorText(page.getByLabel('Saída')))
+    .toBe('{\n  "nome": "Gabriel",\n  "tags": [\n    "a",\n    "b"\n  ]\n}');
 
   await target.getByText('CSV', { exact: true }).click();
   await expect(page.getByText(/O CSV precisa de uma lista/)).toBeVisible();
 
   await page.getByLabel('Entrada').fill('nome,idade\nGabriel,33\nMaria,41');
-  await expect(page.getByLabel('Saída')).toHaveValue('nome,idade\nGabriel,33\nMaria,41');
+  await expect
+    .poll(() => editorText(page.getByLabel('Saída')))
+    .toBe('nome,idade\nGabriel,33\nMaria,41');
 });
 
 test('Encodings: an accent and an emoji survive the round trip, and a file becomes base64', async ({
@@ -110,10 +118,12 @@ test('Encodings: an accent and an emoji survive the round trip, and a file becom
   await gotoHydrated(page, '/dev-tools/encode');
 
   await page.getByLabel('Texto', { exact: true }).fill('Anotação 🎉');
-  await expect(page.getByLabel('Codificado')).toHaveValue('QW5vdGHDp8OjbyDwn46J');
+  await expect.poll(() => editorText(page.getByLabel('Codificado'))).toBe('QW5vdGHDp8OjbyDwn46J');
 
   await page.getByRole('button', { name: 'Inverter' }).click();
-  await expect(page.getByLabel('Texto', { exact: true })).toHaveValue('Anotação 🎉');
+  await expect
+    .poll(() => editorText(page.getByLabel('Texto', { exact: true })))
+    .toBe('Anotação 🎉');
 
   await page.getByLabel('Codificado').fill('não é base64 !!');
   await expect(page.getByText(/Isto não é base64/)).toBeVisible();
@@ -124,7 +134,7 @@ test('Encodings: an accent and an emoji survive the round trip, and a file becom
     mimeType: 'text/plain',
     buffer: Buffer.from('oi'),
   });
-  await expect(page.getByLabel('Codificado')).toHaveValue('b2k=');
+  await expect.poll(() => editorText(page.getByLabel('Codificado'))).toBe('b2k=');
 });
 
 test('Imagens: a PNG becomes a smaller WebP and downloads', async ({ page }) => {
@@ -184,7 +194,7 @@ test('nothing the tools touch leaves the tab', async ({ page }) => {
 
   await gotoHydrated(page, '/dev-tools/encode');
   await page.getByLabel('Texto', { exact: true }).fill('senha');
-  await expect(page.getByLabel('Codificado')).toHaveValue('c2VuaGE=');
+  await expect.poll(() => editorText(page.getByLabel('Codificado'))).toBe('c2VuaGE=');
 
   await gotoHydrated(page, '/dev-tools/rsa');
   await page.getByRole('button', { name: /Gerar par/ }).click();

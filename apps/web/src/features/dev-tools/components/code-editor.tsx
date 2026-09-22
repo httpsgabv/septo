@@ -42,6 +42,8 @@ export type CodeEditorProps = {
   /** Id of the pane label that names the editor (a `<label for>` cannot name a contenteditable). */
   labelledBy: string;
   placeholder?: string;
+  /** Soft-wrap long lines (prose, base64) instead of scrolling sideways. Read once, at creation. */
+  wrap?: boolean;
   /** Must be stable (a module-level function): a new one reconfigures the linter. */
   diagnose?: (text: string) => CodeDiagnostic | null;
 };
@@ -130,6 +132,7 @@ export function CodeEditor({
   language = null,
   labelledBy,
   placeholder,
+  wrap = false,
   diagnose,
 }: CodeEditorProps) {
   const host = useRef<HTMLDivElement>(null);
@@ -177,6 +180,7 @@ export function CodeEditor({
           ]),
           theme,
           placeholder ? placeholderText(placeholder) : [],
+          wrap ? EditorView.lineWrapping : [],
           EditorView.contentAttributes.of({ 'aria-labelledby': labelledBy }),
           // A dropped file is the pane's business (size check, replace the whole text); without
           // this CodeMirror would also insert it at the cursor.
