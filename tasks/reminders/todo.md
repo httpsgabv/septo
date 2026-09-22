@@ -302,15 +302,15 @@
 
 **Acceptance criteria:**
 
-- [ ] `GET /api/push/config`, `PUT /api/push/subscriptions` e `DELETE /api/push/subscriptions/:id` têm operationIds/status/erros da spec e nenhum `@Public()`.
-- [ ] Endpoint exige HTTPS e limites/base64url; delete é 204 idempotente; respostas e snapshots nunca contêm endpoint/keys/private key.
-- [ ] `openapi.json` gerado passa no teste de contrato e Orval produz funções/hooks tipados para config/upsert/delete.
+- [x] `GET /api/push/config`, `PUT /api/push/subscriptions` e `DELETE /api/push/subscriptions/:id` têm operationIds/status/erros da spec e nenhum `@Public()`.
+- [x] Endpoint exige HTTPS e limites/base64url; delete é 204 idempotente; respostas e snapshots nunca contêm endpoint/keys/private key.
+- [x] `openapi.json` gerado passa no teste de contrato e Orval produz funções/hooks tipados para config/upsert/delete.
 
 **Verification:**
 
-- [ ] `npm run test -w @septo/api -- reminders.spec.ts`
-- [ ] `npm run codegen && npm run check-types`
-- [ ] Definition of Done global, incluindo `git diff --exit-code -- apps/api/openapi.json` depois de regenerar pela segunda vez.
+- [x] `npm run test -w @septo/api -- reminders.spec.ts`
+- [x] `npm run codegen && npm run check-types`
+- [x] Definition of Done global, incluindo `git diff --exit-code -- apps/api/openapi.json` depois de regenerar pela segunda vez.
 
 **Dependencies:** T8, T9
 

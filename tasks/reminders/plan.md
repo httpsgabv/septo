@@ -79,7 +79,7 @@ T8 + T10 + T12 + T14 ─▶ T15 integração/e2e/smoke ─▶ T16 cobertura e do
 ### Fase 3: contrato HTTP e assinatura no navegador
 
 - [x] T9: Casos de uso de config, upsert e remoção da assinatura
-- [ ] T10: Controller, schemas, integração HTTP, OpenAPI e Orval
+- [x] T10: Controller, schemas, integração HTTP, OpenAPI e Orval
 - [ ] T11: Domínio/client web para suporte, ativação, reconciliação e desativação
 - [ ] T12: Configurações → Notificações e ajuda de instalação
 
