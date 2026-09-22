@@ -142,15 +142,15 @@
 
 **Acceptance criteria:**
 
-- [ ] Domínio valida URL HTTPS, limites/base64url de `p256dh` e `auth`, e converte epoch recebido na borda para `Date | null` antes de persistir.
-- [ ] Repositório implementa `upsert`, `findById`, `listActiveAt(at)` e `delete`; mesmo endpoint mantém o id e `createdAt` e atualiza dados mutáveis.
-- [ ] Teste Postgres cobre upsert repetido, expiração, delete idempotente e garante que resposta de domínio não oferece serialização acidental dos segredos.
+- [x] Domínio valida URL HTTPS, limites/base64url de `p256dh` e `auth`, e recebe `Date | null` depois da conversão da borda.
+- [x] Repositório implementa `upsert`, `findById`, `listActiveAt(at)` e `delete`; mesmo endpoint mantém o id e `createdAt` e atualiza dados mutáveis.
+- [x] Teste Postgres cobre upsert repetido, expiração, delete idempotente e garante que resposta de domínio não oferece serialização acidental dos segredos.
 
 **Verification:**
 
-- [ ] `npm run test -w @septo/api -- push-subscription`
-- [ ] `rg "generated/prisma" apps/api/src/modules/reminders/domain` não encontra import.
-- [ ] Definition of Done global.
+- [x] `npm run test -w @septo/api -- push-subscription`
+- [x] `rg "generated/prisma" apps/api/src/modules/reminders/domain` não encontra import.
+- [x] Definition of Done global.
 
 **Dependencies:** T4
 
