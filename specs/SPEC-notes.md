@@ -120,6 +120,36 @@ model Note {
 
 Segunda migration do projeto (`npm run db:migrate -w @septo/api`). Sem `ownerId` (um usuário só). Sem índices na v1 — ver a linha "Índices" nas decisões.
 
+## Contrato fornecido a `reminders`
+
+> Extensão aditiva aprovada por [SPEC-reminders](SPEC-reminders.md) em 2026-09-21; não muda o contrato HTTP nem o modelo de dados de `notes`.
+
+`notes` fornece uma leitura mínima e somente leitura para o módulo dependente. O contrato e seu adapter Prisma ficam dentro deste módulo; `reminders` não recebe `NoteRepository`, models Prisma nem permissão para consultar a tabela diretamente.
+
+```ts
+export type ReminderCandidate = {
+  id: string;
+  title: string;
+  remindAt: Date;
+  updatedAt: Date;
+};
+
+export abstract class ReminderSource {
+  abstract listDue(input: {
+    after: Date;
+    through: Date;
+    limit: number;
+  }): Promise<ReminderCandidate[]>;
+
+  abstract findCurrent(id: string, scheduledFor: Date): Promise<ReminderCandidate | null>;
+}
+```
+
+- `listDue` retorna somente notas não arquivadas com `remindAt > after`, `remindAt <= through` e `updatedAt < remindAt`, em `remindAt ASC`, respeitando `limit`;
+- `findCurrent` retorna `null` se a nota não existir, estiver arquivada, tiver outro `remindAt` ou tiver `updatedAt >= remindAt`;
+- horários são comparados como instantes, sem depender da representação ISO;
+- `NotesModule` exporta `ReminderSource`; o adapter concreto continua privado.
+
 ## Estrutura
 
 ```
