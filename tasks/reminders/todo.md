@@ -434,15 +434,15 @@
 
 **Acceptance criteria:**
 
-- [ ] `push` aceita payload válido e usa fallbacks seguros em payload ausente/inválido; título/body/tag/icon/data.url seguem a spec.
-- [ ] `notificationclick` fecha a notificação, rejeita URL externa e foca+navega cliente existente ou chama `openWindow` para `/notes/<id>`.
-- [ ] Root liga manifest/apple icon/theme-color e registra `/sw.js` no client; SW não contém listener `fetch`, cache ou conteúdo autenticado.
+- [x] `push` aceita payload válido e usa fallbacks seguros em payload ausente/inválido; título/body/tag/icon/data.url seguem a spec.
+- [x] `notificationclick` fecha a notificação, rejeita URL externa e foca+navega cliente existente ou chama `openWindow` para `/notes/<id>`.
+- [x] Root liga manifest/apple icon/theme-color e registra `/sw.js` no client; SW não contém listener `fetch`, cache ou conteúdo autenticado.
 
 **Verification:**
 
-- [ ] `node --check apps/web/public/sw.js` e inspeção controlada no Application panel cobre payload válido/inválido e os dois caminhos do click; T15 automatiza o cenário.
-- [ ] `npm run build -w @septo/web`; Application panel mostra scope `/` e manifest sem erro, sem Cache Storage criado pelo septo.
-- [ ] Definition of Done global.
+- [x] `node --check apps/web/public/sw.js` e inspeção controlada no Application panel cobre payload válido/inválido e os dois caminhos do click; T15 automatiza o cenário.
+- [x] `npm run build -w @septo/web`; Application panel mostra scope `/` e manifest sem erro, sem Cache Storage criado pelo septo.
+- [x] Definition of Done global.
 
 **Dependencies:** T13
 
