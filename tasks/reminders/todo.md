@@ -46,15 +46,15 @@
 
 **Acceptance criteria:**
 
-- [ ] `PushSender.send(subscription, payload)` não conhece Prisma/Nest e devolve um resultado discriminado com `statusCode?`, sem lançar para respostas esperadas.
-- [ ] Adapter envia JSON com TTL de 24 h, urgência normal e topic estável; `404`/`410` → `gone`, rede/`408`/`429`/`5xx` → `transient`, demais `4xx` → `permanent`.
-- [ ] Import ESM/SWC e tipos do pacote funcionam no build da API; testes mockam a chamada externa sem fazer rede.
+- [x] `PushSender.send(subscription, payload)` não conhece Prisma/Nest e devolve um resultado discriminado com `statusCode?`, sem lançar para respostas esperadas.
+- [x] Adapter envia JSON com TTL de 24 h, urgência normal e topic estável; `404`/`410` → `gone`, rede/`408`/`429`/`5xx` → `transient`, demais `4xx` → `permanent`.
+- [x] Import ESM/SWC e tipos do pacote funcionam no build da API; testes mockam a chamada externa sem fazer rede.
 
 **Verification:**
 
-- [ ] `npm run test -w @septo/api -- web-push.sender.spec.ts`
-- [ ] `npm run build -w @septo/api`
-- [ ] Definition of Done global.
+- [x] `npm run test -w @septo/api -- web-push.sender.spec.ts`
+- [x] `npm run build -w @septo/api`
+- [x] Definition of Done global.
 
 **Dependencies:** T1
 
