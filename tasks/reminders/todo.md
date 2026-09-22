@@ -1,7 +1,7 @@
 # Tarefas: reminders
 
 > Plano: [plan.md](plan.md) · Spec: [SPEC-reminders](../../specs/SPEC-reminders.md)
-> Branch prevista: `feat/reminders` · um commit por tarefa (Conventional Commits, em inglês).
+> Branch: `codex/reminders` · commits incrementais por tarefa (Conventional Commits, em inglês).
 > Regra geral: toda tarefa termina com `npm run lint`, `npm run check-types` e `npm run test` passando, com `docker compose up -d` quando houver teste de banco.
 > Só T10 muda rota da API: ela roda `npm run codegen` e commita `apps/api/openapi.json`. Código gerado do Orval continua gitignored e nunca é editado à mão.
 > Camadas: Prisma só em `infrastructure`; `domain` sem framework; imports relativos da API terminam em `.js`; `reminders` nunca consulta Prisma de `notes`.
@@ -469,7 +469,7 @@
 **Verification:**
 
 - [x] `npm run test:e2e -w @septo/web -- reminders.spec.ts` três vezes sem flake.
-- [ ] `npm run test:e2e` completo.
+- [x] `npm run test:e2e` completo.
 - [ ] Definition of Done global, mais smoke nas plataformas disponíveis.
 
 **Dependencies:** T8, T10, T12, T14
@@ -496,8 +496,8 @@
 **Verification:**
 
 - [x] `npm run coverage -w @septo/api` e `npm run coverage -w @septo/web`.
-- [ ] `npm run lint && npm run check-types && npm run build && npm run test && npm run test:e2e`.
-- [ ] `git diff --check` e segunda geração do OpenAPI sem diff.
+- [x] `npm run lint && npm run check-types && npm run build && npm run test && npm run test:e2e`.
+- [x] `git diff --check` e segunda geração do OpenAPI sem diff.
 
 **Dependencies:** T15
 
@@ -517,15 +517,34 @@
 
 **Acceptance criteria:**
 
-- [ ] Cada um dos 14 Success Criteria aponta para teste automatizado ou linha preenchida de `smoke.md`; falha ou lacuna não é tratada como sucesso.
-- [ ] SPEC-reminders, extensão de SPEC-notes, CAPABILITY-MAP, plan e todo refletem decisões e comportamento reais, sem dívida silenciosa.
-- [ ] Status muda para implementado somente depois da suíte final verde e da revisão humana; caso contrário permanece em progresso com o bloqueio explícito.
+- [x] Cada um dos 14 Success Criteria aponta para teste automatizado ou linha preenchida de `smoke.md`; falha ou lacuna não é tratada como sucesso.
+- [x] SPEC-reminders, extensão de SPEC-notes, CAPABILITY-MAP, plan e todo refletem decisões e comportamento reais, sem dívida silenciosa.
+- [x] Status muda para implementado somente depois da suíte final verde e da revisão humana; caso contrário permanece em progresso com o bloqueio explícito.
 
 **Verification:**
 
-- [ ] `git diff --check` e links locais dos documentos resolvem.
-- [ ] Segunda geração do OpenAPI não produz diff.
-- [ ] Revisão manual da matriz Spec → teste/smoke → resultado.
+- [x] `git diff --check` e links locais dos documentos resolvem.
+- [x] Segunda geração do OpenAPI não produz diff.
+- [x] Revisão manual da matriz Spec → teste/smoke → resultado.
+
+### Matriz de auditoria — 2026-09-22
+
+| Critério da spec | Evidência | Resultado |
+|---|---|---|
+| 1. Auth e config pública | [`test/reminders.spec.ts`](../../apps/api/test/reminders.spec.ts) | ✅ automatizado |
+| 2. Ativação só por clique | [`push-client.spec.ts`](../../apps/web/src/features/reminders/push-client.spec.ts) e [`e2e/reminders.spec.ts`](../../apps/web/e2e/reminders.spec.ts) | ✅ automatizado |
+| 3. Upsert idempotente e sem segredo | [`test/reminders.spec.ts`](../../apps/api/test/reminders.spec.ts) e [`push-subscription.spec.ts`](../../apps/api/src/modules/reminders/domain/push-subscription.spec.ts) | ✅ automatizado |
+| 4. Fan-out e corte por criação | [`dispatch-due-reminders.use-case.spec.ts`](../../apps/api/src/modules/reminders/application/dispatch-due-reminders.use-case.spec.ts) | ✅ automatizado |
+| 5. Envio no prazo normal | [`reminder-scheduler.service.spec.ts`](../../apps/api/src/modules/reminders/infrastructure/reminder-scheduler.service.spec.ts) e [`smoke.md`](smoke.md) | ⚠ lógica automatizada; latência real pendente |
+| 6. Lembrete obsoleto não envia | [`prisma-reminder-source.spec.ts`](../../apps/api/src/modules/notes/infrastructure/prisma-reminder-source.spec.ts) e [`dispatch-due-reminders.use-case.spec.ts`](../../apps/api/src/modules/reminders/application/dispatch-due-reminders.use-case.spec.ts) | ✅ automatizado |
+| 7. Recuperação de 24 h | [`dispatch-due-reminders.use-case.spec.ts`](../../apps/api/src/modules/reminders/application/dispatch-due-reminders.use-case.spec.ts) | ✅ automatizado |
+| 8. Retry e assinatura expirada | [`dispatch-due-reminders.use-case.spec.ts`](../../apps/api/src/modules/reminders/application/dispatch-due-reminders.use-case.spec.ts) e [`web-push.sender.spec.ts`](../../apps/api/src/modules/reminders/infrastructure/web-push.sender.spec.ts) | ✅ automatizado |
+| 9. Conteúdo e click da notificação | [`notification-copy.spec.ts`](../../apps/api/src/modules/reminders/domain/notification-copy.spec.ts), [`service-worker.spec.ts`](../../apps/web/src/features/reminders/service-worker.spec.ts) e [`smoke.md`](smoke.md) | ⚠ comportamento automatizado; entrega/click real pendentes |
+| 10. Desativação por browser | [`push-client.spec.ts`](../../apps/web/src/features/reminders/push-client.spec.ts) e [`e2e/reminders.spec.ts`](../../apps/web/e2e/reminders.spec.ts) | ✅ automatizado |
+| 11. Manifest, SW e instalação | [`e2e/reminders.spec.ts`](../../apps/web/e2e/reminders.spec.ts) e [`smoke.md`](smoke.md) | ⚠ assets/escopo automatizados; instalação real pendente |
+| 12. Orientação iOS sem falso positivo | [`notification-settings.spec.tsx`](../../apps/web/src/features/reminders/components/notification-settings.spec.tsx) e [`e2e/reminders.spec.ts`](../../apps/web/e2e/reminders.spec.ts) | ✅ automatizado |
+| 13. VAPID obrigatório em produção | [`env.spec.ts`](../../apps/api/src/shared/env.spec.ts) | ✅ automatizado |
+| 14. Gates e documentos | comandos finais, codegen forçado sem diff e documentos locais | ✅ automatizado |
 
 **Dependencies:** T16
 
@@ -544,8 +563,8 @@
 ## Checkpoint final
 
 - [ ] Todos os 14 Success Criteria da spec verificados.
-- [ ] `lint`, `check-types`, `build`, `test` e `test:e2e` verdes.
-- [ ] `openapi.json` commitado e idêntico a uma regeneração limpa.
+- [x] `lint`, `check-types`, `build`, `test` e `test:e2e` verdes.
+- [x] `openapi.json` commitado e idêntico a uma regeneração limpa.
 - [ ] Smoke real aprovado nas plataformas disponíveis; lacunas de hardware/OS explícitas.
-- [ ] README, CLAUDE.md, specs, CAPABILITY-MAP, plano e tarefas atualizados.
+- [x] README, CLAUDE.md, specs, CAPABILITY-MAP, plano e tarefas atualizados.
 - [ ] Revisão final humana.

@@ -2,6 +2,7 @@
 
 > Módulo `reminders` do [CAPABILITY-MAP](../CAPABILITY-MAP.md). Status: **aprovada** em 2026-09-21. Plano: [tasks/reminders/plan.md](../tasks/reminders/plan.md).
 > Herda as convenções globais de [SPEC-foundation](SPEC-foundation.md): camadas, contrato zod → OpenAPI → Orval, estilo, testes e limites. Depende de [SPEC-notes](SPEC-notes.md): `notes` é dono de `remindAt`; este módulo é dono da entrega.
+> Implementação e gates automatizados concluídos em 2026-09-22; módulo em validação até o [smoke real](../tasks/reminders/smoke.md) e a revisão humana.
 
 ## Premissas aprovadas
 

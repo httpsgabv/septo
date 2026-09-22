@@ -1,6 +1,6 @@
 # Implementation Plan: reminders
 
-> Spec: [SPEC-reminders](../../specs/SPEC-reminders.md) · Tarefas: [todo.md](todo.md) · Status: **aprovado em 2026-09-22**
+> Spec: [SPEC-reminders](../../specs/SPEC-reminders.md) · Tarefas: [todo.md](todo.md) · Status: **implementação concluída; smoke real e revisão humana pendentes em 2026-09-22**
 
 ## Overview
 
@@ -95,16 +95,16 @@ T8 + T10 + T12 + T14 ─▶ T15 integração/e2e/smoke ─▶ T16 cobertura e do
 
 - [x] T13: Manifest e conjunto de ícones PWA
 - [x] T14: Service worker, registro client-only e click para a nota
-- [ ] T15: Integração, e2e e checklist de smoke Web Push real
-- [ ] T16: Cobertura e documentação operacional
+- [x] T15: Integração, e2e e checklist de smoke Web Push real (plataformas reais registradas como não executadas)
+- [x] T16: Cobertura e documentação operacional
 - [ ] T17: Auditoria dos critérios e fechamento do módulo
 
 ### Checkpoint final
 
 - [ ] Todos os 14 Success Criteria da spec verificados
-- [ ] `lint`, `check-types`, `build`, `test` e `test:e2e` verdes
+- [x] `lint`, `check-types`, `build`, `test` e `test:e2e` verdes
 - [ ] Smoke real aprovado nas plataformas disponíveis e lacunas explicitadas
-- [ ] `openapi.json`, `.env.example`, README, CLAUDE.md, specs e CAPABILITY-MAP atualizados
+- [x] `openapi.json`, `.env.example`, README, CLAUDE.md, specs e CAPABILITY-MAP atualizados
 - [ ] Revisão final humana
 
 ## Paralelização
