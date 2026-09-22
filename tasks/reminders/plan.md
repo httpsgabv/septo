@@ -66,15 +66,15 @@ T8 + T10 + T12 + T14 ─▶ T15 integração/e2e/smoke ─▶ T16 cobertura e do
 - [x] T5: Fatia de persistência de `PushSubscription`
 - [x] T6: Fatia de persistência de `ReminderDelivery`
 - [x] T7: Caso de uso de despacho, fan-out, idempotência e retries
-- [ ] T8: Scheduler de 60 s e wiring do módulo
+- [x] T8: Scheduler de 60 s e wiring do módulo
 
 ### Checkpoint B: scheduler completo sem HTTP
 
-- [ ] Tick com relógio fixo cria uma entrega por assinatura elegível e não duplica no tick seguinte
-- [ ] Data criada no passado, nota obsoleta/arquivada/excluída e atraso > 24 h não enviam
-- [ ] Sucesso, retry, falha permanente e remoção `404`/`410` persistem os estados previstos
-- [ ] O sender fake confirma que nenhuma chamada de rede ocorre dentro da transação
-- [ ] `lint`, `check-types`, `test` e coverage do módulo passam
+- [x] Tick com relógio fixo cria uma entrega por assinatura elegível e não duplica no tick seguinte
+- [x] Data criada no passado, nota obsoleta/arquivada/excluída e atraso > 24 h não enviam
+- [x] Sucesso, retry, falha permanente e remoção `404`/`410` persistem os estados previstos
+- [x] O sender fake confirma que nenhuma chamada de rede ocorre dentro da transação
+- [x] `lint`, `check-types`, `test` e coverage do módulo passam
 
 ### Fase 3: contrato HTTP e assinatura no navegador
 

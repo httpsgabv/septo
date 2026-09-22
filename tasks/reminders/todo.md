@@ -232,15 +232,15 @@
 
 **Acceptance criteria:**
 
-- [ ] Bootstrap chama o caso de uso uma vez; intervalo usa 60 s; tick sobreposto é ignorado; erro é logado sem matar os próximos ticks.
-- [ ] Shutdown sempre limpa o timer; testes com fake timers não deixam handles abertos nem acessam rede/banco.
-- [ ] `RemindersModule` importa `NotesModule`, resolve todas as portas/adapters e o app sobe sem erro de DI.
+- [x] Bootstrap chama o caso de uso uma vez; intervalo usa 60 s; tick sobreposto é ignorado; erro é logado sem matar os próximos ticks.
+- [x] Shutdown sempre limpa o timer; testes com fake timers não deixam handles abertos nem acessam rede/banco.
+- [x] `RemindersModule` importa `NotesModule`, resolve todas as portas/adapters e o app sobe sem erro de DI.
 
 **Verification:**
 
-- [ ] `npm run test -w @septo/api -- reminder-scheduler.service.spec.ts`
-- [ ] `npm run build -w @septo/api` e smoke de bootstrap sem erro de DI.
-- [ ] Definition of Done global.
+- [x] `npm run test -w @septo/api -- reminder-scheduler.service.spec.ts`
+- [x] `npm run build -w @septo/api` e smoke de bootstrap sem erro de DI.
+- [x] Definition of Done global.
 
 **Dependencies:** T7
 
@@ -257,11 +257,11 @@
 
 ## Checkpoint B: scheduler completo sem HTTP
 
-- [ ] Tick cria uma entrega por assinatura e não duplica no tick seguinte.
-- [ ] Passado criado agora, obsoleto, arquivado/excluído e atraso > 24 h não enviam.
-- [ ] Sucesso/retry/falha/gone persistem corretamente; sender nunca roda dentro da transação.
-- [ ] Scheduler inicia/para limpo, sem tick sobreposto nem handle pendurado.
-- [ ] `lint`, `check-types`, `test`, build e coverage verdes.
+- [x] Tick cria uma entrega por assinatura e não duplica no tick seguinte.
+- [x] Passado criado agora, obsoleto, arquivado/excluído e atraso > 24 h não enviam.
+- [x] Sucesso/retry/falha/gone persistem corretamente; sender nunca roda dentro da transação.
+- [x] Scheduler inicia/para limpo, sem tick sobreposto nem handle pendurado.
+- [x] `lint`, `check-types`, `test`, build e coverage verdes.
 
 ---
 
