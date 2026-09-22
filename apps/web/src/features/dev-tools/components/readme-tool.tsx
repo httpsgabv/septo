@@ -5,7 +5,8 @@ import { useEffect, useState } from 'react';
 import { markdownExtensions, parseMarkdown } from '../../../shared/markdown';
 import { MAX_TEXT_CHARS, TEXT_TOO_LARGE } from '../domain/limits';
 import { FileDrop } from './file-drop';
-import { Pane, PaneTextarea, Workspace } from './workspace';
+import { LazyCodeEditor } from './lazy-code-editor';
+import { Pane, Workspace } from './workspace';
 
 const ACCEPT = '.md,.markdown,text/markdown,text/plain';
 
@@ -45,7 +46,7 @@ export function ReadmeTool() {
     <Workspace to="/dev-tools/readme" error={problem}>
       <Pane
         label="Markdown"
-        htmlFor="readme-input"
+        labelId="readme-input-label"
         actions={
           <FileDrop
             {...drop}
@@ -59,7 +60,7 @@ export function ReadmeTool() {
           </FileDrop>
         }
       >
-        {/* The whole pane takes a dropped .md; clicks stay with the textarea. */}
+        {/* The whole pane takes a dropped .md (the editor declines file drops); clicks stay with it. */}
         <FileDrop
           {...drop}
           pick={false}
@@ -67,11 +68,13 @@ export function ReadmeTool() {
           onReject={setProblem}
           className="absolute inset-0 data-over:bg-brand-subtle"
         >
-          <PaneTextarea
-            id="readme-input"
+          <LazyCodeEditor
+            labelledBy="readme-input-label"
             value={markdown}
-            onChange={(event) => setMarkdown(event.target.value)}
+            onChange={setMarkdown}
+            language="markdown"
             placeholder={'# Título\n\nCole ou solte um README.'}
+            wrap
           />
         </FileDrop>
       </Pane>

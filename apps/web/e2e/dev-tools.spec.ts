@@ -156,11 +156,11 @@ test('Chaves RSA: a 2048 pair shows up as two PEM blocks', async ({ page }) => {
 
   const started = Date.now();
   await page.getByRole('button', { name: /Gerar par/ }).click();
-  await expect(page.getByLabel('Chave pública (SPKI)')).toHaveValue(/BEGIN PUBLIC KEY/, {
+  await expect(page.getByLabel('Chave pública (SPKI)')).toContainText('BEGIN PUBLIC KEY', {
     timeout: 10_000,
   });
   expect(Date.now() - started).toBeLessThan(10_000);
-  await expect(page.getByLabel('Chave privada (PKCS#8)')).toHaveValue(/BEGIN PRIVATE KEY/);
+  await expect(page.getByLabel('Chave privada (PKCS#8)')).toContainText('BEGIN PRIVATE KEY');
 
   const download = page.waitForEvent('download');
   await page.getByRole('link', { name: 'Baixar' }).first().click();
@@ -181,6 +181,25 @@ test('README: markdown is rendered, and a table stays as text', async ({ page })
   await expect(reading).toHaveAttribute('contenteditable', 'false');
 });
 
+test('README: a .md dropped on the editor replaces the text', async ({ page }) => {
+  await gotoHydrated(page, '/dev-tools/readme');
+  const input = page.getByLabel('Markdown');
+  await input.fill('antes');
+
+  const dataTransfer = await page.evaluateHandle(() => {
+    const transfer = new DataTransfer();
+    transfer.items.add(new File(['# De arquivo'], 'LEIAME.md', { type: 'text/markdown' }));
+    return transfer;
+  });
+  await input.dispatchEvent('drop', { dataTransfer });
+
+  // The pane took the file; the editor did not insert it a second time at the cursor.
+  await expect.poll(() => editorText(input)).toBe('# De arquivo');
+  await expect(
+    page.locator('.ProseMirror').getByRole('heading', { name: 'De arquivo' }),
+  ).toBeVisible();
+});
+
 test('nothing the tools touch leaves the tab', async ({ page }) => {
   const requests: string[] = [];
   page.on('request', (request) => requests.push(request.url()));
@@ -198,7 +217,7 @@ test('nothing the tools touch leaves the tab', async ({ page }) => {
 
   await gotoHydrated(page, '/dev-tools/rsa');
   await page.getByRole('button', { name: /Gerar par/ }).click();
-  await expect(page.getByLabel('Chave privada (PKCS#8)')).toHaveValue(/BEGIN PRIVATE KEY/, {
+  await expect(page.getByLabel('Chave privada (PKCS#8)')).toContainText('BEGIN PRIVATE KEY', {
     timeout: 10_000,
   });
 

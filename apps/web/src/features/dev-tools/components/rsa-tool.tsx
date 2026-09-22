@@ -3,8 +3,9 @@ import { DownloadIcon, KeyRoundIcon } from 'lucide-react';
 import { useState } from 'react';
 import { generateRsaKeyPair, RSA_SIZES, type RsaKeyPair, type RsaSize } from '../domain/rsa';
 import { CopyButton } from './copy-button';
+import { LazyCodeEditor } from './lazy-code-editor';
 import { Segmented } from './segmented';
-import { Pane, PaneTextarea, Workspace } from './workspace';
+import { Pane, Workspace } from './workspace';
 
 export function RsaTool() {
   const [bits, setBits] = useState<RsaSize>(2048);
@@ -74,7 +75,7 @@ function KeyPane({
   return (
     <Pane
       label={label}
-      htmlFor={id}
+      labelId={`${id}-label`}
       actions={
         value && (
           <>
@@ -91,7 +92,7 @@ function KeyPane({
         )
       }
     >
-      <PaneTextarea id={id} value={value} readOnly className="text-[0.7rem] md:text-[0.7rem]" />
+      <LazyCodeEditor labelledBy={`${id}-label`} value={value} readOnly />
     </Pane>
   );
 }

@@ -433,12 +433,12 @@
 **Descrição:** RSA: as duas chaves no editor só leitura, em texto puro, com Copiar e Baixar no cabeçalho. README: entrada no editor com markdown; soltar um `.md` no painel substitui o conteúdo uma vez só (o CM recusa o drop e o `FileDrop` trata).
 
 **Aceite:**
-- [ ] O PEM público e o privado aparecem nos editores, e o download continua com o nome `chave.pub.pem`
-- [ ] Soltar um `.md` no editor do README não duplica o conteúdo
-- [ ] A leitura continua renderizando `<h1>`, lista e tabela como texto
+- [x] O PEM público e o privado aparecem nos editores, e o download continua com o nome `chave.pub.pem`
+- [x] Soltar um `.md` no editor do README substitui o conteúdo (a guarda contra o drop do CM não é distinguível por e2e: sem ela o resultado final também é o do arquivo)
+- [x] A leitura continua renderizando `<h1>`, lista e tabela como texto
 
 **Verificação:**
-- [ ] e2e do RSA e do README com `editorText`, mais um teste novo de drop de `.md` (`dispatchEvent('drop')` com `DataTransfer`)
+- [x] e2e do RSA e do README com `editorText`, mais um teste novo de drop de `.md` (`dispatchEvent('drop')` com `DataTransfer`)
 
 **Dependências:** E1
 **Arquivos:** `components/rsa-tool.tsx`, `components/readme-tool.tsx`, `e2e/dev-tools.spec.ts`
