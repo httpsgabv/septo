@@ -191,3 +191,75 @@ R2 moldura: Workspace + Pane + Segmented + StatusBar, índice compacto, JSON ao 
 ## Open Questions
 
 Nenhuma.
+
+---
+
+# Revisão 2: editor de código e leitura expandida
+
+> Spec: [SPEC-dev-tools § Revisão 2](../../specs/SPEC-dev-tools.md#revisão-2-editor-de-código-e-leitura-expandida) · Tarefas: [todo.md § Revisão 2](todo.md#revisão-2-editor-de-código-e-leitura-expandida) · Status: **aprovado em 2026-09-21** · Branch: `feat/dev-tools-editor` (a partir da `main`)
+
+## Overview
+
+Um componente novo (`CodeEditor`, CodeMirror 6) substitui o `PaneTextarea` em todos os painéis de texto, e o README ganha a leitura expandida. Nenhum `domain/*.ts` muda de comportamento. O único código de domínio novo é o adaptador do linter de JSON. Nada em `apps/api`.
+
+O risco está no editor: bundle, SSR/hidratação, foco e o e2e, que hoje lê `textarea` com `toHaveValue`. Por isso a primeira tarefa é uma fatia vertical completa (dependências + `CodeEditor` + JSON + e2e do JSON), e as outras ferramentas só repetem o padrão.
+
+## Grafo de dependências
+
+```
+E1 deps + CodeEditor (núcleo, tema, aria, lazy, linguagens sob demanda) + JSON (entrada, saída, linter)
+      ├─▶ E2 Dados (YAML/XML/JSON por formato) + Encodings (texto puro)
+      ├─▶ E3 RSA (só leitura) + README entrada (markdown, drop de arquivo)
+      │         └─▶ E4 README: leitura expandida        (independe do editor; fica depois da E3 só para não mexer no mesmo arquivo em paralelo)
+      └────────────────▶ E5 fechamento: PaneTextarea removido, e2e de bundle, medição do chunk, screenshots, docs
+```
+
+## Architecture Decisions
+
+- **`CodeEditor` em dois arquivos.**
+  - `components/code-editor.tsx` é o CM de verdade: `EditorView` criado num `useEffect` sobre um `ref`; `value` externo sincronizado por transação só quando difere do documento, para não perder o cursor a cada tecla; `onChange` por `EditorView.updateListener`.
+  - `components/lazy-code-editor.tsx` é a porta de entrada que as ferramentas importam: `ClientOnly` + `lazy` + `<pre>` de fallback com o mesmo valor, para o SSR e o primeiro paint não ficarem vazios.
+- **Props:** `{ value, onChange?, readOnly?, language?: 'json' | 'yaml' | 'xml' | 'markdown' | null, labelledBy, lint?: (text) => Diagnostic[] }`. `readOnly`, linguagem e linter ficam cada um num `Compartment` e são trocados por `reconfigure`, nunca recriando a view.
+- **Linguagens sob demanda:** um mapa `{ json: () => import('@codemirror/lang-json').then(m => m.json()), … }`. Quando `language` muda, o `import()` resolve e reconfigura o compartment (descartando o resultado se a linguagem já mudou de novo). Encodings e RSA passam `null` e nunca baixam parser.
+- **Rótulo:** `Pane` ganha um `id` no rótulo, e o `CodeEditor` põe `aria-labelledby` no `contenteditable` (`EditorView.contentAttributes`). O `Pane` passa a aceitar `labelId` em vez de `htmlFor` para os editores; o `<label htmlFor>` continua para os `input` normais.
+- **Tema:** `EditorView.theme` com `var(--…)` do design system e um `HighlightStyle` com as cores de sintaxe como variáveis CSS novas em `code-editor.css`, com valores claro/escuro ao lado dos tokens da ferramenta, **não** em `packages/ui`. Fonte `font-mono` e `text-xs`, iguais ao `PaneTextarea` de hoje.
+- **Linter do JSON:** `domain/json.ts` ganha `jsonDiagnostic(text): { from, to, message } | null`, puro e testado, que reusa `describeJsonProblem` + `findSyntaxErrorIndex`. O componente só adapta para o `Diagnostic` do `@codemirror/lint` (`severity: 'error'`, `delay` curto).
+- **Drop de arquivo:** `domEventHandlers({ drop: (e) => Boolean(e.dataTransfer?.files.length) })`. Devolver `true` impede o CM de inserir o arquivo, e o evento sobe até o `FileDrop` do README.
+- **Leitura expandida:** o `Pane` da leitura ganha `expanded`. Com ele, o `section` recebe `fixed inset-0 z-50 bg-background`, `role="dialog"`, `aria-modal` e `aria-label`, e o conteúdo vira uma coluna `mx-auto max-w-3xl`. O `Esc` é tratado num `keydown` no próprio nó e, ao fechar, o foco volta ao botão por `ref`.
+- **e2e:** um helper `editorText(locator)` lê o `.cm-content` (`innerText`, sem os números de linha, que ficam no gutter). O `fill()` do Playwright funciona em `contenteditable`, então `getByLabel('Entrada').fill(...)` continua valendo via `aria-labelledby`.
+
+## Task List
+
+### Fase 1: a fatia vertical
+- E1 — dependências, `CodeEditor`, JSON migrado (entrada, saída e linter)
+
+### Checkpoint A
+- `Tab` indenta e o foco fica; `Esc`+`Tab` sai; erro sublinhado igual à status bar; claro e escuro legíveis; tamanho do núcleo medido (≤ 120 KB gz, senão paro e reporto)
+
+### Fase 2: as outras ferramentas (E2 e E3 são independentes)
+- E2 — Dados + Encodings
+- E3 — RSA + entrada do README
+
+### Fase 3: leitura
+- E4 — README: leitura expandida
+
+### Fase 4: fechamento
+- E5 — `PaneTextarea` removido, e2e de bundle por rota, screenshots, CLAUDE.md, spec "implementada"
+
+### Checkpoint final
+- Critérios 1–8 da revisão 2; `lint`, `check-types`, `test`, `test:e2e` verdes; `openapi.json` sem diff
+
+## Risks and Mitigations
+
+| Risco | Mitigação |
+|---|---|
+| Núcleo do CM maior que o previsto | Medir na E1 (`vite build` + gzip do chunk) antes de migrar o resto. Parar e reportar se passar de 120 KB gz |
+| Sincronizar `value` ↔ documento quebra o cursor ou entra em loop | Só despachar transação quando `value !== view.state.doc.toString()`, e marcar transações externas com `Transaction.addToHistory.of(false)` para o desfazer não voltar para uma saída |
+| Hidratação: o fallback `<pre>` e o editor montado têm alturas diferentes | Os dois ocupam `absolute inset-0` no painel e o layout não depende do conteúdo |
+| e2e frágil lendo `contenteditable` | Um helper só (`editorText`) e asserções por texto. O CM virtualiza linhas fora da tela, mas as saídas dos testes são curtas |
+| Linguagem chega depois do texto (flash sem cores) | Aceitável: é só cor. O texto já aparece com o núcleo |
+| `fill()` com `closeBrackets` dobra `}` | O `fill` insere o texto de uma vez (não tecla por tecla), e o `closeBrackets` só reage a digitação. O teste de tecla (`Tab`/`Enter`) usa `press`/`type` de propósito e confere o resultado exato |
+
+## Open Questions
+
+Nenhuma.
