@@ -68,6 +68,27 @@ test('JSON: formats what is valid and points at what is not', async ({ page }) =
   await expect(page.locator('.cm-lintRange-error')).toBeVisible();
 });
 
+test('JSON: a broken input keeps the last valid output on screen', async ({ page }) => {
+  await gotoHydrated(page, '/dev-tools/json');
+  const input = page.getByLabel('Entrada');
+  const output = page.getByLabel('Saída');
+
+  await input.fill('{"a":1}');
+  await expect.poll(() => editorText(output)).toBe('{\n  "a": 1\n}');
+
+  // Halfway through typing: the error shows, the output stays.
+  await input.fill('{"a":1,');
+  await expect(page.getByText(/Linha 1, coluna/)).toBeVisible();
+  expect(await editorText(output)).toBe('{\n  "a": 1\n}');
+
+  await input.fill('{"a":1,"b":2}');
+  await expect.poll(() => editorText(output)).toBe('{\n  "a": 1,\n  "b": 2\n}');
+
+  // Empty is valid: it clears.
+  await input.fill('');
+  await expect.poll(() => editorText(output)).toBe('');
+});
+
 test('JSON: Tab indents inside the editor, and Esc then Tab leaves it', async ({ page }) => {
   await gotoHydrated(page, '/dev-tools/json');
   const input = page.getByLabel('Entrada');
@@ -200,37 +221,33 @@ test('README: a .md dropped on the editor replaces the text', async ({ page }) =
   ).toBeVisible();
 });
 
-test('README: the reading expands over the whole window, and Esc brings it back', async ({
+test('README: the reading expands over the writing pane, and the rest of the layout stays', async ({
   page,
 }) => {
   await gotoHydrated(page, '/dev-tools/readme');
-  await page.getByLabel('Markdown').fill('# septo\n\nUm app pessoal.');
+  const markdown = page.getByLabel('Markdown');
+  await markdown.fill('# septo\n\nUm app pessoal.');
+  const reading = page.locator('.ProseMirror');
+  const before = await reading.boundingBox();
 
   await page.getByRole('button', { name: 'Expandir' }).click();
-  const reading = page.getByRole('dialog', { name: 'Leitura' });
+  await expect(markdown).toBeHidden();
   await expect(reading.getByRole('heading', { level: 1, name: 'septo' })).toBeVisible();
-
-  // The window, not the browser's fullscreen: the box is exactly the viewport, over sidebar and header.
-  const viewport = page.viewportSize();
-  expect(await reading.boundingBox()).toEqual({
-    x: 0,
-    y: 0,
-    width: viewport?.width,
-    height: viewport?.height,
-  });
+  // Sidebar, header and toolbar are still there; the reading took the writing pane's place.
+  await expect(page.locator('[data-sidebar="sidebar"]')).toBeVisible();
+  await expect(page.getByRole('heading', { level: 1, name: 'README' })).toBeVisible();
+  const after = await reading.boundingBox();
+  expect(after?.x).toBeLessThan(before?.x ?? 0);
 
   await page.keyboard.press('Escape');
-  await expect(reading).toBeHidden();
-  const expand = page.getByRole('button', { name: 'Expandir' });
-  await expect(expand).toBeFocused();
-  await expect
-    .poll(() => editorText(page.getByLabel('Markdown')))
-    .toBe('# septo\n\nUm app pessoal.');
+  await expect(markdown).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Expandir' })).toBeFocused();
+  await expect.poll(() => editorText(markdown)).toBe('# septo\n\nUm app pessoal.');
 
   // The same button closes it too.
-  await expand.click();
+  await page.getByRole('button', { name: 'Expandir' }).click();
   await page.getByRole('button', { name: 'Fechar' }).click();
-  await expect(reading).toBeHidden();
+  await expect(markdown).toBeVisible();
 });
 
 test('nothing the tools touch leaves the tab', async ({ page }) => {

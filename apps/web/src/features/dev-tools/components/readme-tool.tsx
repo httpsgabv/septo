@@ -37,6 +37,16 @@ export function ReadmeTool() {
     }
   }, [editor, markdown]);
 
+  // Esc closes the expanded reading from anywhere on the page (the markdown editor is hidden then).
+  useEffect(() => {
+    if (!expanded) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setExpanded(false);
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [expanded]);
+
   async function readFile(file: File): Promise<void> {
     setMarkdown(await file.text());
   }
@@ -48,6 +58,8 @@ export function ReadmeTool() {
       <Pane
         label="Markdown"
         labelId="readme-input-label"
+        // Covered, not unmounted: the text and its undo history are there when the reading closes.
+        className={expanded ? 'hidden' : undefined}
         actions={
           <FileDrop
             {...drop}
@@ -81,8 +93,8 @@ export function ReadmeTool() {
       </Pane>
       <Pane
         label="Leitura"
-        expanded={expanded}
-        onCollapse={() => setExpanded(false)}
+        // Expanded, the reading takes the writing pane's place too; sidebar, header and toolbar stay.
+        className={expanded ? 'md:col-span-2' : undefined}
         actions={
           // One button that changes its label: focus stays on it when the pane opens and closes.
           <Button variant="ghost" size="xs" onClick={() => setExpanded(!expanded)}>

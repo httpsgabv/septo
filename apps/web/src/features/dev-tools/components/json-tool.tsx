@@ -33,7 +33,11 @@ export function JsonTool() {
     return layout === 'min' ? minifyJson(input) : formatJson(input, layout);
   }, [input, layout]);
 
-  const output = outcome.ok ? outcome.text : '';
+  // While the input is broken (every keystroke of hand-written JSON passes through that), the
+  // output keeps the last valid result instead of blinking to empty. Adjusted during render, not
+  // in an effect, so there is never a frame with the stale value. Empty input is valid: it clears.
+  const [output, setOutput] = useState('');
+  if (outcome.ok && outcome.text !== output) setOutput(outcome.text);
   const problem = outcome.ok
     ? null
     : outcome.line === null

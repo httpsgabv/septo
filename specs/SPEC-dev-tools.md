@@ -92,7 +92,7 @@ Chegar a qualquer ferramenta em um clique de qualquer lugar do app, e dar a cada
 ### Objetivo
 
 1. Escrever à mão em qualquer painel de texto das ferramentas (**JSON**, **Dados**, **Encodings**, **README** e **RSA**) como num editor de IDE. Hoje o `Tab` tira o foco do campo em vez de indentar, e não há números de linha, cores nem fechamento de chaves.
-2. Ler um README com a janela inteira, sem painel de markdown, sem sidebar e sem header, e voltar com um clique ou `Esc`. **Não** é a Fullscreen API do navegador.
+2. Ler um README com a área de trabalho inteira: a leitura cobre o painel de markdown, e sidebar, header e toolbar continuam no lugar. Volta com um clique ou `Esc`. **Não** é a Fullscreen API do navegador (ajustado em 2026-09-21: antes cobria a janela toda).
 
 ### Histórias
 
@@ -105,7 +105,7 @@ Chegar a qualquer ferramenta em um clique de qualquer lugar do app, e dar a cada
 3. Os painéis de **saída** (JSON, Dados, Encodings e as duas chaves do RSA) usam o mesmo editor em modo somente leitura: mesmas cores, números de linha e dobra. Copiar e Baixar continuam no cabeçalho. O painel "Leitura" do README continua sendo o Tiptap renderizado.
 4. No Dados, as cores seguem o formato: o detectado (ou o escolhido) na entrada e o de destino na saída.
 5. Continuo conseguindo sair do editor pelo teclado: `Esc` e depois `Tab` passa o foco adiante, que é o padrão do CodeMirror para não prender o foco.
-6. No README, o cabeçalho do painel "Leitura" tem um botão **Expandir**. A leitura passa a cobrir a janela inteira, com o texto numa coluna centralizada (`max-w-3xl`) e um botão **Fechar** no canto. `Esc` também fecha e devolve o foco ao botão Expandir. O markdown continua o mesmo ao voltar.
+6. No README, o cabeçalho do painel "Leitura" tem um botão **Expandir**. A leitura passa a ocupar os dois painéis (cobre o de markdown; sidebar, header e toolbar ficam), com o texto numa coluna centralizada (`max-w-3xl`), e o mesmo botão vira **Fechar**. `Esc` também fecha e devolve o foco ao botão Expandir. O markdown continua o mesmo ao voltar.
 
 ### Decisões (revisão 2)
 
@@ -121,7 +121,8 @@ Chegar a qualquer ferramenta em um clique de qualquer lugar do app, e dar a cada
 | Acessibilidade | O `contenteditable` do CM recebe `aria-labelledby` apontando para o rótulo do painel ("Entrada"/"Saída") | O `<label htmlFor>` não funciona com `contenteditable`. Assim o `getByLabel('Entrada')` e os leitores de tela continuam iguais |
 | Onde usar | Todos os painéis de texto: JSON e Dados (entrada e saída), Encodings (entrada e saída, texto puro), README (entrada, markdown) e RSA (as duas chaves, só leitura, texto puro). `PaneTextarea` sai do código | Pedido do usuário em 2026-09-21: o mesmo comportamento de teclado e o mesmo visual em todas as ferramentas |
 | Soltar arquivo no editor | O `CodeEditor` recusa o drop de **arquivo** do próprio CM (`domEventHandlers.drop` devolve `true` quando há `files`), e o `FileDrop` em volta (README) recebe o arquivo como hoje, com a checagem de tamanho | O CM lê um arquivo solto e o insere na posição do drop, sem limite de tamanho, disputando com a substituição que o painel faz. Medido em 2026-09-21: nos testes a substituição do painel sempre vence (o texto final é o do arquivo), então a guarda é defesa, não correção de um bug observado |
-| Leitura expandida | É o **mesmo nó** do painel "Leitura" que muda de classe (`fixed inset-0 z-50 bg-background`), com `role="dialog"`, `aria-modal` e `aria-label="Leitura"` enquanto está expandido. `Esc` fecha e o foco volta ao botão. Não usa a Fullscreen API nem o `Dialog` do design system | O Tiptap não monta o mesmo editor em dois lugares, e um segundo editor só para o overlay duplica estado. Trocar a classe mantém scroll, conteúdo e instância. A Fullscreen API foi descartada a pedido |
+| Leitura expandida | É o **mesmo nó** do painel "Leitura" que passa a ocupar as duas colunas do workspace (`md:col-span-2`), enquanto o painel de markdown sai do layout (`hidden`, o editor continua montado com o texto). Não é modal: sidebar, header e toolbar seguem usáveis. `Esc` dentro do painel fecha, e o foco fica no botão. Ajustado em 2026-09-21: a versão que cobria a janela toda (`fixed inset-0`, `role="dialog"`) escondia o resto do layout | O Tiptap não monta o mesmo editor em dois lugares; trocar a classe mantém scroll, conteúdo e instância. Esconder o markdown em vez de desmontar preserva o histórico de desfazer |
+| Saída do JSON com erro | A saída mostra o **último resultado válido** enquanto a entrada está quebrada; o erro fica na status bar e sublinhado na entrada. Apagar a entrada inteira limpa a saída (vazio é válido) | Pedido em 2026-09-21: ao escrever à mão, a entrada passa por estados inválidos a cada tecla, e a saída piscando para vazio atrapalha a leitura |
 | Estado | Nada persiste (sem `localStorage`); expandido/recolhido é `useState` e volta a recolhido ao sair da rota | Regra do módulo |
 
 ### Dependências novas (pedem aprovação)
@@ -150,7 +151,7 @@ Descartados: `codemirror` (o meta-pacote `basicSetup` traz autocomplete e extras
 | Nível | Cobre |
 |---|---|
 | Unit | `jsonLintDiagnostic(text)` (o adaptador do linter): o erro vira um intervalo de 1 caractere na posição de `findSyntaxErrorIndex`, o JSON válido não gera nada e a entrada vazia não gera nada |
-| E2E `dev-tools.spec.ts` | `Tab` no editor do JSON insere indentação e o foco **continua** no editor; `Esc`+`Tab` sai; o erro aparece sublinhado (`.cm-lintRange-error`); as asserções de saída passam de `toHaveValue` para o texto do editor em JSON, Dados, Encodings e RSA; o Dados continua convertendo YAML → JSON; o README solto como arquivo entra uma vez só; o índice e Imagens **não** baixam o chunk do CodeMirror, e o parser de YAML só é baixado no Dados; README: Expandir cobre a janela (a caixa da leitura tem o tamanho da viewport), `Esc` fecha e o foco volta ao botão |
+| E2E `dev-tools.spec.ts` | `Tab` no editor do JSON insere indentação e o foco **continua** no editor; `Esc`+`Tab` sai; o erro aparece sublinhado (`.cm-lintRange-error`); as asserções de saída passam de `toHaveValue` para o texto do editor em JSON, Dados, Encodings e RSA; o Dados continua convertendo YAML → JSON; o README solto como arquivo entra uma vez só; o índice e Imagens **não** baixam o chunk do CodeMirror, e o parser de YAML só é baixado no Dados; README: Expandir faz a leitura ocupar os dois painéis com sidebar e `<h1>` visíveis e o markdown escondido; `Esc` fecha e o foco fica no botão; JSON: com a entrada quebrada a saída mantém o último resultado válido |
 
 ### Critérios de sucesso (revisão 2)
 
@@ -158,10 +159,11 @@ Descartados: `codemirror` (o meta-pacote `basicSetup` traz autocomplete e extras
 2. JSON quebrado: sublinhado vermelho na posição e status bar com a mesma linha/coluna.
 3. No Dados, colar YAML mostra cores de YAML na entrada e de JSON na saída; trocar o destino para XML troca as cores da saída.
 4. `Esc` e depois `Tab` tira o foco do editor (sem armadilha de teclado).
-5. O README expande para 100% da viewport, sem sidebar nem header visíveis; `Esc` e "Fechar" voltam ao layout de dois painéis com o mesmo conteúdo.
+5. O README expande sobre o painel de markdown (os dois painéis), com sidebar, header e toolbar visíveis; `Esc` e "Fechar" voltam ao layout de dois painéis com o mesmo conteúdo.
 6. O índice e Imagens não baixam o CodeMirror. O núcleo do editor (sem linguagens) fica abaixo de **120 KB gzip**; se passar, paro e trago o número antes de seguir.
 7. Claro e escuro legíveis (screenshots), 375 px sem scroll horizontal, e `lint`, `check-types`, `test` e `test:e2e` verdes. `openapi.json` sem diff.
 8. `Tab` indenta em todos os editores de entrada (JSON, Dados, Encodings, README), e as chaves do RSA aparecem no editor só leitura com Copiar e Baixar funcionando.
+9. No JSON, quebrar uma entrada que estava válida mantém a saída anterior na tela; corrigir atualiza; apagar tudo limpa.
 
 ## As seis ferramentas
 
